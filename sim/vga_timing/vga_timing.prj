@@ -10,5 +10,7 @@
 
 
 sv work ../../rtl/vga_pkg.sv \
-        ../../rtl/vga_timing.sv \
+        ../../rtl/vga_if.sv \
+        ../../rtl/top_draw_board/vga_timing.sv \
+        ../common/logger_pkg.sv \
         vga_timing_tb.sv

@@ -14,20 +14,31 @@ import sys
 import subprocess
 import glob
 import argparse
+import colorama
 
-# Load ROOT_DIR from .env file
+# Load ROOT_DIR and VIVADO_SETUP from .env file
 ENV_FILE = ".env"
 ROOT_DIR = None
+VIVADO_SETUP = None
+
+colorama.init(autoreset=True)
 
 if os.path.exists(ENV_FILE):
     with open(ENV_FILE, "r") as f:
         for line in f:
-            if line.startswith("ROOT_DIR="):
-                ROOT_DIR = line.strip().split("=")[1].strip('"')
-                break
+            key, value = line.strip().split("=")
+            value = value.strip('"')
+            if key == "ROOT_DIR":
+                ROOT_DIR = value
+            elif key == "VIVADO_SETUP":
+                VIVADO_SETUP = value
 
 if not ROOT_DIR:
     print("Error: ROOT_DIR is not set. Run env.py first to initialize it.")
+    sys.exit(1)
+
+if not VIVADO_SETUP:
+    print("Error: VIVADO_SETUP is not set in .env. Run env.py first to initialize it.")
     sys.exit(1)
 
 SIM_DIR = os.path.join(ROOT_DIR, "sim")
@@ -35,6 +46,9 @@ BUILD_DIR = os.path.join(SIM_DIR, "build")
 
 # Ensure build directory exists
 os.makedirs(BUILD_DIR, exist_ok=True)
+
+# Vivado setup command
+SETUP_CMD = f'call "{VIVADO_SETUP}" && '
 
 def list_available_tests():
     """List all available tests in the sim directory, excluding non-test folders."""
@@ -61,13 +75,37 @@ def execute_test(test_name, show_gui):
 
     # Run simulation
     if show_gui:
-        subprocess.run(f"xelab {xelab_opts} -debug typical", shell=True, cwd=BUILD_DIR)
-        subprocess.run(f"xsim {test_name}_tb -gui -t {os.path.join(ROOT_DIR, 'tools', 'sim_cmd.tcl')}", shell=True, cwd=BUILD_DIR)
+        subprocess.run(f'cmd.exe /c "{SETUP_CMD} xelab {xelab_opts} -debug typical"', cwd=BUILD_DIR)
+        subprocess.run(f'cmd.exe /c "{SETUP_CMD} xsim {test_name}_tb -gui -t {os.path.join(ROOT_DIR, "tools", "sim_cmd.tcl")}"', cwd=BUILD_DIR)
     else:
-        process = subprocess.run(f"xelab {xelab_opts} -standalone -runall", shell=True, cwd=BUILD_DIR, stdout=subprocess.PIPE, text=True)
-        for line in process.stdout.splitlines():
-            if any(keyword in line.lower() for keyword in ["fatal", "error", "critical", "warning"]):
-                print(line)
+        process = subprocess.run(f'cmd.exe /c "{SETUP_CMD} xelab {xelab_opts} -standalone -runall"',
+                                 cwd=BUILD_DIR, stdout=subprocess.PIPE, text=True)
+        log_file = os.path.join(BUILD_DIR, "xsim.log")
+
+        if not os.path.exists(log_file):
+            print(colorama.Fore.RED + f"[{test_name}] FAILED (xsim.log not found)")
+            return
+
+        with open(log_file, "r") as f:
+            log_output = f.read().lower()
+
+
+        # Check for failure indicators
+        failed_keywords = ["fatal", "error", "critical", "failed"]
+        passed_keywords = ["test passed"]
+
+        is_failed = any(keyword in log_output for keyword in failed_keywords)
+        is_passed = any(keyword in log_output for keyword in passed_keywords)
+
+        # Print the result in color
+        if not is_failed:
+            print(colorama.Fore.GREEN + f"[{test_name}] PASSED ")
+        else:
+            print(colorama.Fore.RED + f"[{test_name}] FAILED ")
+            with open(log_file, "r") as f:
+                for line in f:
+                    if any(keyword in line.lower() for keyword in ["fatal", "error"]):
+                        print(colorama.Fore.RED + ">> " + line.strip())
 
 def run_all():
     """Run all available tests and summarize results."""
@@ -84,9 +122,9 @@ def run_all():
         error_count = process.stdout.lower().count("error")
         
         if error_count == 0:
-            print("\033[1;32mPASSED\033[0;39m")  # Green PASSED
+            print(colorama.Fore.GREEN + "PASSED")
         else:
-            print("\033[1;31mFAILED\033[0;39m")  # Red FAILED
+            print(colorama.Fore.GREEN + "FAILED")
     sys.exit(0)
 
 # Argument parsing

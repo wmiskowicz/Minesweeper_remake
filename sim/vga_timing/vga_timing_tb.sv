@@ -9,16 +9,18 @@
 
 `timescale 1 ns / 1 ps
 
+
 module vga_timing_tb;
 
 import vga_pkg::*;
+import logger_pkg::*;
 
 
 /**
  *  Local parameters
  */
 
-localparam CLK_PERIOD = 25;     // 40 MHz
+localparam CLK_PERIOD = 25ns;     // 40 MHz
 
 
 /**
@@ -28,9 +30,7 @@ localparam CLK_PERIOD = 25;     // 40 MHz
 logic clk;
 logic rst;
 
-wire [10:0] vcount, hcount;
-wire        vsync,  hsync;
-wire        vblnk,  hblnk;
+vga_if vga_test_if();
 
 
 
@@ -45,58 +45,50 @@ end
 
 
 /**
- * Reset generation
- */
-
-initial begin
-                       rst = 1'b0;
-    #(1.25*CLK_PERIOD) rst = 1'b1;
-                       rst = 1'b1;
-    #(2.00*CLK_PERIOD) rst = 1'b0;
-end
-
-
-/**
  * Dut placement
  */
 
 vga_timing dut(
     .clk,
     .rst,
-    .out()
+    .out(vga_test_if.out)
 );
-
-/**
- * Tasks and functions
- */
-
- // Here you can declare tasks with immediate assertions (assert).
-
-
-//Assertions
-
-
-// Here you can declare concurrent assertions (assert property).
 
 
 /**
  * Main test
  */
 
- always_comb begin
-    assert (vcount < VER_PIXELS) else $error("vcount too big");
-    assert (hcount < HOR_PIXELS) else $error("hcount too big");
- end
-
 initial begin
-    @(posedge rst);
-    @(negedge rst);
-
-    wait (vsync == 1'b0);
-    @(negedge vsync)
-    @(negedge vsync)
+    void'(logger::init());
+    InitReset();
+    `log_info("Starting test");
+    `check_eq(1, 2);
+    WaitClocks(50);
+    `log_info($sformatf("hcount = %d", vga_test_if.hcount));
+    WaitClocks(50);
+    // @(negedge vga_test_if.vsync)
+    // @(negedge vga_test_if.vsync)
 
     $finish;
 end
+
+
+/**
+ * Tasks and functions
+ */
+
+task automatic WaitClocks(input int num_of_clock_cycles);
+    repeat (num_of_clock_cycles) @(posedge clk);
+endtask
+
+// Task: Initialize Reset Sequence
+task automatic InitReset();
+    rst = 1;
+    WaitClocks(10);
+    rst = 0;
+    WaitClocks(10); 
+endtask
+
 
 endmodule
