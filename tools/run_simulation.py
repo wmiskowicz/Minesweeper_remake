@@ -16,7 +16,6 @@ import glob
 import argparse
 import colorama
 
-# Load ROOT_DIR and VIVADO_SETUP from .env file
 ENV_FILE = ".env"
 ROOT_DIR = None
 VIVADO_SETUP = None
@@ -34,20 +33,16 @@ if os.path.exists(ENV_FILE):
                 VIVADO_SETUP = value
 
 if not ROOT_DIR:
-    print("Error: ROOT_DIR is not set. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + "ROOT_DIR is not set. Run env.py first to initialize it.")
     sys.exit(1)
 
 if not VIVADO_SETUP:
-    print("Error: VIVADO_SETUP is not set in .env. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + "VIVADO_SETUP is not set in .env. Run env.py first to initialize it.")
     sys.exit(1)
 
 SIM_DIR = os.path.join(ROOT_DIR, "sim")
 BUILD_DIR = os.path.join(SIM_DIR, "build")
 
-# Ensure build directory exists
-os.makedirs(BUILD_DIR, exist_ok=True)
-
-# Vivado setup command
 SETUP_CMD = f'call "{VIVADO_SETUP}" && '
 
 def list_available_tests():
@@ -62,8 +57,10 @@ def list_available_tests():
 
 def execute_test(test_name, show_gui):
     """Run the specified test with or without GUI."""
-    # Clean untracked files
-    subprocess.run(["git", "clean", "-fXd", "."], cwd=SIM_DIR)
+    subprocess.run(["git", "clean", "-fXd", "."], cwd=SIM_DIR) 
+
+    if not os.path.exists(BUILD_DIR):
+        os.makedirs(BUILD_DIR, exist_ok=True)
 
     test_path = os.path.join(SIM_DIR, test_name)
     project_file = os.path.join(test_path, f"{test_name}.prj")
@@ -73,7 +70,6 @@ def execute_test(test_name, show_gui):
 
     xelab_opts = f"work.{test_name}_tb {compile_glbl} -snapshot {test_name}_tb -prj {project_file} -timescale 1ns/1ps -L unisims_ver"
 
-    # Run simulation
     if show_gui:
         subprocess.run(f'cmd.exe /c "{SETUP_CMD} xelab {xelab_opts} -debug typical"', cwd=BUILD_DIR)
         subprocess.run(f'cmd.exe /c "{SETUP_CMD} xsim {test_name}_tb -gui -t {os.path.join(ROOT_DIR, "tools", "sim_cmd.tcl")}"', cwd=BUILD_DIR)
@@ -90,14 +86,10 @@ def execute_test(test_name, show_gui):
             log_output = f.read().lower()
 
 
-        # Check for failure indicators
         failed_keywords = ["fatal", "error", "critical", "failed"]
-        passed_keywords = ["test passed"]
 
         is_failed = any(keyword in log_output for keyword in failed_keywords)
-        is_passed = any(keyword in log_output for keyword in passed_keywords)
 
-        # Print the result in color
         if not is_failed:
             print(colorama.Fore.GREEN + f"[{test_name}] PASSED ")
         else:
@@ -127,7 +119,6 @@ def run_all():
             print(colorama.Fore.GREEN + "FAILED")
     sys.exit(0)
 
-# Argument parsing
 parser = argparse.ArgumentParser(description="Run Vivado simulations outside Vivado for faster execution.")
 parser.add_argument("-l", action="store_true", help="List available tests")
 parser.add_argument("-t", type=str, help="Run the specified test")

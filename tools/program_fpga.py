@@ -9,11 +9,14 @@ import os
 import glob
 import subprocess
 import sys
+import colorama
 
 # Load ROOT_DIR and VIVADO_DIR from .env file
 ENV_FILE = ".env"
 ROOT_DIR = None
 VIVADO_DIR = None
+
+colorama.init(autoreset=True)
 
 if os.path.exists(ENV_FILE):
     with open(ENV_FILE, "r") as f:
@@ -24,11 +27,11 @@ if os.path.exists(ENV_FILE):
                 VIVADO_DIR = line.strip().split("=")[1].strip('"')
 
 if not ROOT_DIR:
-    print("Error: ROOT_DIR is not set. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + "ROOT_DIR is not set. Run env.py first to initialize it.")
     sys.exit(1)
 
 if not VIVADO_DIR:
-    print("Error: VIVADO_DIR is not set. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + "VIVADO_DIR is not set. Run env.py first to initialize it.")
     sys.exit(1)
 
 # Add Vivado binary path to the environment
@@ -39,7 +42,7 @@ os.environ["PATH"] = vivado_bin + os.pathsep + os.environ["PATH"]
 bitstream_files = glob.glob(os.path.join(ROOT_DIR, "results", "*.bit"))
 
 if not bitstream_files:
-    print("Error: No .bit file found in the results directory.")
+    print(colorama.Fore.RED + "Error: No .bit file found in the results directory.")
     sys.exit(1)
 
 bitstream_file = bitstream_files[0]  # Take the first found file
@@ -49,4 +52,4 @@ tcl_script = os.path.join(ROOT_DIR, "fpga", "scripts", "program_fpga.tcl")
 command = f'{VIVADO_DIR}/vivado.bat -mode tcl -source "{tcl_script}" -tclargs "{bitstream_file}"'
 subprocess.run(command, shell=True)
 
-print(f"Bitstream {bitstream_file} programmed successfully.")
+print(colorama.Fore.GREEN + f"Bitstream {bitstream_file} programmed successfully.")

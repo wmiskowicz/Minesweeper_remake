@@ -14,11 +14,14 @@ import glob
 import subprocess
 import shutil
 import sys
+import colorama
 
 # Load ROOT_DIR and VIVADO_DIR from .env file
 ENV_FILE = ".env"
 ROOT_DIR = None
 VIVADO_DIR = None
+
+colorama.init(autoreset=True)
 
 if os.path.exists(ENV_FILE):
     with open(ENV_FILE, "r") as f:
@@ -29,18 +32,18 @@ if os.path.exists(ENV_FILE):
                 VIVADO_DIR = line.strip().split("=")[1].strip('"')
 
 if not ROOT_DIR:
-    print("Error: ROOT_DIR is not set. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + "ROOT_DIR is not set. Run env.py first to initialize it.")
     sys.exit(1)
 
 if not VIVADO_DIR:
-    print("Error: VIVADO_DIR is not set. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + "VIVADO_DIR is not set. Run env.py first to initialize it.")
     sys.exit(1)
 
 # Locate the correct Vivado executable
 vivado_executable = os.path.join(VIVADO_DIR, "vivado.bat")
 
 if not os.path.exists(vivado_executable):
-    print(f"Error: Vivado executable not found at {vivado_executable}. Check VIVADO_DIR path.")
+    print(colorama.Fore.RED + f"Error: Vivado executable not found at {vivado_executable}. Check VIVADO_DIR path.")
     sys.exit(1)
 
 # Clean untracked files in the fpga directory
@@ -57,7 +60,7 @@ subprocess.run(command, shell=True, cwd=fpga_dir)
 bitstream_files = glob.glob(os.path.join(fpga_dir, "build", "*.bit"))
 
 if not bitstream_files:
-    print("Error: No bitstream (.bit) file found in fpga/build.")
+    print(colorama.Fore.RED + "Error: No bitstream (.bit) file found in fpga/build.")
     sys.exit(1)
 
 results_dir = os.path.join(ROOT_DIR, "results")
@@ -76,4 +79,4 @@ if os.path.exists(warning_summary_script):
 else:
     print("Warning: warning_summary.py not found in tools/ directory.")
 
-print("Bitstream generation and logging completed successfully.")
+print(colorama.Fore.GREEN + "Bitstream generation and logging completed successfully.")

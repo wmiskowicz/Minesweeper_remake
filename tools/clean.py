@@ -9,10 +9,12 @@
 import os
 import subprocess
 import sys
+import colorama
 
-# Load ROOT_DIR from .env file
 ENV_FILE = ".env"
 ROOT_DIR = None
+
+colorama.init(autoreset=True)
 
 if os.path.exists(ENV_FILE):
     with open(ENV_FILE, "r") as f:
@@ -21,13 +23,13 @@ if os.path.exists(ENV_FILE):
                 ROOT_DIR = line.strip().split("=")[1].strip('"')
 
 if not ROOT_DIR:
-    print("Error: ROOT_DIR is not set. Run env.py first to initialize it.")
+    print(colorama.Fore.YELLOW + f"ROOT_DIR is not set. Run env.py first to initialize it.")
     sys.exit(1)
 
 # Run git clean -fdX to remove untracked files
 try:
     subprocess.run(["git", "clean", "-fdX"], cwd=ROOT_DIR, check=True)
-    print("Untracked files removed successfully.")
+    print(colorama.Fore.GREEN + "Untracked files removed successfully.")
 except subprocess.CalledProcessError:
-    print("Error: Failed to clean untracked files. Make sure this is a valid git repository.")
+    print(colorama.Fore.RED + "Error: Failed to clean untracked files. Make sure this is a valid git repository.")
     sys.exit(1)
