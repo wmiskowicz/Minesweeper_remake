@@ -15,10 +15,13 @@ import subprocess
 import glob
 import argparse
 import colorama
+import time
 
 ENV_FILE = ".env"
 ROOT_DIR = None
 VIVADO_SETUP = None
+
+MAX_SIM_TIME = 60 # seconds 
 
 colorama.init(autoreset=True)
 
@@ -57,7 +60,7 @@ def list_available_tests():
 
 def execute_test(test_name, show_gui):
     """Run the specified test with or without GUI."""
-    subprocess.run(["git", "clean", "-fXd", "."], cwd=SIM_DIR) 
+    subprocess.run(["git", "clean", "-fXd", "."], cwd=SIM_DIR)
 
     if not os.path.exists(BUILD_DIR):
         os.makedirs(BUILD_DIR, exist_ok=True)
@@ -65,26 +68,43 @@ def execute_test(test_name, show_gui):
     test_path = os.path.join(SIM_DIR, test_name)
     project_file = os.path.join(test_path, f"{test_name}.prj")
 
-    # Check if glbl.v is included
     compile_glbl = "work.glbl" if "glbl.v" in open(project_file).read() else ""
 
     xelab_opts = f"work.{test_name}_tb {compile_glbl} -snapshot {test_name}_tb -prj {project_file} -timescale 1ns/1ps -L unisims_ver"
 
     if show_gui:
         subprocess.run(f'cmd.exe /c "{SETUP_CMD} xelab {xelab_opts} -debug typical"', cwd=BUILD_DIR)
-        subprocess.run(f'cmd.exe /c "{SETUP_CMD} xsim {test_name}_tb -gui -t {os.path.join(ROOT_DIR, "tools", "sim_cmd.tcl")}"', cwd=BUILD_DIR)
+        subprocess.run(f'cmd.exe /c "{SETUP_CMD} xsim {test_name}_tb -gui -t {os.path.join(ROOT_DIR, "tools", "sim_cmd.tcl").replace("\\", "/")}"', cwd=BUILD_DIR)
     else:
         process = subprocess.run(f'cmd.exe /c "{SETUP_CMD} xelab {xelab_opts} -standalone -runall"',
-                                 cwd=BUILD_DIR, stdout=subprocess.PIPE, text=True)
+                                 cwd=BUILD_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        if process.returncode != 0:
+            print(colorama.Fore.RED + f"[{test_name}] FAILED (xelab error)" + colorama.Style.RESET_ALL)
+            for line in process.stdout.splitlines():
+                if line.strip().startswith("ERROR"):
+                    print(colorama.Fore.RED + line.strip() + colorama.Style.RESET_ALL)
+                else:
+                    print(line.strip())
+            return
+        else:
+            for line in process.stdout.splitlines():
+                if line.strip().startswith("WARNING"):
+                    print(colorama.Fore.YELLOW + line.strip() + colorama.Style.RESET_ALL)
+                else:
+                    print(line.strip())
+
         log_file = os.path.join(BUILD_DIR, "xsim.log")
 
-        if not os.path.exists(log_file):
-            print(colorama.Fore.RED + f"[{test_name}] FAILED (xsim.log not found)")
-            return
+        start_time = time.time()
+        while not os.path.exists(log_file):
+            if time.time() - start_time > MAX_SIM_TIME:
+                print(colorama.Fore.RED + f"[{test_name}] FAILED (xsim.log not found after {MAX_SIM_TIME} seconds)")
+                return
+            time.sleep(1)
 
         with open(log_file, "r") as f:
             log_output = f.read().lower()
-
 
         failed_keywords = ["fatal", "error", "critical", "failed"]
 
@@ -98,7 +118,6 @@ def execute_test(test_name, show_gui):
                 for line in f:
                     if any(keyword in line.lower() for keyword in ["fatal", "error"]):
                         print(colorama.Fore.RED + ">> " + line.strip())
-
 def run_all():
     """Run all available tests and summarize results."""
     tests = [name for name in os.listdir(SIM_DIR) if os.path.isdir(os.path.join(SIM_DIR, name))

@@ -81,7 +81,7 @@ tiff_writer #(
 
 
 //Main test
-//task vcount_max
+//task VCOUNT_MAX - 1
 
 
 //assert (vcount < VER_PIXELS) else $error("vcount too big");

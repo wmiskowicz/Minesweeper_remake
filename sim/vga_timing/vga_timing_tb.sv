@@ -1,52 +1,20 @@
-/**
- *  Copyright (C) 2023  AGH University of Science and Technology
- * MTM UEC2
- * Author: Piotr Kaczmarczyk
- *
- * Description:
- * Testbench for vga_timing module.
- */
-
 `timescale 1 ns / 1 ps
-
 
 module vga_timing_tb;
 
 import vga_pkg::*;
 import logger_pkg::*;
 
-
-/**
- *  Local parameters
- */
-
-localparam CLK_PERIOD = 25ns;     // 40 MHz
-
-
-/**
- * Local variables and signals
- */
+localparam CLK_PERIOD = 25ns;
 
 logic clk;
 logic rst;
-
 vga_if vga_test_if();
-
-
-
-/**
- * Clock generation
- */
 
 initial begin
     clk = 1'b0;
     forever #(CLK_PERIOD/2) clk = ~clk;
 end
-
-
-/**
- * Dut placement
- */
 
 vga_timing dut(
     .clk,
@@ -54,41 +22,56 @@ vga_timing dut(
     .out(vga_test_if.out)
 );
 
-
-/**
- * Main test
- */
-
 initial begin
     void'(logger::init());
     InitReset();
     `log_info("Starting test");
-    `check_eq(1, 2);
-    WaitClocks(50);
-    `log_info($sformatf("hcount = %d", vga_test_if.hcount));
-    WaitClocks(50);
-    // @(negedge vga_test_if.vsync)
-    // @(negedge vga_test_if.vsync)
-
+    WaitClocks(HCOUNT_MAX * VCOUNT_MAX);
     $finish;
 end
 
+always @(posedge clk) begin
+    if (!rst) begin
+        if (vga_test_if.out.hcount >= HSYNC_START && vga_test_if.out.hcount <= HSYNC_STOP) begin
+            `check_eq(vga_test_if.out.hsync, 1'b1);
+        end
+        else begin
+            `check_eq(vga_test_if.out.hsync, 1'b0);
+        end
 
-/**
- * Tasks and functions
- */
+        if (vga_test_if.out.hcount >= HBLNK_START && vga_test_if.out.hcount <= HBLNK_STOP) begin
+            `check_eq(vga_test_if.out.hblnk, 1'b1);
+        end
+        else begin
+            `check_eq(vga_test_if.out.hblnk, 1'b0);
+        end
+
+        if (vga_test_if.out.vcount >= VSYNC_START && vga_test_if.out.vcount <= VSYNC_STOP) begin
+            `check_eq(vga_test_if.out.vsync, 1'b1);
+        end 
+        else begin
+            `check_eq(vga_test_if.out.vsync, 1'b0);
+        end
+
+        if (vga_test_if.out.vcount >= VBLNK_START && vga_test_if.out.vcount <= VBLNK_STOP) begin
+            `check_eq(vga_test_if.out.vblnk, 1'b1);
+        end
+        else begin
+            `check_eq(vga_test_if.out.vblnk, 1'b0);
+        end
+        `check_eq(vga_test_if.out.rgb, '0);
+    end
+end
 
 task automatic WaitClocks(input int num_of_clock_cycles);
     repeat (num_of_clock_cycles) @(posedge clk);
 endtask
 
-// Task: Initialize Reset Sequence
 task automatic InitReset();
     rst = 1;
     WaitClocks(10);
     rst = 0;
     WaitClocks(10); 
 endtask
-
 
 endmodule

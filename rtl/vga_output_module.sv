@@ -14,8 +14,8 @@ import vga_pkg::*;
 /**
  * Double-Buffered Frame Memory (Stored in BRAM)
  */
-logic [11:0] frame_buffer_A [0:HCOUNT_MAX-1][0:VCOUNT_MAX-1]; // Write Buffer
-logic [11:0] frame_buffer_B [0:HCOUNT_MAX-1][0:VCOUNT_MAX-1]; // Read Buffer
+logic [11:0] frame_buffer_A [0:HCOUNT_MAX - 1-1][0:VCOUNT_MAX - 1-1]; // Write Buffer
+logic [11:0] frame_buffer_B [0:HCOUNT_MAX - 1-1][0:VCOUNT_MAX - 1-1]; // Read Buffer
 
 logic buffer_select; // 0 = Display A, Write to B; 1 = Display B, Write to A
 logic frame_ready;   // Frame completion flag
@@ -28,7 +28,7 @@ always_ff @(posedge clk) begin
         buffer_select <= 0;
         frame_ready   <= 0;
     end
-    else if (in.vcount == VCOUNT_MAX && in.hcount == HCOUNT_MAX) begin
+    else if (in.vcount == VCOUNT_MAX - 1 && in.hcount == HCOUNT_MAX - 1) begin
         frame_ready   <= 1;        // Mark frame as ready
         buffer_select <= ~buffer_select; // Swap buffers
     end

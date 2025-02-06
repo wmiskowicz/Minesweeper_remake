@@ -12,10 +12,10 @@
 #-----------------------------------------------------#
 #                   Project details                   #
 #-----------------------------------------------------#
-# Project name                                  -- EDIT
-set project_name Saper_game
+# Project name
+set project_name Saper_new
 
-# Top module name                               -- EDIT
+# Top module name
 set top_module top_vga_basys3
 
 # FPGA device
