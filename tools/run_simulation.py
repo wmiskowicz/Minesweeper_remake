@@ -7,7 +7,6 @@
 # For more information see: AMD Xilinx UG 900:
 # https://docs.xilinx.com/r/en-US/ug900-vivado-logic-simulation/Simulating-in-Batch-or-Scripted-Mode-in-Vivado-Simulator
 # To work properly, a git repository in the project directory is required.
-# Run from the project root directory.
 
 import os
 import sys

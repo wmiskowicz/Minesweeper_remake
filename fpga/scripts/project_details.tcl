@@ -3,19 +3,18 @@
 # Author: Piotr Kaczmarczyk
 #
 # Description:
-# Project detiles required for generate_bitstream.tcl
-# Make sure that project_name, top_module and target are correct.
-# Provide paths to all the files required for synthesis and implementation.
-# Depending on the file type, it should be added in the corresponding section.
-# If the project does not use files of some type, leave the corresponding section commented out.
+# Project details required for generate_bitstream.tcl
+# These files are auto-filled by generate_bitstream script.
+# If you want to edit search paths or project parameters
+# edit add_files_to_tcl file.
 
 #-----------------------------------------------------#
 #                   Project details                   #
 #-----------------------------------------------------#
-# Project name                                  -- EDIT
+# Project name
 set project_name Saper_new
 
-# Top module name                               -- EDIT
+# Top module name
 set top_module top_vga_basys3
 
 # FPGA device
@@ -24,13 +23,13 @@ set target xc7a35tcpg236-1
 #-----------------------------------------------------#
 #                    Design sources                   #
 #-----------------------------------------------------#
-# Specify .xdc files location                   -- EDIT
+# Specify .xdc files location
 set xdc_files {
     constraints/clk_wiz_0.xdc
     constraints/top_vga_basys3.xdc
 }
 
-# Specify SystemVerilog design files location   -- EDIT
+# Specify SystemVerilog design files location
 set sv_files {
     ../rtl/edge_detector.sv
     ../rtl/memory.sv
@@ -50,21 +49,22 @@ set sv_files {
     rtl/top_vga_basys3.sv
 }
 
-# Specify Verilog design files location         -- EDIT
+# Specify Verilog design files location
 set verilog_files {
     ../rtl/list_ch04_15_disp_hex_mux.v
     rtl/clk_wiz_0.v
     rtl/clk_wiz_0_clk_wiz.v
 }
 
-# Specify VHDL design files location            -- EDIT
+# Specify VHDL design files location
 set vhdl_files {
     ../rtl/mouse/MouseCtl.vhd
     ../rtl/mouse/MouseDisplay.vhd
     ../rtl/mouse/Ps2Interface.vhd
 }
 
-# Specify files for a memory initialization     -- EDIT
+# Specify files for a memory initialization
 # set mem_files {
-#    path/to/file.data
+#     path/to/file.data
 # }
+

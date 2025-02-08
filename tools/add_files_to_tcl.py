@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# Author: Wojciech Miskowicz
+#
+# Description:
+# This script is responsible for auto filling  project_details.tcl file containing
+# all project files. It's used by generate_bitstream script. If you want
+# change search locations or project parameters edit constants at the begginign of this file.
+# ------------------------------------------------------------------------------
 import os
 import colorama
 
@@ -11,24 +19,17 @@ TOP_MODULE   = "top_vga_basys3"
 TARGET_FPGA  = "xc7a35tcpg236-1"
 
 # -------------------------------------------------------------------------
-# Derive key directories based on this script's location:
-#   We assume this script is in: <project>/tools/add_files_to_tcl.py
-#   Hence PROJECT_DIR is one level above that 'tools' folder.
-#   Then we define:
-#     - FPGA_DIR            = <project>/fpga
-#     - FPGA_CONSTRAINTS_DIR= <project>/fpga/constraints
-#     - FPGA_RTL_DIR        = <project>/fpga/rtl
-#     - TOP_RTL_DIR         = <project>/rtl
+# Search locations
 # -------------------------------------------------------------------------
 THIS_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR     = os.path.abspath(os.path.join(THIS_SCRIPT_DIR, ".."))
 FPGA_DIR        = os.path.join(PROJECT_DIR, "fpga")
 
-FPGA_CONSTRAINTS_DIR = os.path.join(FPGA_DIR, "constraints")  # => ../fpga/constraints
-FPGA_RTL_DIR         = os.path.join(FPGA_DIR, "rtl")          # => ../fpga/rtl
-TOP_RTL_DIR          = os.path.join(PROJECT_DIR, "rtl")       # => ../rtl
+FPGA_CONSTRAINTS_DIR = os.path.join(FPGA_DIR, "constraints")
+FPGA_RTL_DIR         = os.path.join(FPGA_DIR, "rtl")
+TOP_RTL_DIR          = os.path.join(PROJECT_DIR, "rtl")
+MEM_INIT_DIR         = os.path.join(PROJECT_DIR, "rtl")
 
-# Where the final TCL gets written (inside fpga/scripts)
 OUTPUT_TCL = os.path.join(FPGA_DIR, "scripts", "project_details.tcl")
 
 # -------------------------------------------------------------------------
@@ -39,7 +40,7 @@ def collect_files_abs(root_dir, extensions):
     """
     collected = []
     if not os.path.isdir(root_dir):
-        return collected  # If the directory doesn't exist, return empty
+        return collected 
 
     for base, dirs, files in os.walk(root_dir):
         for filename in files:
@@ -63,65 +64,62 @@ def prioritize_pkg_if(file_list):
 # -------------------------------------------------------------------------
 def update_generate_bitstream_tcl():
     """
-    Gathers XDC, SV, V, VHDL files from:
+    Gathers XDC, SV, V, VHDL, and MEM (.data) files from:
       - fpga/constraints
       - fpga/rtl (local)
       - <project>/rtl (parent)
+      - fpga/mem (for memory .data files)
     Then writes them into fpga/scripts/project_details.tcl
     using paths relative to fpga/.
     """
 
-    # --- 1) Collect XDC files from fpga/constraints ---
+    # Collect .xdc, .sv, .v, .vhd
     xdc_abs = collect_files_abs(FPGA_CONSTRAINTS_DIR, {".xdc"})
-
-    # --- 2) Collect .sv, .v, .vhd from both local (fpga/rtl) and parent (project/rtl) ---
     sv_abs, v_abs, vhdl_abs = [], [], []
 
-    # -- from fpga/rtl --
     sv_abs   += collect_files_abs(FPGA_RTL_DIR, {".sv"})
     v_abs    += collect_files_abs(FPGA_RTL_DIR, {".v"})
     vhdl_abs += collect_files_abs(FPGA_RTL_DIR, {".vhd", ".vhdl"})
 
-    # -- from <project>/rtl --
     sv_abs   += collect_files_abs(TOP_RTL_DIR,  {".sv"})
     v_abs    += collect_files_abs(TOP_RTL_DIR,  {".v"})
     vhdl_abs += collect_files_abs(TOP_RTL_DIR,  {".vhd", ".vhdl"})
 
-    # --- 3) Convert absolute paths to relative paths from fpga/ directory ---
+    # Collect memory .data files
+    mem_abs = collect_files_abs(MEM_INIT_DIR, {".data"})
+
     def to_rel_fpga(path_list):
         rels = []
         for p in path_list:
-            rel_path = os.path.relpath(p, start=FPGA_DIR)  # relative to "fpga/"
-            # unify to forward slashes:
+            rel_path = os.path.relpath(p, start=FPGA_DIR)
             rel_path = rel_path.replace("\\", "/")
             rels.append(rel_path)
-        return sorted(set(rels))  # remove duplicates, then sort
+        return sorted(set(rels))
 
     xdc_files  = to_rel_fpga(xdc_abs)
     sv_files   = prioritize_pkg_if(to_rel_fpga(sv_abs))
     v_files    = to_rel_fpga(v_abs)
     vhdl_files = to_rel_fpga(vhdl_abs)
+    mem_files  = to_rel_fpga(mem_abs)
 
-    # --- 4) Prepare the new project_details.tcl content ---
     header = f"""\
 # Copyright (C) 2023  AGH University of Science and Technology
 # MTM UEC2
 # Author: Piotr Kaczmarczyk
 #
 # Description:
-# Project detiles required for generate_bitstream.tcl
-# Make sure that project_name, top_module and target are correct.
-# Provide paths to all the files required for synthesis and implementation.
-# Depending on the file type, it should be added in the corresponding section.
-# If the project does not use files of some type, leave the corresponding section commented out.
+# Project details required for generate_bitstream.tcl
+# These files are auto-filled by generate_bitstream script.
+# If you want to edit search paths or project parameters
+# edit add_files_to_tcl file.
 
 #-----------------------------------------------------#
 #                   Project details                   #
 #-----------------------------------------------------#
-# Project name                                  -- EDIT
+# Project name
 set project_name {PROJECT_NAME}
 
-# Top module name                               -- EDIT
+# Top module name
 set top_module {TOP_MODULE}
 
 # FPGA device
@@ -153,25 +151,15 @@ set target {TARGET_FPGA}
         else:
             s = (f"{comment}\n"
                  f"# set {var_name} {{\n"
-                 f"#     path/to/file.sv\n"
+                 f"#     path/to/file.data\n"
                  f"# }}\n\n")
         return s
 
-    xdc_section    = write_section("# Specify .xdc files location                   -- EDIT",
-                                   "xdc_files", xdc_files)
-    sv_section     = write_section("# Specify SystemVerilog design files location   -- EDIT",
-                                   "sv_files", sv_files)
-    verilog_section= write_section("# Specify Verilog design files location         -- EDIT",
-                                   "verilog_files", v_files)
-    vhdl_section   = write_section("# Specify VHDL design files location            -- EDIT",
-                                   "vhdl_files", vhdl_files)
-
-    mem_section = """\
-# Specify files for a memory initialization     -- EDIT
-# set mem_files {
-#    path/to/file.data
-# }
-"""
+    xdc_section    = write_section("# Specify .xdc files location", "xdc_files", xdc_files)
+    sv_section     = write_section("# Specify SystemVerilog design files location", "sv_files", sv_files)
+    verilog_section= write_section("# Specify Verilog design files location", "verilog_files", v_files)
+    vhdl_section   = write_section("# Specify VHDL design files location", "vhdl_files", vhdl_files)
+    mem_section    = write_section("# Specify files for a memory initialization", "mem_files", mem_files)
 
     new_tcl_content = (header 
                        + xdc_section
@@ -180,7 +168,6 @@ set target {TARGET_FPGA}
                        + vhdl_section
                        + mem_section)
 
-    # --- 5) Write out the updated TCL file ---
     os.makedirs(os.path.dirname(OUTPUT_TCL), exist_ok=True)
     with open(OUTPUT_TCL, "w", encoding="utf-8") as f:
         f.write(new_tcl_content)

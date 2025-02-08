@@ -1,3 +1,10 @@
+# ------------------------------------------------------------------------------
+# Author: Wojciech Miskowicz
+#
+# Description:
+# This script is responsible for auto filling simulation .prj file containing
+# all project files. It's used by run_simulation script when executed with -prj flag.
+# ------------------------------------------------------------------------------
 import os
 
 def generate_prj_file(test_name, sim_dir):
@@ -9,7 +16,7 @@ def generate_prj_file(test_name, sim_dir):
     script_dir = os.path.dirname(__file__)
     project_dir = os.path.dirname(os.path.dirname(__file__))
     rtl_root = os.path.normpath(os.path.join(script_dir, "../rtl"))  
-    common_dir = os.path.normpath(os.path.join(sim_dir, "common"))  # FIXED: Common is inside sim!
+    common_dir = os.path.normpath(os.path.join(sim_dir, "common"))
 
     sv_files = []
     v_files = []
@@ -22,7 +29,7 @@ def generate_prj_file(test_name, sim_dir):
         for base, _, files in os.walk(root_path):
             for f in files:
                 ext = os.path.splitext(f)[1].lower()
-                rel_path = os.path.relpath(os.path.join(base, f), start=base_dir)  # FIXED: Base set per directory
+                rel_path = os.path.relpath(os.path.join(base, f), start=base_dir)
                 rel_path = prefix + rel_path.replace("\\", "/") 
                 if ext == ".sv":
                     sv_files.append(rel_path)
@@ -31,8 +38,8 @@ def generate_prj_file(test_name, sim_dir):
                 elif ext == ".vhd":
                     vhdl_files.append(rel_path)
 
-    collect_files(rtl_root, "../../", sim_parent_dir)  # rtl/ files → "../../rtl/"
-    collect_files(common_dir, "../", sim_dir)  # FIXED: common/ files → "../common/"
+    collect_files(rtl_root, "../../", sim_parent_dir) 
+    collect_files(common_dir, "../", sim_dir)
 
     for item in os.listdir(prj_dir):
         full_path = os.path.join(prj_dir, item)
@@ -57,6 +64,7 @@ def generate_prj_file(test_name, sim_dir):
         f.write("#\n")
         f.write("# Description:\n")
         f.write("# List of files defining the modules used during the test.\n")
+        f.write("# This file can be auto-generated using -prj flag of run_simulation script.\n")
         f.write("# Specify the file paths relative to THIS file.\n")
         f.write("# For syntax detail see AMD Xilinx UG 900:\n")
         f.write("# https://docs.xilinx.com/r/en-US/ug900-vivado-logic-simulation/Project-File-.prj-Syntax\n")

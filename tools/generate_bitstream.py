@@ -4,11 +4,11 @@
 # Description:
 # Based on work of Piotr Kaczmarczyk, PhD, AGH University of Krakow.
 # This script runs Vivado in tcl mode and sources an appropriate tcl file to run
-# all the steps to generate bitstream. When finished, the bitstream is copied to
+# all the steps to generate bitstream. To automate the process tcl file is updated
+# automatically by the apropriate script. When finished, the bitstream is copied to
 # the result directory. Additionally, all warnings and errors logged during
 # synthesis and implementation are also copied to results/warning_summary.log.
 # To work properly, a git repository in the project directory is required.
-# Run from the project root directory.
 # ------------------------------------------------------------------------------
 
 import os
@@ -60,6 +60,7 @@ def list_bit_files(search_path="."):
                 bit_files.append(os.path.abspath(os.path.join(root, file)))
 
     return bit_files
+
 # ------------------------------------------------------------------------------
 # MAIN script flow
 #  1) Update project_details.tcl with fresh file lists
