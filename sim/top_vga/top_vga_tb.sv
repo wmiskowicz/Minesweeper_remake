@@ -39,7 +39,10 @@ localparam CLK_PERIOD = 11;     // 40 MHz
 logic clk, rst;
 wire vs, hs;
 wire [3:0] r, g, b;
-logic [2:0] btnS;
+wire [3:0] an;
+wire [6:0] sseg;
+wire ps2_clk;
+wire ps2_data;
 
 
 /**
@@ -56,15 +59,18 @@ end
  * Submodules instances
  */
 
-top_vga dut (
-    .btnS,
-    .clk(clk),
-    .rst(rst),
-    .vs(vs),
-    .hs(hs),
-    .r(r),
-    .g(g),
-    .b(b)
+top_vga u_top_vga (
+  .an      (an),
+  .b       (b),
+  .clk     (clk),
+  .g       (g),
+  .hs      (hs),
+  .ps2_clk (ps2_clk),
+  .ps2_data(ps2_data),
+  .r       (r),
+  .rst     (rst),
+  .sseg    (sseg),
+  .vs      (vs)
 );
 
 tiff_writer #(
@@ -79,33 +85,31 @@ tiff_writer #(
     .go(vs)
 );
 
-
-//Main test
-//task VCOUNT_MAX - 1
-
-
-//assert (vcount < VER_PIXELS) else $error("vcount too big");
-//endtask
-
 initial begin
-    rst = 1'b0;
-    # 3 btnS = 3'b0;
-    # 30 rst = 1'b1;
-    # 30 rst = 1'b0;
-    
-    #30000 btnS = 3'b001;
+    InitReset();
 
     $display("If simulation ends before the testbench");
     $display("completes, use the menu option to run all.");
     $display("Prepare to wait a long time...");
 #30
-    //wait (vs == 1'b0);
-    //@(negedge vs) $display("Info: negedge VS at %t",$time);
-    //@(negedge vs) $display("Info: negedge VS at %t",$time);
+    wait (vs == 1'b0);
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
+    @(negedge vs) $display("Info: negedge VS at %t",$time);
 
     // End the simulation.
     $display("Simulation is over, check the waveforms.");
     $finish;
 end
+
+task automatic WaitClocks(input int num_of_clock_cycles);
+    repeat (num_of_clock_cycles) @(posedge clk);
+endtask
+
+task automatic InitReset();
+    rst = 1;
+    WaitClocks(10);
+    rst = 0;
+    WaitClocks(10); 
+endtask
 
 endmodule

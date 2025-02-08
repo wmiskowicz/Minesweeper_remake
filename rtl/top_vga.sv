@@ -15,50 +15,59 @@
  `timescale 1 ns / 1 ps
 
  module top_vga (
-     input  logic clk,
-     input  wire [2:0] btnS,
-     input  wire tim_stop, 
-     input  logic rst,
-     output logic vs,
-     output logic hs,
-     output logic [3:0] r,
-     output logic [3:0] g,
-     output logic [3:0] b,
-     output wire [3:0] an,
-     output wire [6:0] sseg,
+     input  logic        clk,
+     input  logic        rst,
+     output logic        vs,
+     output logic        hs,
+     output logic  [3:0] r,
+     output logic  [3:0] g,
+     output logic  [3:0] b,
+     output wire   [3:0] an,
+     output wire   [6:0] sseg,
 
      inout ps2_clk,
      inout ps2_data 
  );
-
- 
  
  /**
   * Local variables and signals
   */
 
-
-
- /**
- * VGA interfaces
- */
- vga_if tim_bg_if();
+ vga_if tim_bg_vga();
+ vga_if mouse_vga();
+ vga_if output_vga();
 
  
  
  /**
   * Signals assignments
   */
- 
+ assign vs      = output_vga.vsync;
+ assign hs      = output_vga.hsync;
+ assign {r,g,b} = output_vga.rgb;
  
  /**
   * Submodules instances
   */
+ vga_timing u_vga_timing (
+    .clk,
+    .rst,
+    .out(tim_bg_vga.out)
+);
+
+draw_bg u_draw_bg (
+    .clk,
+    .rst,
+    .in(tim_bg_vga.in),
+    .out(mouse_vga.out)
+);
+
+
  top_mouse u_top_mouse(
     .clk,
     .rst,
-    .in(),
-    .out(),
+    .in(mouse_vga.in),
+    .out(output_vga.out),
     .mouse_xpos(),
     .mouse_ypos(),
     .ps2_clk,
@@ -66,9 +75,6 @@
     .right(),
     .left()
  );
-
-
-
  
  disp_hex_mux u_disp(
     .clk(clk), 

@@ -58,7 +58,7 @@ module vga_timing (
             out.hsync <= 1'b1;
         end
         else begin
-            out.hsync <= 1'b1;
+            out.hsync <= 1'b0;
         end
 
         if (out.vcount >= VBLNK_START && out.vcount <= VBLNK_STOP) begin
@@ -72,7 +72,7 @@ module vga_timing (
             out.vsync <= 1'b1;
         end
         else begin
-            out.vsync <= 1'b1;
+            out.vsync <= 1'b0;
         end
     end
 

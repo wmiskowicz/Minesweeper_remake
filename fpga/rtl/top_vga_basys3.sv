@@ -79,8 +79,6 @@ top_vga u_top_vga (
     .clk(clk88MHz),
     .ps2_clk(PS2Clk),
     .ps2_data(PS2Data),
-    .btnS(btnS),
-    .tim_stop,
     .sseg(seg),
     .an(an),
     .rst(btnD),

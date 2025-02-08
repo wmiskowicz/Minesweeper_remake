@@ -28,7 +28,7 @@ always_ff @(posedge wb.CLK_I or posedge wb.RST_I) begin
       if (wb.CYC_O && wb.STB_O) begin
           if (wb.WE_O) begin
               // Write Operation
-              board[row][col] <= Field'(wb.DAT_O);
+              board[row][col] <= field_t'(wb.DAT_O);
           end else begin
               // Read Operation
               wb.DAT_I <= board[row][col];

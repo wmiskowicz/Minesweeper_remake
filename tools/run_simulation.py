@@ -16,6 +16,7 @@ import glob
 import argparse
 import colorama
 import time
+from add_files_to_prj import generate_prj_file
 
 ENV_FILE = ".env"
 ROOT_DIR = None
@@ -58,7 +59,7 @@ def list_available_tests():
         print("No tests found.")
     sys.exit(0)
 
-def execute_test(test_name, show_gui):
+def execute_test(test_name, show_gui, update_prj):
     """Run the specified test with or without GUI."""
     subprocess.run(["git", "clean", "-fXd", "."], cwd=SIM_DIR)
 
@@ -67,6 +68,8 @@ def execute_test(test_name, show_gui):
 
     test_path = os.path.join(SIM_DIR, test_name)
     project_file = os.path.join(test_path, f"{test_name}.prj")
+    
+    if update_prj: generate_prj_file(test_name, SIM_DIR)
 
     compile_glbl = "work.glbl" if "glbl.v" in open(project_file).read() else ""
 
@@ -143,6 +146,7 @@ parser.add_argument("-l", action="store_true", help="List available tests")
 parser.add_argument("-t", type=str, help="Run the specified test")
 parser.add_argument("-g", action="store_true", help="Show GUI (use with -t)")
 parser.add_argument("-a", action="store_true", help="Run all available tests")
+parser.add_argument("-prj", action="store_true", help="Update .prj file of run test. (use with -t)")
 
 args = parser.parse_args()
 
@@ -151,7 +155,7 @@ if args.l:
 elif args.a:
     run_all()
 elif args.t:
-    execute_test(args.t, args.g)
+    execute_test(args.t, args.g, args.prj)
 else:
     parser.print_help()
     sys.exit(1)
