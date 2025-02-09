@@ -57,13 +57,13 @@ always_comb begin : bg_comb_blk
         rgb_nxt = 12'h0_0_0;                    // - make it it black.
     end 
     else begin                              // Active region:
-        if (in.vcount == VBLNK_STOP + 1)                     // - top edge:
+        if (in.vcount == VBLNK_STOP_FRONT + 1)                     // - top edge:
             rgb_nxt = 12'hf_f_0;                // - - make a yellow line.
-        else if (in.vcount == VBLNK_START - 1)   // - bottom edge:
+        else if (in.vcount == VBLNK_START_FRONT - 1)   // - bottom edge:
             rgb_nxt = 12'hf_0_0;                // - - make a red line.
-        else if (in.hcount == HBLNK_STOP + 2)                // - left edge:
+        else if (in.hcount == HBLNK_STOP_FRONT + 2)                // - left edge:
             rgb_nxt = 12'h0_f_0;                // - - make a green line.
-        else if (in.hcount == HBLNK_START)   // - right edge:
+        else if (in.hcount == HBLNK_START_FRONT)   // - right edge:
             rgb_nxt = 12'h0_0_f;                // - - make a blue line.
 
 
