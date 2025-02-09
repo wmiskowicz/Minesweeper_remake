@@ -51,31 +51,35 @@ package logger_pkg;
 
   //Logger macros
   `define log_msg(msg,verb) logger::log((msg),(verb),$sformatf("%s(%0d)", `__FILE__, `__LINE__))
-  `define log_info(msg)   `log_msg(msg,INFO)
-  `define log_warn(msg)   `log_msg(msg,WARNING)
-  `define log_err(msg)    `log_msg(msg,ERROR)
-  `define log_fatal(msg)  `log_msg(msg,FATAL)
+  `define log_info(msg)   `log_msg($sformatf(msg),INFO)
+  `define log_warn(msg)   `log_msg($sformatf(msg),WARNING)
+  `define log_err(msg)    `log_msg($sformatf(msg),ERROR)
+  `define log_fatal(msg)  `log_msg($sformatf(msg),FATAL)
 
   //Comparison macros
   `define check_eq(num1, num2) \
-    assert (num1 === num2) else \
-      `log_err($sformatf("num1: %0h is not equal to %0h", num1, num2));  \
-      $finish();
+    assert (num1 === num2) else begin\
+      `log_err($sformatf("expected: %0h is not equal to %0h", num1, num2));  \
+      $finish(); \
+    end
 
   `define check_neq(num1, num2) \
-    assert (num1 !== num2) else   \
-      `log_err($sformatf("num1: %0h is equal to %0h", num1, num2)); \
-      $finish();
+    assert (num1 !== num2) else begin   \
+      `log_err($sformatf("expected: %0h is equal to %0h", num1, num2)); \
+      $finish();  \
+    end
 
   `define check_greater(num1, num2) \
-    assert (num1 > num2) else \
-      `log_err($sformatf("num1: %0h is less or equal to %0h", num1, num2));  \
-      $finish();
+    assert (num1 > num2) else begin\
+      `log_err($sformatf("expected: %0h is less or equal to %0h", num1, num2));  \
+      $finish();  \
+    end
   
   `define check_less(num1, num2) \
-    assert (num1 < num2) else   \
-      `log_err($sformatf("num1: %0h is greater or equal to %0h", num1, num2)); \
-      $finish();
+    assert (num1 < num2) else begin  \
+      `log_err($sformatf("expected: %0h is greater or equal to %0h", num1, num2)); \
+      $finish(); \
+    end
 
 
 endpackage
