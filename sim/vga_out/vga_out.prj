@@ -1,0 +1,37 @@
+# Copyright (C) 2023  AGH University of Science and Technology
+# MTM UEC2
+# Author: Piotr Kaczmarczyk
+#
+# Description:
+# List of files defining the modules used during the test.
+# This file can be auto-generated using -prj flag of run_simulation script.
+# Specify the file paths relative to THIS file.
+# For syntax detail see AMD Xilinx UG 900:
+# https://docs.xilinx.com/r/en-US/ug900-vivado-logic-simulation/Project-File-.prj-Syntax
+
+sv work ../../rtl/top_draw/vga_if.sv \
+        ../../rtl/top_draw/vga_pkg.sv \
+        ../../rtl/whishbone_if.sv \
+        ../common/logger_pkg.sv \
+        ../../rtl/edge_detector.sv \
+        ../../rtl/main_fsm.sv \
+        ../../rtl/memory.sv \
+        ../../rtl/mouse/draw_mouse.sv \
+        ../../rtl/mouse/top_mouse.sv \
+        ../../rtl/timer/bin2bcd.sv \
+        ../../rtl/timer/time_controller.sv \
+        ../../rtl/timer/top_timer.sv \
+        ../../rtl/top_draw/draw_bg.sv \
+        ../../rtl/top_draw/top_draw_board.sv \
+        ../../rtl/top_draw/vga_out.sv \
+        ../../rtl/top_draw/vga_timing.sv \
+        ../../rtl/top_vga.sv \
+        ../common/tiff_writer.sv \
+        ./vga_out_tb.sv \
+
+verilog work ../../rtl/list_ch04_15_disp_hex_mux.v \
+            ../common/glbl.v \
+
+vhdl work ../../rtl/mouse/MouseCtl.vhd \
+          ../../rtl/mouse/MouseDisplay.vhd \
+          ../../rtl/mouse/Ps2Interface.vhd \
