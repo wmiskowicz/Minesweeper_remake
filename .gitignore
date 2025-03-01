@@ -102,3 +102,6 @@ default.ls
 results
 images
 *build*
+*.vscode
+*.png
+*.jpg

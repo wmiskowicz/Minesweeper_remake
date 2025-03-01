@@ -3,15 +3,14 @@
 /*
  Module name:   draw mouse
  Author:        Wojciech Miskowicz
- Last modified: 2023-06-18
  Description:  connects module Mouse Display
  */
 //////////////////////////////////////////////////////////////////////////////
 module draw_mouse (
     input  logic clk,
     input  logic rst,
-    input wire [11:0] mouse_x_pos,
-    input wire [11:0] mouse_y_pos,
+    input wire [11:0] mouse_xpos,
+    input wire [11:0] mouse_ypos,
     vga_if.in in,
     vga_if.out out
 );
@@ -42,8 +41,8 @@ end
 
 MouseDisplay u_MouseDisplay(
     .pixel_clk(clk),
-    .xpos(mouse_x_pos),
-    .ypos(mouse_y_pos),
+    .xpos(mouse_xpos),
+    .ypos(mouse_ypos),
     .hcount(out.hcount),
     .vcount(out.vcount),
     .rgb_in(in.rgb),

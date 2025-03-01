@@ -27,8 +27,8 @@
  draw_mouse u_draw_mouse(
     .in(in),
     .out(out),
-    .mouse_x_pos(mouse_xpos),
-    .mouse_y_pos(mouse_ypos),
+    .mouse_xpos(mouse_xpos),
+    .mouse_ypos(mouse_ypos),
     .clk,
     .rst
  );
@@ -54,10 +54,10 @@
     .right(right),
     .new_event(),
     .value(12'd100),
-    .setx(detected),
-    .sety(detected),
-    .setmax_x('0),
-    .setmax_y('0)
+    .setx(0),
+    .sety(0),
+    .setmax_x(0),
+    .setmax_y(0)
  );
 
  endmodule

@@ -39,10 +39,6 @@ localparam CLK_PERIOD = 11;     // 40 MHz
 logic clk, rst;
 wire vs, hs;
 wire [3:0] r, g, b;
-wire [3:0] an;
-wire [6:0] sseg;
-wire ps2_clk;
-wire ps2_data;
 
 
 /**
@@ -59,18 +55,19 @@ end
  * Submodules instances
  */
 
-top_vga u_top_vga (
-  .an      (an),
+top_vga dut (
   .b       (b),
   .clk     (clk),
   .g       (g),
   .hs      (hs),
-  .ps2_clk (ps2_clk),
-  .ps2_data(ps2_data),
   .r       (r),
   .rst     (rst),
-  .sseg    (sseg),
-  .vs      (vs)
+  .vs      (vs),
+
+  .mouse_xpos('0),  
+  .mouse_ypos('0),  
+  .mouse_left(),  
+  .mouse_right()
 );
 
 tiff_writer #(

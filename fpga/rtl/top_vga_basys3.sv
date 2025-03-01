@@ -15,21 +15,19 @@
 `timescale 1 ns / 1 ps
 
 module top_vga_basys3 (
-    input  wire clk,
-    input  wire btnL,
-    input  wire btnC,
-    input  wire btnR,
-    input  wire btnD,
-    input  wire tim_stop,
-    inout  wire PS2Clk,
-    inout  wire PS2Data,
+    input  wire       clk,
+    input  wire       btnD,
+    inout  wire       PS2Clk,
+    inout  wire       PS2Data,
 
-    output wire Vsync,
-    output wire Hsync,
+    output wire       led,
+
+    output wire       Vsync,
+    output wire       Hsync,
     output wire [3:0] vgaRed,    
     output wire [3:0] vgaGreen,
     output wire [3:0] vgaBlue,
-    output wire JA1,
+
     output wire [6:0] seg,
     output wire [3:0] an
 );
@@ -39,19 +37,23 @@ module top_vga_basys3 (
  * Local variables and signals
  */
 
+wire [11:0] mouse_xpos;
+wire [11:0] mouse_ypos;
+wire mouse_right;
+wire mouse_left;
+
 wire clk100MHz, clk88MHz;
 wire locked;
-wire pclk;
-wire pclk_mirror;
-wire [2:0] btnS;
+logic rst;
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
-logic [7:0] safe_start = 0;
 
 /**
  * Signals assignments
  */
+assign rst = btnD;
+assign led = locked;
 
 
 
@@ -59,34 +61,58 @@ logic [7:0] safe_start = 0;
  * FPGA submodules placement
  */
 
-// Mirror pclk on a pin for use by the testbench;
-// not functionally required for this design to work.
 
  clk_wiz_0 clk0_wiz(
-    // Clock out ports
   .clk100MHz(clk100MHz),
   .clk90MHz(clk88MHz),
-  // Status and control signals
   .locked(locked),
   .clk(clk)
 );
 
-/**
- *  Project functional top module
- */
-
 top_vga u_top_vga (
-    .clk(clk88MHz),
-    .ps2_clk(PS2Clk),
-    .ps2_data(PS2Data),
-    .sseg(seg),
-    .an(an),
-    .rst(btnD),
-    .r(vgaRed),
-    .g(vgaGreen),
-    .b(vgaBlue),
-    .hs(Hsync),
-    .vs(Vsync)
+    .clk          (clk88MHz),
+    .rst          (rst),
+    .r            (vgaRed),
+    .g            (vgaGreen),
+    .b            (vgaBlue),
+    .hs           (Hsync),
+    .vs           (Vsync),
+
+    .mouse_xpos   (mouse_xpos),
+    .mouse_ypos   (mouse_ypos),
+    .mouse_left   (mouse_left),
+    .mouse_right  (mouse_right)
 );
+
+MouseCtl u_MouseCtl(
+  .clk      (clk100MHz),
+  .rst      (rst),
+  .xpos     (mouse_xpos),
+  .ypos     (mouse_ypos),
+  .ps2_clk  (PS2Clk),
+  .ps2_data (PS2Data),
+  .zpos     (),
+  .left     (mouse_left),
+  .middle   (),
+  .right    (mouse_right),
+  .new_event(),
+  .value    ('0),
+  .setx     ('0),
+  .sety     ('0),
+  .setmax_x ('0),
+  .setmax_y ('0)
+);
+
+disp_hex_mux u_disp(
+  .clk    (clk100MHz), 
+  .reset  (rst),
+  .hex3   (), 
+  .hex2   (), 
+  .hex1   (), 
+  .hex0   (),
+  .an     (an), 
+  .sseg   (seg)
+);
+
 
 endmodule

@@ -32,19 +32,22 @@ set xdc_files {
 # Specify SystemVerilog design files location
 set sv_files {
     ../rtl/edge_detector.sv
+    ../rtl/main_fsm.sv
     ../rtl/memory.sv
     ../rtl/mouse/draw_mouse.sv
     ../rtl/mouse/top_mouse.sv
     ../rtl/timer/bin2bcd.sv
     ../rtl/timer/time_controller.sv
     ../rtl/timer/top_timer.sv
-    ../rtl/top_draw_board/draw_bg.sv
-    ../rtl/top_draw_board/top_draw_board.sv
-    ../rtl/top_draw_board/vga_timing.sv
+    ../rtl/top_draw/draw_bg.sv
+    ../rtl/top_draw/draw_rect.sv
+    ../rtl/top_draw/image_rom.sv
+    ../rtl/top_draw/top_draw_board.sv
+    ../rtl/top_draw/vga_if.sv
+    ../rtl/top_draw/vga_out.sv
+    ../rtl/top_draw/vga_pkg.sv
+    ../rtl/top_draw/vga_timing.sv
     ../rtl/top_vga.sv
-    ../rtl/vga_if.sv
-    ../rtl/vga_output_module.sv
-    ../rtl/vga_pkg.sv
     ../rtl/whishbone_if.sv
     rtl/top_vga_basys3.sv
 }
@@ -64,7 +67,7 @@ set vhdl_files {
 }
 
 # Specify files for a memory initialization
-# set mem_files {
-#     path/to/file.data
-# }
+set mem_files {
+    ../rtl/top_draw/data/agh.data
+}
 

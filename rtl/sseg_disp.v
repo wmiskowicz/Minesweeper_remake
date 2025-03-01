@@ -1,5 +1,4 @@
-// Listing 4.15
-module disp_hex_mux
+module sseg_disp
    (
     input wire clk, reset,
     input wire [3:0] hex3, hex2, hex1, hex0,  // hex digits

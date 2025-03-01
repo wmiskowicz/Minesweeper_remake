@@ -56,8 +56,8 @@ module vga_out_tb;
       if(dut.frame_ready) frame_ctr++;
       @(posedge clk);
     end
-    foreach (dut.frame_buffer_A[i, j]) `check_eq(dut.frame_buffer_A[i][j], 12'hAAA);
-    foreach (dut.frame_buffer_B[i, j]) `check_eq(dut.frame_buffer_B[i][j], 12'hBBB);
+    foreach (dut.line_buffer_A[i]) `check_eq(dut.line_buffer_A[i], 12'hAAA);
+    foreach (dut.line_buffer_B[i]) `check_eq(dut.line_buffer_B[i], 12'hBBB);
     WaitClocks(100);
     $finish;
   end
