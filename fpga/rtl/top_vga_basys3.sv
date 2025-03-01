@@ -17,6 +17,10 @@
 module top_vga_basys3 (
     input  wire       clk,
     input  wire       btnD,
+    input  wire       btnL,
+    input  wire       btnC,
+    input  wire       btnR,
+
     inout  wire       PS2Clk,
     inout  wire       PS2Data,
 
@@ -45,6 +49,7 @@ wire mouse_left;
 wire clk100MHz, clk88MHz;
 wire locked;
 logic rst;
+logic [1:0] level;
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
@@ -54,19 +59,18 @@ logic rst;
  */
 assign rst = btnD;
 assign led = locked;
-
+assign level = {btnR || btnC, btnL || btnR};
 
 
 /**
  * FPGA submodules placement
  */
 
-
  clk_wiz_0 clk0_wiz(
+  .clk      (clk),
+  .locked   (locked),
   .clk100MHz(clk100MHz),
-  .clk90MHz(clk88MHz),
-  .locked(locked),
-  .clk(clk)
+  .clk90MHz (clk88MHz)
 );
 
 top_vga u_top_vga (
@@ -79,9 +83,7 @@ top_vga u_top_vga (
     .vs           (Vsync),
 
     .mouse_xpos   (mouse_xpos),
-    .mouse_ypos   (mouse_ypos),
-    .mouse_left   (mouse_left),
-    .mouse_right  (mouse_right)
+    .mouse_ypos   (mouse_ypos)
 );
 
 MouseCtl u_MouseCtl(
@@ -112,6 +114,16 @@ disp_hex_mux u_disp(
   .hex0   (),
   .an     (an), 
   .sseg   (seg)
+);
+
+main_fsm u_main_fsm (
+  .clk       (clk),
+  .rst       (rst),
+  .level     (level),
+  .game_lost (1'b0),
+  .game_won  (1'b0),
+  .retry     (1'b0),
+  .timer_stop(1'b0)
 );
 
 

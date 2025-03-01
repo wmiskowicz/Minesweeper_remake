@@ -1,4 +1,4 @@
-interface whishbone_if (
+interface wishbone_if (
   input logic CLK_I, 
   input logic RST_I
 );

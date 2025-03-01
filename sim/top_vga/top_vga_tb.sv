@@ -65,9 +65,7 @@ top_vga dut (
   .vs      (vs),
 
   .mouse_xpos('0),  
-  .mouse_ypos('0),  
-  .mouse_left(),  
-  .mouse_right()
+  .mouse_ypos('0)
 );
 
 tiff_writer #(

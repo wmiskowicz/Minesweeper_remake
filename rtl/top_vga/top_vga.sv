@@ -24,9 +24,7 @@
     output logic  [3:0] b,
 
     input logic  [11:0] mouse_xpos,  
-    input logic  [11:0] mouse_ypos,  
-    input logic         mouse_left,  
-    input logic         mouse_right
+    input logic  [11:0] mouse_ypos
  );
  
  /**
@@ -69,9 +67,7 @@ draw_back_objects u_draw_back_objects (
   .clk       (clk),
   .rst       (rst),
   .in        (background_vga.in),
-  .out       (back_obj_vga.out),
-  .rect_x_pos(12'd0),
-  .rect_y_pos(12'd0)
+  .out       (back_obj_vga.out)
 );
 
  draw_mouse u_draw_mouse(

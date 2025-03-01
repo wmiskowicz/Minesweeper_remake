@@ -1,10 +1,6 @@
-`timescale 1 ns / 1 ps
-
 module draw_back_objects (
   input  logic clk,
   input  logic rst,
-  input  logic [11:0] rect_x_pos,
-  input  logic [11:0] rect_y_pos,
   vga_if.in in,
   vga_if.out out
 );

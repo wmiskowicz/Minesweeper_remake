@@ -31,6 +31,10 @@ localparam VER_BLANK_TIME  = 26;
 localparam VER_SYNC_START = 903;
 localparam VER_SYNC_TIME  = 32;
 
+// Board geometry
+localparam X_CENTER = HOR_PIXELS / 2;
+localparam Y_CENTER = VER_PIXELS / 2;
+
 // ============================================================
 // Internal calcuations
 
