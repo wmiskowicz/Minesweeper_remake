@@ -31,30 +31,36 @@ set xdc_files {
 
 # Specify SystemVerilog design files location
 set sv_files {
-    ../rtl/edge_detector.sv
-    ../rtl/main_fsm.sv
-    ../rtl/memory.sv
+    ../rtl/common/cross_buffer.sv
+    ../rtl/common/delay_vga.sv
+    ../rtl/common/edge_detector.sv
+    ../rtl/game_setup/game_pkg.sv
+    ../rtl/game_setup/main_fsm.sv
+    ../rtl/memory/memory.sv
+    ../rtl/memory/wishbone_if.sv
     ../rtl/mouse/draw_mouse.sv
     ../rtl/mouse/top_mouse.sv
     ../rtl/timer/bin2bcd.sv
     ../rtl/timer/time_controller.sv
     ../rtl/timer/top_timer.sv
-    ../rtl/top_draw/draw_bg.sv
-    ../rtl/top_draw/draw_rect.sv
-    ../rtl/top_draw/image_rom.sv
-    ../rtl/top_draw/top_draw_board.sv
-    ../rtl/top_draw/vga_if.sv
-    ../rtl/top_draw/vga_out.sv
-    ../rtl/top_draw/vga_pkg.sv
-    ../rtl/top_draw/vga_timing.sv
-    ../rtl/top_vga.sv
-    ../rtl/whishbone_if.sv
+    ../rtl/top_vga/draw_back_objects.sv
+    ../rtl/top_vga/draw_bg.sv
+    ../rtl/top_vga/draw_image.sv
+    ../rtl/top_vga/draw_rect.sv
+    ../rtl/top_vga/image_rom.sv
+    ../rtl/top_vga/top_draw_board.sv
+    ../rtl/top_vga/top_vga.sv
+    ../rtl/top_vga/vga_if.sv
+    ../rtl/top_vga/vga_out.sv
+    ../rtl/top_vga/vga_pkg.sv
+    ../rtl/top_vga/vga_timing.sv
     rtl/top_vga_basys3.sv
 }
 
 # Specify Verilog design files location
 set verilog_files {
-    ../rtl/list_ch04_15_disp_hex_mux.v
+    ../rtl/common/delay.v
+    ../rtl/sseg_disp.v
     rtl/clk_wiz_0.v
     rtl/clk_wiz_0_clk_wiz.v
 }
@@ -68,6 +74,8 @@ set vhdl_files {
 
 # Specify files for a memory initialization
 set mem_files {
-    ../rtl/top_draw/data/agh.data
+    ../rtl/top_vga/data/agh.data
+    ../rtl/top_vga/data/bomb.data
+    ../rtl/top_vga/data/flag.data
 }
 

@@ -32,12 +32,11 @@
   */
 
  vga_if tim_bg_vga();
+ vga_if del1_vga();
  vga_if background_vga();
  vga_if back_obj_vga();
  vga_if mouse_vga();
  vga_if output_vga();
-
- 
  
  /**
   * Signals assignments
@@ -50,33 +49,40 @@
   * Submodules instances
   */
 
- vga_timing u_vga_timing (
-    .clk,
-    .rst,
-    .out(tim_bg_vga.out)
+vga_timing u_vga_timing (
+  .clk,
+  .rst,
+  .out(tim_bg_vga.out)
+);
+
+delay_vga u_delay_vga (
+  .clk(clk),
+  .rst(rst),
+  .in (tim_bg_vga.in),
+  .out(del1_vga.out)
 );
 
 draw_bg u_draw_bg (
-    .clk,
-    .rst,
-    .in(tim_bg_vga.in),
-    .out(background_vga.out)
+  .clk,
+  .rst,
+  .in(del1_vga.in),
+  .out(background_vga.out)
 );
 
 draw_back_objects u_draw_back_objects (
-  .clk       (clk),
-  .rst       (rst),
-  .in        (background_vga.in),
-  .out       (back_obj_vga.out)
+  .clk (clk),
+  .rst (rst),
+  .in  (background_vga.in),
+  .out (back_obj_vga.out)
 );
 
  draw_mouse u_draw_mouse(
-    .clk,
-    .rst,
-    .in(back_obj_vga.in),
-    .out(mouse_vga.out),
-    .mouse_xpos(mouse_xpos),
-    .mouse_ypos(mouse_ypos)
+   .clk,
+   .rst,
+   .in(back_obj_vga.in),
+   .out(mouse_vga.out),
+   .mouse_xpos(mouse_xpos),
+   .mouse_ypos(mouse_ypos)
  );
 
  vga_out u_vga_out (
@@ -85,5 +91,6 @@ draw_back_objects u_draw_back_objects (
    .in (mouse_vga.in),
    .out(output_vga.out)
  );
+
 
  endmodule

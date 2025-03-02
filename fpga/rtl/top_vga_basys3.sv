@@ -46,7 +46,9 @@ wire [11:0] mouse_ypos;
 wire mouse_right;
 wire mouse_left;
 
-wire clk100MHz, clk88MHz;
+wire clk100MHz;
+wire clk88MHz;
+wire clk40MHz;
 wire locked;
 logic rst;
 logic [1:0] level;
@@ -68,9 +70,11 @@ assign level = {btnR || btnC, btnL || btnR};
 
  clk_wiz_0 clk0_wiz(
   .clk      (clk),
+  .reset    (rst),
   .locked   (locked),
   .clk100MHz(clk100MHz),
-  .clk90MHz (clk88MHz)
+  .clk88MHz (clk88MHz),
+  .clk40MHz (clk40MHz)
 );
 
 top_vga u_top_vga (
@@ -86,27 +90,21 @@ top_vga u_top_vga (
     .mouse_ypos   (mouse_ypos)
 );
 
-MouseCtl u_MouseCtl(
-  .clk      (clk100MHz),
-  .rst      (rst),
-  .xpos     (mouse_xpos),
-  .ypos     (mouse_ypos),
-  .ps2_clk  (PS2Clk),
-  .ps2_data (PS2Data),
-  .zpos     (),
-  .left     (mouse_left),
-  .middle   (),
-  .right    (mouse_right),
-  .new_event(),
-  .value    ('0),
-  .setx     ('0),
-  .sety     ('0),
-  .setmax_x ('0),
-  .setmax_y ('0)
+top_mouse u_top_mouse (
+  .clk100MHz  (clk100MHz),
+  .clk40MHz   (clk40MHz),
+  .rst       (rst),
+  .ps2_clk   (PS2Clk),
+  .ps2_data  (PS2Data),
+
+  .left      (),
+  .right     (),
+  .mouse_xpos(mouse_xpos),
+  .mouse_ypos(mouse_ypos)
 );
 
-disp_hex_mux u_disp(
-  .clk    (clk100MHz), 
+sseg_disp u_disp(
+  .clk    (clk40MHz), 
   .reset  (rst),
   .hex3   (), 
   .hex2   (), 
@@ -117,7 +115,7 @@ disp_hex_mux u_disp(
 );
 
 main_fsm u_main_fsm (
-  .clk       (clk),
+  .clk       (clk40MHz),
   .rst       (rst),
   .level     (level),
   .game_lost (1'b0),

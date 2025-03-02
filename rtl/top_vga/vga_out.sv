@@ -9,8 +9,8 @@ module vga_out (
 
 import vga_pkg::*;
 
-(* ram_style = "block" *) logic [11:0] line_buffer_A [0:HOR_TOTAL_TIME - 1]; 
-(* ram_style = "block" *) logic [11:0] line_buffer_B [0:HOR_TOTAL_TIME - 1]; 
+logic [11:0] line_buffer_A [0:HOR_TOTAL_TIME - 1]; 
+logic [11:0] line_buffer_B [0:HOR_TOTAL_TIME - 1]; 
 
 logic buffer_select; 
 
