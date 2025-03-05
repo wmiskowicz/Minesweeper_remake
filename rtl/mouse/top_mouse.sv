@@ -12,6 +12,7 @@
  module top_mouse (
      input  wire clk100MHz,
      input  wire clk40MHz,
+     input  wire clk74MHz,
      input  wire rst,
      inout  ps2_clk,
      inout  ps2_data,
@@ -46,7 +47,7 @@
 
 
  cross_buffer u_cross_buffer (
-   .clk40MHz     (clk40MHz),
+   .slow_clk     (clk74MHz),
    .clk100MHz    (clk100MHz),
    .rst     (rst),
    .xpos_in (xpos_in),

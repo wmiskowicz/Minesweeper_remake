@@ -47,7 +47,7 @@ wire mouse_right;
 wire mouse_left;
 
 wire clk100MHz;
-wire clk88MHz;
+wire clk74MHz;
 wire clk40MHz;
 wire locked;
 logic rst;
@@ -68,17 +68,17 @@ assign level = {btnR || btnC, btnL || btnR};
  * FPGA submodules placement
  */
 
- clk_wiz_0 clk0_wiz(
+ clk_wiz_1 clk0_wiz(
   .clk      (clk),
   .reset    (rst),
   .locked   (locked),
   .clk100MHz(clk100MHz),
-  .clk88MHz (clk88MHz),
+  .clk74MHz (clk74MHz),
   .clk40MHz (clk40MHz)
 );
 
 top_vga u_top_vga (
-    .clk          (clk88MHz),
+    .clk          (clk74MHz),
     .rst          (rst),
     .r            (vgaRed),
     .g            (vgaGreen),
@@ -93,6 +93,7 @@ top_vga u_top_vga (
 top_mouse u_top_mouse (
   .clk100MHz  (clk100MHz),
   .clk40MHz   (clk40MHz),
+  .clk74MHz   (clk74MHz),
   .rst       (rst),
   .ps2_clk   (PS2Clk),
   .ps2_data  (PS2Data),

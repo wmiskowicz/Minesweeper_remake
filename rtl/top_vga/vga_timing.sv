@@ -48,7 +48,7 @@
  
  
  always_ff @(posedge clk) begin: blanck_sync_blk
-    out.rgb <= '0;
+    out.rgb <= 12'h0_0_0;
     
     if(out.hcount >= HSYNC_START && out.hcount <= HSYNC_STOP) begin
        out.hsync <= 1'b1;

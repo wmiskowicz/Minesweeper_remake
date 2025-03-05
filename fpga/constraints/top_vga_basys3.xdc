@@ -6,6 +6,7 @@
 ## Clock signal
 set_property PACKAGE_PIN W5 [get_ports clk]
 	set_property IOSTANDARD LVCMOS33 [get_ports clk]
+	set_max_delay -from [get_clocks -of_objects [get_pins clk0_wiz/inst/mmcm_adv_inst/CLKOUT0]] -to [get_clocks -of_objects [get_pins clk0_wiz/inst/mmcm_adv_inst/CLKOUT1]] 3
 	#create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]
 
 ## Switches

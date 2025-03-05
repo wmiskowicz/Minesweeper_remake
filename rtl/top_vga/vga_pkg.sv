@@ -10,26 +10,27 @@
 
 package vga_pkg;
 
-// Parameters for VGA Display 1440 x 900 @ 60fps using a 88.75 MHz clock;
+// Parameters for VGA Display 1280 x 720 @ 60fps using a 74.25 MHz clock;
 // Update this section for changing display resolution.
 
-localparam HOR_PIXELS = 1440;
-localparam VER_PIXELS = 900;
+localparam HOR_PIXELS = 1280;
+localparam VER_PIXELS = 720;
 
-localparam HOR_TOTAL_TIME = 1600;
-localparam VER_TOTAL_TIME = 926;
+localparam HOR_TOTAL_TIME = 1650;
+localparam VER_TOTAL_TIME = 750;
 
-localparam HOR_BLANK_START = 1440;
-localparam HOR_BLANK_TIME  = 160;
+localparam HOR_BLANK_START = 1280;
+localparam HOR_BLANK_TIME  = 370;
 
-localparam HOR_SYNC_START = 1488;
-localparam HOR_SYNC_TIME  = 32;
+localparam HOR_SYNC_START = 1390;
+localparam HOR_SYNC_TIME  = 40;
 
-localparam VER_BLANK_START = 900;
-localparam VER_BLANK_TIME  = 26;
+localparam VER_BLANK_START = 720;
+localparam VER_BLANK_TIME  = 30;
 
-localparam VER_SYNC_START = 903;
-localparam VER_SYNC_TIME  = 32;
+localparam VER_SYNC_START = 725;
+localparam VER_SYNC_TIME  = 5;
+  
 
 // Board geometry
 localparam X_CENTER = HOR_PIXELS / 2;

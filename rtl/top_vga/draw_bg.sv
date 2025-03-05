@@ -29,12 +29,17 @@ import vga_pkg::*;
  logic signed [10:0] y_c = 240;  
 
  logic [3:0] circle_wave;
- logic [20:0] dist_sq;
- logic signed [10:0] dx, dy;
+ logic [16:0] dist_sq;
+ logic signed [10:0] dx_sq, dy_sq;
  
- assign dx = in.hcount - x_c;
- assign dy = in.vcount - y_c;
- assign dist_sq = dx * dx + dy * dy;
+
+ always_ff @(posedge clk) begin
+  dx_sq   <= in.hcount - x_c;
+  dy_sq   <= in.vcount - y_c; 
+  dist_sq <= dx_sq + dy_sq;  
+end
+
+ 
 
 
 
@@ -62,7 +67,7 @@ import vga_pkg::*;
     out.hsync  <= in.hsync;
     out.hblnk  <= in.hblnk;
     if (in.vblnk || in.hblnk) begin             
-      out.rgb <= 12'h0_0_0;                    
+      out.rgb <= in.rgb; // equals to 0, line to avoid warnings                    
     end 
     else begin                              
     circle_wave <= (dist_sq[16:13]); 

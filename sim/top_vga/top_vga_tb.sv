@@ -21,6 +21,7 @@
  */
 
 `timescale 1 ns / 1 ps
+import vga_pkg::*;
 
 module top_vga_tb;
 
@@ -69,8 +70,8 @@ top_vga dut (
 );
 
 tiff_writer #(
-    .XDIM(16'd1600),
-    .YDIM(16'd926),
+    .XDIM(HOR_TOTAL_TIME),
+    .YDIM(VER_TOTAL_TIME),
     .FILE_DIR("../../results")
 ) u_tiff_writer (
     .clk(clk),

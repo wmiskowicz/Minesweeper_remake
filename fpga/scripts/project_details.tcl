@@ -34,8 +34,6 @@ set sv_files {
     ../rtl/common/cross_buffer.sv
     ../rtl/common/delay_vga.sv
     ../rtl/common/edge_detector.sv
-    ../rtl/game_setup/game_pkg.sv
-    ../rtl/game_setup/main_fsm.sv
     ../rtl/memory/memory.sv
     ../rtl/memory/wishbone_if.sv
     ../rtl/mouse/draw_mouse.sv
@@ -54,6 +52,8 @@ set sv_files {
     ../rtl/top_vga/vga_out.sv
     ../rtl/top_vga/vga_pkg.sv
     ../rtl/top_vga/vga_timing.sv
+    ../rtl/z_game_setup/game_pkg.sv
+    ../rtl/z_game_setup/main_fsm.sv
     rtl/top_vga_basys3.sv
 }
 

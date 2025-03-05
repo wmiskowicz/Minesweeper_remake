@@ -1,5 +1,5 @@
 
-# file: clk_wiz_0.xdc
+# file: clk_wiz_1.xdc
 # 
 # (c) Copyright 2008 - 2013 Xilinx, Inc. All rights reserved.
 # 

@@ -1,5 +1,5 @@
 
-// file: clk_wiz_0.v
+// file: clk_wiz_1.v
 // 
 // (c) Copyright 2008 - 2013 Xilinx, Inc. All rights reserved.
 // 
@@ -56,9 +56,9 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// clk100MHz__100.00000______0.000______50.0______135.375____105.692
-// clk88MHz__88.75000______0.000______50.0______138.788____105.692
-// clk40MHz__40.34091______0.000______50.0______163.787____105.692
+// clk100MHz__100.00000______0.000______50.0______122.532_____91.877
+// clk74MHz__74.16667______0.000______50.0______130.215_____91.877
+// clk40MHz__39.73214______0.000______50.0______148.685_____91.877
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
@@ -67,13 +67,13 @@
 
 `timescale 1ps/1ps
 
-(* CORE_GENERATION_INFO = "clk_wiz_0,clk_wiz_v6_0_12_0_0,{component_name=clk_wiz_0,use_phase_alignment=true,use_min_o_jitter=false,use_max_i_jitter=false,use_dyn_phase_shift=false,use_inclk_switchover=false,use_dyn_reconfig=false,enable_axi=0,feedback_source=FDBK_AUTO,PRIMITIVE=MMCM,num_out_clk=3,clkin1_period=10.000,clkin2_period=10.000,use_power_down=false,use_reset=true,use_locked=true,use_inclk_stopped=false,feedback_type=SINGLE,CLOCK_MGR_TYPE=NA,manual_override=false}" *)
+(* CORE_GENERATION_INFO = "clk_wiz_1,clk_wiz_v6_0_12_0_0,{component_name=clk_wiz_1,use_phase_alignment=true,use_min_o_jitter=false,use_max_i_jitter=false,use_dyn_phase_shift=false,use_inclk_switchover=false,use_dyn_reconfig=false,enable_axi=0,feedback_source=FDBK_AUTO,PRIMITIVE=MMCM,num_out_clk=3,clkin1_period=10.000,clkin2_period=10.000,use_power_down=false,use_reset=true,use_locked=true,use_inclk_stopped=false,feedback_type=SINGLE,CLOCK_MGR_TYPE=NA,manual_override=false}" *)
 
-module clk_wiz_0 
+module clk_wiz_1 
  (
   // Clock out ports
   output        clk100MHz,
-  output        clk88MHz,
+  output        clk74MHz,
   output        clk40MHz,
   // Status and control signals
   input         reset,
@@ -82,11 +82,11 @@ module clk_wiz_0
   input         clk
  );
 
-  clk_wiz_0_clk_wiz inst
+  clk_wiz_1_clk_wiz inst
   (
   // Clock out ports  
   .clk100MHz(clk100MHz),
-  .clk88MHz(clk88MHz),
+  .clk74MHz(clk74MHz),
   .clk40MHz(clk40MHz),
   // Status and control signals               
   .reset(reset), 
