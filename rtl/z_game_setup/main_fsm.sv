@@ -5,6 +5,8 @@
  Description:   Module containing the FSM controlling the game. 
  */
 //////////////////////////////////////////////////////////////////////////////
+import game_pkg::*;
+
 module main_fsm(
   input  wire  clk,  
   input  wire  rst,
@@ -13,13 +15,12 @@ module main_fsm(
   input  wire  game_won,
   input  wire  game_lost,
   input  wire  retry,
-  output state_t state_out
+  output fsm_state_t state_out
 );
-  import game_pkg::*;
 
   // Local variables
 
-  state_t state;
+  fsm_state_t state;
   game_setup_mem_t game_setup_mem;
 
     

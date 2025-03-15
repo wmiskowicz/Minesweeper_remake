@@ -24,7 +24,7 @@ module wishbone_master_tb;
   logic read_en;
   logic read_ready;
 
-  wishbone_if master_wb();
+  wishbone_if wb_master();
   
   localparam CLK_PERIOD = 25ns;
 
@@ -48,7 +48,7 @@ module wishbone_master_tb;
     .read_en      (read_en),
     .read_ready   (read_ready),
 
-    .master_wb(master_wb)
+    .wb_master(wb_master)
   );
         
   initial begin
@@ -60,8 +60,8 @@ module wishbone_master_tb;
     write_en = 0;
     read_addr = 0;
     read_en = 0;
-    master_wb.ack_i = 1'b0;
-    master_wb.stall_i = 1'b1;
+    wb_master.ack_i = 1'b0;
+    wb_master.stall_i = 1'b1;
     InitReset();
     `log_info($sformatf("Starting test at, %t", $time));
 
@@ -74,12 +74,12 @@ module wishbone_master_tb;
     write_en = 1'b0;
     WaitClocks(10);
     `check_eq(dut.master_state, BUS_WAIT)
-    master_wb.stall_i = 1'b0;
-    master_wb.ack_i = 1'b1;
+    wb_master.stall_i = 1'b0;
+    wb_master.ack_i = 1'b1;
     WaitClocks(1);
     `check_eq(dut.master_state, IDLE)
-    master_wb.ack_i = 0;
-    master_wb.stall_i = 1'b1;
+    wb_master.ack_i = 0;
+    wb_master.stall_i = 1'b1;
 
     WaitClocks(15);
 
@@ -89,11 +89,11 @@ module wishbone_master_tb;
     WaitClocks(15);
     read_en = 0;
     `check_eq(dut.master_state, BUS_WAIT)
-    master_wb.stall_i = 1'b0;
-    master_wb.ack_i = 1'b1;
-    master_wb.dat_i = 8'h55;
+    wb_master.stall_i = 1'b0;
+    wb_master.ack_i = 1'b1;
+    wb_master.dat_i = 8'h55;
     WaitClocks(1);
-    master_wb.ack_i = 0;
+    wb_master.ack_i = 0;
     `check_eq(read_ready, 1'b1);
     `check_eq(read_data, 8'h55);
 

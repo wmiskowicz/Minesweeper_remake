@@ -21,7 +21,7 @@ module wishbone_master (
   input  logic       read_en,
   output logic       read_ready,
 
-  wishbone_if.master master_wb
+  wishbone_if.master wb_master
 );
 
 
@@ -35,11 +35,11 @@ end
 // dodać logikę cyc_o tak, żeby był wysoki kiedy trwa burst (jak np podczas odczytu / zapisu całej tablicy)
 always_ff @(posedge clk) begin
   if(rst) begin
-    master_wb.adr_o <= '0;
-    master_wb.cyc_o <= '0;
-    master_wb.dat_o <= '0;
-    master_wb.stb_o <= '0;
-    master_wb.we_o  <= '0;
+    wb_master.adr_o <= '0;
+    wb_master.cyc_o <= '0;
+    wb_master.dat_o <= '0;
+    wb_master.stb_o <= '0;
+    wb_master.we_o  <= '0;
     write_ready     <= 1'b0;
     read_ready      <= 1'b0;
     master_state    <= IDLE;
@@ -47,30 +47,30 @@ always_ff @(posedge clk) begin
   else begin
     case (master_state)
       IDLE: begin
-        master_wb.stb_o <= 1'b0;
-        master_wb.cyc_o <= burst_active;
-        master_wb.we_o  <= 1'b0;
+        wb_master.stb_o <= 1'b0;
+        wb_master.cyc_o <= burst_active;
+        wb_master.we_o  <= 1'b0;
         write_ready     <= 1'b0;
         read_ready      <= 1'b0;
 
         if (write_en || read_en) begin
-          master_wb.we_o  <= write_en;
-          master_wb.adr_o <= write_en ? write_addr : read_addr;
-          master_wb.dat_o <= write_data;
-          master_wb.stb_o <= 1'b1;
-          master_wb.cyc_o <= 1'b1;
+          wb_master.we_o  <= write_en;
+          wb_master.adr_o <= write_en ? write_addr : read_addr;
+          wb_master.dat_o <= write_data;
+          wb_master.stb_o <= 1'b1;
+          wb_master.cyc_o <= 1'b1;
           master_state    <= BUS_WAIT; 
         end
       end
       BUS_WAIT: begin
-        if (!master_wb.stall_i && master_wb.ack_i) begin 
+        if (!wb_master.stall_i && wb_master.ack_i) begin 
 
-          master_wb.stb_o <= 1'b0;
-          master_wb.cyc_o <= burst_active;
+          wb_master.stb_o <= 1'b0;
+          wb_master.cyc_o <= burst_active;
 
-          write_ready <= master_wb.we_o;
-		      read_ready  <= !master_wb.we_o;
-          read_data   <= master_wb.dat_i;
+          write_ready <= wb_master.we_o;
+		      read_ready  <= !wb_master.we_o;
+          read_data   <= wb_master.dat_i;
 
           master_state <= IDLE;
         end

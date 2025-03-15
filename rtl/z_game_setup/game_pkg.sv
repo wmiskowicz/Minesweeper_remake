@@ -10,19 +10,7 @@ package game_pkg;
   import vga_pkg::*;
 
   // ==== Definition types ====
-  typedef enum logic [2:0] {MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} state_t;
-
-  typedef struct packed {
-    logic [11:0] row_column_number; //[4:0]
-    logic [11:0] mine_number;       //[5:0]
-    logic [11:0] timer_seconds;     //[7:0]
-    logic [11:0] field_size;        //[7:0]
-    logic [11:0] board_size;
-    logic [11:0] board_xpos;
-    logic [11:0] board_ypos;
-    logic [11:0] games_won;
-    logic [11:0] games_lost;
-  } game_setup_mem_t;
+  typedef enum logic [2:0] {MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} fsm_state_t;
 
 // ======== EASY ========
   localparam E_ROW_COLUMN_NUMBER = 8; 
