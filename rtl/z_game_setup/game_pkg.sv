@@ -10,7 +10,8 @@ package game_pkg;
   import vga_pkg::*;
 
   // ==== Definition types ====
-  typedef enum {MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} state_t;
+  typedef enum logic [2:0] {MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} state_t;
+
   typedef struct packed {
     logic [11:0] row_column_number; //[4:0]
     logic [11:0] mine_number;       //[5:0]

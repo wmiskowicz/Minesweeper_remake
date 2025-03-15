@@ -12,7 +12,8 @@ module main_fsm(
   input  wire  timer_stop,
   input  wire  game_won,
   input  wire  game_lost,
-  input  wire  retry
+  input  wire  retry,
+  output state_t state_out
 );
   import game_pkg::*;
 
@@ -25,9 +26,11 @@ module main_fsm(
   always_ff @(posedge clk) begin : fsm_blk
     if(rst)begin
       state <= MENU;
+      state_out <= MENU;
       game_setup_mem <= '0;
     end
     else begin
+      state_out <= state;
       case(state)
         MENU: begin
           if(level > 0) begin 

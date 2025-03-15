@@ -1,0 +1,45 @@
+# Copyright (C) 2023  AGH University of Science and Technology
+# MTM UEC2
+# Author: Piotr Kaczmarczyk
+#
+# Description:
+# List of files defining the modules used during the test.
+# This file can be auto-generated using -prj flag of run_simulation script.
+# Specify the file paths relative to THIS file.
+# For syntax detail see AMD Xilinx UG 900:
+# https://docs.xilinx.com/r/en-US/ug900-vivado-logic-simulation/Project-File-.prj-Syntax
+
+sv work ../../rtl/memory/wishbone_if.sv \
+        ../../rtl/top_vga/vga_if.sv \
+        ../../rtl/top_vga/vga_pkg.sv \
+        ../../rtl/z_game_setup/game_pkg.sv \
+        ../common/logger_pkg.sv \
+        ../../rtl/common/cross_buffer.sv \
+        ../../rtl/common/delay_vga.sv \
+        ../../rtl/common/edge_detector.sv \
+        ../../rtl/memory/memory.sv \
+        ../../rtl/memory/wishbone_master.sv \
+        ../../rtl/mouse/draw_mouse.sv \
+        ../../rtl/mouse/top_mouse.sv \
+        ../../rtl/timer/bin2bcd.sv \
+        ../../rtl/timer/time_controller.sv \
+        ../../rtl/timer/top_timer.sv \
+        ../../rtl/top_vga/draw_back_objects.sv \
+        ../../rtl/top_vga/draw_bg.sv \
+        ../../rtl/top_vga/draw_image.sv \
+        ../../rtl/top_vga/draw_rect.sv \
+        ../../rtl/top_vga/image_rom.sv \
+        ../../rtl/top_vga/top_draw_board.sv \
+        ../../rtl/top_vga/top_vga.sv \
+        ../../rtl/top_vga/vga_out.sv \
+        ../../rtl/top_vga/vga_timing.sv \
+        ../common/tiff_writer.sv \
+        ./wishbone_master_tb.sv \
+
+verilog work ../../rtl/common/delay.v \
+            ../../rtl/sseg_disp.v \
+            ../common/glbl.v \
+
+vhdl work ../../rtl/mouse/MouseCtl.vhd \
+          ../../rtl/mouse/MouseDisplay.vhd \
+          ../../rtl/mouse/Ps2Interface.vhd \
