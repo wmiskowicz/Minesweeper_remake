@@ -22,6 +22,7 @@
 
 `timescale 1 ns / 1 ps
 import vga_pkg::*;
+import game_pkg::*;
 
 module top_vga_tb;
 
@@ -71,7 +72,7 @@ top_vga dut (
   .mouse_xpos('0),  
   .mouse_ypos('0),
 
-  .main_state(1),
+  .main_state(PLAY),
   .game_settings_wb(game_set_if),
   .game_board_wb(game_board_if)
 );
