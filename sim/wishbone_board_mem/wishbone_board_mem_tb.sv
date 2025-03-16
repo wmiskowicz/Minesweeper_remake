@@ -6,18 +6,8 @@ module wishbone_board_mem_tb;
   logic clk;
   logic rst;
 
-  logic [7:0] write_data;
-  logic [7:0] write_addr;
-  logic write_en;
-  logic write_ready;
-
-  logic [7:0] read_data;
-  logic [7:0] read_addr;
-  logic read_en;
-  logic read_ready;
-
-  wishbone_if master_w();
-  wishbone_if master_r();
+  wishbone_if write_wb(.CLK_I(clk), .RST_I(rst));
+  wishbone_if read_wb(.CLK_I(clk), .RST_I(rst));
 
   localparam CLK_PERIOD = 25ns;
 
@@ -29,80 +19,90 @@ module wishbone_board_mem_tb;
   wishbone_board_mem dut (
     .clk(clk),
     .rst(rst),
-    .master_w(master_w.slave),
-    .master_r(master_r.slave)
+    .slave_wr(write_wb.slave),
+    .slave_rd(read_wb.slave)
   );
-        
+  
   initial begin
     void'(logger::init());
-    clk = 0;
-    write_data = 0;
-    write_addr = 0;
-    write_en = 0;
-    read_addr = 0;
-    read_en = 0;
-    master_r.cyc_o = 1'b0;
-    master_r.stb_o = 1'b0;
-    master_w.cyc_o = 1'b0;
-    master_w.stb_o = 1'b0;
+    read_wb.cyc_o = 1'b0;
+    read_wb.stb_o = 1'b0;
+    write_wb.cyc_o = 1'b0;
+    write_wb.stb_o = 1'b0;
     InitReset();
+    
     `log_info($sformatf("Starting test at, %t", $time));
 
-    // Master W tries to write while Master R is reading
-    read_addr = 8'h10;
-    read_en   = 1'b1;
-    master_r.cyc_o = 1'b1;
-    master_r.stb_o = 1'b1;
+    `log_info("Running TEST_WRITE_WHILE_READ");
+    read_wb.cyc_o = 1'b1;
+    read_wb.stb_o = 1'b1;
     WaitClocks(2);
     `check_eq(dut.grant_r, 1'b1);
-    write_addr = 8'h20;
-    write_data = 8'hAA;
-    write_en   = 1'b1;
-    master_w.cyc_o = 1'b1;
-    master_w.stb_o = 1'b1;
+    write_wb.cyc_o = 1'b1;
+    write_wb.stb_o = 1'b1;
     WaitClocks(1);
-    `check_eq(master_w.stall_i, 1'b1);
-    read_en = 0;
-    master_r.cyc_o = 1'b0;
-    master_r.stb_o = 1'b0;
+    `check_eq(write_wb.stall_i, 1'b1);
+    read_wb.cyc_o = 1'b0;
+    read_wb.stb_o = 1'b0;
     WaitClocks(1);
     `check_eq(dut.grant_w, 1'b1);
     WaitClocks(1);
     WaitClocks(1);
-    write_en = 0;
-    master_w.cyc_o = 1'b0;
-    master_w.stb_o = 1'b0;
-
+    write_wb.cyc_o = 1'b0;
+    write_wb.stb_o = 1'b0;
     WaitClocks(10);
 
-    // Master R tries to read while Master W is writing
-    write_addr = 8'h30;
-    write_data = 8'hBB;
-    write_en   = 1'b1;
-    master_w.cyc_o = 1'b1;
-    master_w.stb_o = 1'b1;
+
+    `log_info("Running TEST_READ_WHILE_WRITE");
+    write_wb.cyc_o = 1'b1;
+    write_wb.stb_o = 1'b1;
     WaitClocks(1);
     `check_eq(dut.grant_w, 1'b1);
-    read_addr = 8'h40;
-    read_en   = 1'b1;
-    master_r.cyc_o = 1'b1;
-    master_r.stb_o = 1'b1;
+    read_wb.cyc_o = 1'b1;
+    read_wb.stb_o = 1'b1;
     WaitClocks(1);
-    `check_eq(master_r.stall_i, 1'b1);
-    write_en = 0;
-    master_w.cyc_o = 1'b0;
-    master_w.stb_o = 1'b0;
+    `check_eq(read_wb.stall_i, 1'b1);
+    write_wb.cyc_o = 1'b0;
+    write_wb.stb_o = 1'b0;
     WaitClocks(1);
     `check_eq(dut.grant_r, 1'b1);
     WaitClocks(1);
     WaitClocks(1);
-    read_en = 0;
-    master_r.cyc_o = 1'b0;
-    master_r.stb_o = 1'b0;
+    read_wb.cyc_o = 1'b0;
+    read_wb.stb_o = 1'b0;
+    WaitClocks(20);
+
+    write_wb.cyc_o = 1'b1;
+    write_wb.stb_o = 1'b1;
+    write_wb.adr_o = 8'h33;
+    write_wb.dat_o = 8'h55;
+    write_wb.we_o  = 1'b1;
+    WaitClocks(4);
+    `check_eq(dut.row_w, 4'd3);
+    `check_eq(dut.col_w, 4'd3);
+    `check_eq(dut.grant_w, 1'b1);
+    `check_eq(write_wb.stall_i, 1'b0);
+    `check_eq(dut.board_mem[3][3], 8'h55);
+    write_wb.cyc_o = 1'b0;
+    write_wb.stb_o = 1'b0;
+    write_wb.we_o  = 1'b0;
 
     WaitClocks(20);
+    read_wb.cyc_o = 1'b1;
+    read_wb.stb_o = 1'b1;
+    read_wb.adr_o = 8'h33;
+    read_wb.we_o  = 1'b0;
+    WaitClocks(2);
+    `check_eq(dut.row_r, 4'd3);
+    `check_eq(dut.col_r, 4'd3);
+    `check_eq(dut.grant_r, 1'b1);
+    `check_eq(read_wb.stall_i, 1'b0);
+    `check_eq(read_wb.dat_i, 8'h55);
+
+
     $finish;
-  end
+end
+
 
   task automatic WaitClocks(input int num_of_clock_cycles);
     repeat (num_of_clock_cycles) @(posedge clk);

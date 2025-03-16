@@ -17,7 +17,8 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/common/cross_buffer.sv \
         ../../rtl/common/delay_vga.sv \
         ../../rtl/common/edge_detector.sv \
-        ../../rtl/memory/memory.sv \
+        ../../rtl/memory/wishbone_arbiter.sv \
+        ../../rtl/memory/wishbone_board_mem.sv \
         ../../rtl/memory/wishbone_master.sv \
         ../../rtl/mouse/draw_mouse.sv \
         ../../rtl/mouse/top_mouse.sv \
@@ -33,6 +34,8 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/top_vga/top_vga.sv \
         ../../rtl/top_vga/vga_out.sv \
         ../../rtl/top_vga/vga_timing.sv \
+        ../../rtl/z_game_setup/main_fsm.sv \
+        ../common/example_tb.sv \
         ../common/tiff_writer.sv \
         ./wishbone_master_tb.sv \
 

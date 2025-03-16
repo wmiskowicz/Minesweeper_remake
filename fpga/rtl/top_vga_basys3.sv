@@ -40,11 +40,10 @@ module top_vga_basys3 (
 /**
  * Local variables and signals
  */
+wire [2:0] main_state;
 
 wire [11:0] mouse_xpos;
 wire [11:0] mouse_ypos;
-wire mouse_right;
-wire mouse_left;
 
 wire clk100MHz;
 wire clk74MHz;
@@ -62,6 +61,10 @@ logic [1:0] level;
 assign rst = btnD;
 assign led = locked;
 assign level = {btnR || btnC, btnL || btnR};
+
+wishbone_if write_wb();
+wishbone_if read_wb ();
+wishbone_if game_settings_if();
 
 
 /**
@@ -87,7 +90,12 @@ top_vga u_top_vga (
     .vs           (Vsync),
 
     .mouse_xpos   (mouse_xpos),
-    .mouse_ypos   (mouse_ypos)
+    .mouse_ypos   (mouse_ypos),
+    .main_state   (main_state),
+
+    .game_settings_wb(game_settings_if.master),
+    .game_board_wb   (read_wb.master)
+
 );
 
 top_mouse u_top_mouse (
@@ -104,6 +112,18 @@ top_mouse u_top_mouse (
   .mouse_ypos(mouse_ypos)
 );
 
+top_memory u_top_memory (
+  .clk100MHz(clk100MHz),
+  .clk40MHz (clk40MHz),
+  .clk74MHz (clk74MHz),
+  .rst      (rst),
+
+  .read_if  (read_wb.slave),
+  .write1_if(), //plant mines
+  .write2_if()  // mouse 
+);
+
+
 sseg_disp u_disp(
   .clk    (clk40MHz), 
   .reset  (rst),
@@ -119,10 +139,15 @@ main_fsm u_main_fsm (
   .clk       (clk40MHz),
   .rst       (rst),
   .level     (level),
+
   .game_lost (1'b0),
   .game_won  (1'b0),
   .retry     (1'b0),
-  .timer_stop(1'b0)
+  .timer_stop(1'b0),
+
+  .state_out(main_state),
+  .game_settings(game_settings_if.slave)
+  
 );
 
 

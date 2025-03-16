@@ -3,67 +3,67 @@
 /*
  Module name:   Draw board
  Author:        Wojciech Miskowicz
- Coding style: safe with FPGA sync reset
- Description:  Draws game board
+ Description:   Implements module for drawing game board.
  */
 //////////////////////////////////////////////////////////////////////////////
-module draw_board(
+module draw_board
+(
   input  wire  clk,  
   input  wire  rst,  
-  input  wire draw_board,
 
-  wishbone_if.master game_wb,
-  wishbone_if.master board_wb,
+  input  logic [2:0] main_state,
   vga_if.in in,
   vga_if.out out
 );
+    
+    //------------------------------------------------------------------------------
+    // local parameters
+    //------------------------------------------------------------------------------
+    
+    localparam STATE_BITS = 2;
+    localparam MARGIN = 5;
+    //------------------------------------------------------------------------------
+    // local variables
+    import color_pkg::*;
+    import game_pkg::*;
 
-/*
- * when state = PLAY perform one time wishbone game settings read
- * Then perform cyclic reads from board memory
- * Drawing mines buttons etc should be done with one fsm => use functions and previous stuff
-*/
-        
-  localparam STATE_BITS = 2;
-  localparam MARGIN = 5;
+    logic [11:0] rgb_nxt;
+    logic [10:0] cur_xpos, cur_ypos;
 
-  logic [11:0] rgb_nxt;
-  logic [10:0] cur_xpos, cur_ypos;
-
-  logic [5:0] but_xpos, but_ypos;
+    logic [5:0] but_xpos, but_ypos;
 
 
 //************LOCAL PARAMETERS*****************
 
 
-assign cur_ypos = in.vcount >= gin.board_ypos && in.vcount <= gin.board_ypos + gin.board_size ? in.vcount - gin.board_ypos : 11'h7_f_f;
-assign cur_xpos = cur_ypos != 11'h7_f_f && in.hcount >= gin.board_xpos && in.hcount <= gin.board_xpos + gin.board_size + gin.button_num ? in.hcount - gin.board_xpos :  11'h7_f_f;
+assign cur_ypos = in.vcount >= M_BOARD_YPOS && in.vcount <= M_BOARD_YPOS + M_BOARD_SIZE ? in.vcount - M_BOARD_YPOS: 11'h7_f_f;
+assign cur_xpos = cur_ypos != 11'h7_f_f && in.hcount >= M_BOARD_XPOS && in.hcount <= M_BOARD_XPOS + M_BOARD_SIZE + M_ROW_COLUMN_NUMBER ? in.hcount - M_BOARD_XPOS :  11'h7_f_f;
 
-  enum logic [STATE_BITS-1 :0] {
-    IDLE = 2'b00,
-    DRAW = 2'b01,
-    DONE = 2'b11
-  } state, state_nxt;
+    enum logic [STATE_BITS-1 :0] {
+        IDLE = 2'b00, // idle state
+        DRAW = 2'b01,
+        DONE = 2'b11
+    } state, state_nxt;
 
-  char_pos_conv ind_xpos(
+    char_pos_conv ind_xpos(
     .clk,
     .rst,
     .cur_pos(cur_xpos),
-    .button_size(gin.button_size),
-    .button_num(gin.button_num),
+    .button_size(E_FIELD_SIZE),
+    .button_num(16),
     .char_line(but_xpos),
     .char_pos()
-  );
+);
 
-  char_pos_conv ind_ypos(
+char_pos_conv ind_ypos(
     .clk,
     .rst,
     .cur_pos(cur_ypos),
-    .button_size(gin.button_size),
-    .button_num(gin.button_num),
+    .button_size(E_FIELD_SIZE),
+    .button_num(16),
     .char_line(but_ypos),
     .char_pos()
-  );
+);
      
     //------------------------------------------------------------------------------
     // state sequential with synchronous reset
@@ -81,7 +81,7 @@ assign cur_xpos = cur_ypos != 11'h7_f_f && in.hcount >= gin.board_xpos && in.hco
     //------------------------------------------------------------------------------
     always_comb begin : state_comb_blk
         case(state)
-            IDLE: state_nxt = draw_board ? DRAW : IDLE;
+            IDLE: state_nxt = main_state > 0 ? DRAW : IDLE; // in future other condition
             DRAW: state_nxt = DRAW;
             default: state_nxt = IDLE;
         endcase
@@ -115,7 +115,7 @@ assign cur_xpos = cur_ypos != 11'h7_f_f && in.hcount >= gin.board_xpos && in.hco
         case(state_nxt)
             IDLE: rgb_nxt = in.rgb;
             DRAW: begin
-                if (but_xpos >= MARGIN && but_xpos <= gin.button_size-MARGIN && but_ypos >= MARGIN && but_ypos <= gin.button_size-MARGIN &&
+                if (but_xpos >= MARGIN && but_xpos <= M_FIELD_SIZE-MARGIN && but_ypos >= MARGIN && but_ypos <= M_FIELD_SIZE-MARGIN &&
                 cur_xpos != 11'h7_f_f && cur_ypos != 11'h7_f_f) begin
                     rgb_nxt = BUTTON_BACK;
                 end

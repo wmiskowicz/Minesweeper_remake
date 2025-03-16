@@ -24,7 +24,12 @@
     output logic  [3:0] b,
 
     input logic  [11:0] mouse_xpos,  
-    input logic  [11:0] mouse_ypos
+    input logic  [11:0] mouse_ypos,
+
+    input logic  [2:0]  main_state,
+
+    wishbone_if.master game_settings_wb,
+    wishbone_if.master game_board_wb
  );
  
  /**
@@ -35,6 +40,7 @@
  vga_if del1_vga();
  vga_if background_vga();
  vga_if back_obj_vga();
+ vga_if board_vga();
  vga_if mouse_vga();
  vga_if output_vga();
  
@@ -76,10 +82,19 @@ draw_back_objects u_draw_back_objects (
   .out (back_obj_vga.out)
 );
 
+draw_board u_draw_board (
+  .clk       (clk),
+  .rst       (rst),
+
+  .main_state(main_state),
+  .in        (back_obj_vga.in),
+  .out       (board_vga.out)
+);
+
  draw_mouse u_draw_mouse(
    .clk,
    .rst,
-   .in(back_obj_vga.in),
+   .in(board_vga.in),
    .out(mouse_vga.out),
    .mouse_xpos(mouse_xpos),
    .mouse_ypos(mouse_ypos)

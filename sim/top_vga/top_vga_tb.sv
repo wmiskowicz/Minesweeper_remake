@@ -37,6 +37,9 @@ localparam CLK_PERIOD = 11;     // 40 MHz
  * Local variables and signals
  */
 
+ wishbone_if game_set_if();
+ wishbone_if game_board_if();
+
 logic clk, rst;
 wire vs, hs;
 wire [3:0] r, g, b;
@@ -66,7 +69,11 @@ top_vga dut (
   .vs      (vs),
 
   .mouse_xpos('0),  
-  .mouse_ypos('0)
+  .mouse_ypos('0),
+
+  .main_state(1),
+  .game_settings_wb(game_set_if),
+  .game_board_wb(game_board_if)
 );
 
 tiff_writer #(

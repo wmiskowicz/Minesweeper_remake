@@ -34,8 +34,10 @@ set sv_files {
     ../rtl/common/cross_buffer.sv
     ../rtl/common/delay_vga.sv
     ../rtl/common/edge_detector.sv
-    ../rtl/memory/memory.sv
+    ../rtl/memory/wishbone_arbiter.sv
+    ../rtl/memory/wishbone_board_mem.sv
     ../rtl/memory/wishbone_if.sv
+    ../rtl/memory/wishbone_master.sv
     ../rtl/mouse/draw_mouse.sv
     ../rtl/mouse/top_mouse.sv
     ../rtl/timer/bin2bcd.sv
@@ -43,6 +45,7 @@ set sv_files {
     ../rtl/timer/top_timer.sv
     ../rtl/top_vga/draw_back_objects.sv
     ../rtl/top_vga/draw_bg.sv
+    ../rtl/top_vga/draw_board.sv
     ../rtl/top_vga/draw_image.sv
     ../rtl/top_vga/draw_rect.sv
     ../rtl/top_vga/image_rom.sv

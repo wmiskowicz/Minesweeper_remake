@@ -10,16 +10,16 @@ module wishbone_master (
   input  wire clk,  
   input  wire rst,  
 
-  input  logic       burst_active, 
-  input  logic [7:0] write_data,
-  input  logic [7:0] write_addr,
-  input  logic       write_en,
-  output logic       write_ready,
+  input  logic        burst_active, 
+  input  logic [15:0] write_data,
+  input  logic [7:0]  write_addr,
+  input  logic        write_en,
+  output logic        write_ready,
  
-  output logic [7:0] read_data,
-  input  logic [7:0] read_addr,
-  input  logic       read_en,
-  output logic       read_ready,
+  output logic [15:0] read_data,
+  input  logic [7:0]  read_addr,
+  input  logic        read_en,
+  output logic        read_ready,
 
   wishbone_if.master wb_master
 );
