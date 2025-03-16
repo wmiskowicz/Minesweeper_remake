@@ -25,12 +25,12 @@ module main_fsm(
   localparam ROW_COLUMN_NUMBER_ADDR = 8'h00;
   localparam MINE_NUM_ADDR          = 8'h02;
   localparam TIMER_SECONDS_ADDR     = 8'h04;
-  localparam FIELD_SIZE_ADDR        = 8'h08;
-  localparam BOARD_SIZE_ADDR        = 8'h0A;
-  localparam BOARD_XPOS_ADDR        = 8'h0C;
-  localparam BOARD_YPOS_ADDR        = 8'h0E;
-  localparam GAMES_WON_ADDR         = 8'h10;
-  localparam GAMES_LOST_ADDR        = 8'h12;
+  localparam FIELD_SIZE_ADDR        = 8'h06;
+  localparam BOARD_SIZE_ADDR        = 8'h08;
+  localparam BOARD_XPOS_ADDR        = 8'h0A;
+  localparam BOARD_YPOS_ADDR        = 8'h0C;
+  localparam GAMES_WON_ADDR         = 8'h0E;
+  localparam GAMES_LOST_ADDR        = 8'h10;
 
   localparam ROW_COLUMN_NUMBER_REG_NUM = 0;
   localparam MINE_NUM_REG_NUM          = 1;
@@ -45,7 +45,7 @@ module main_fsm(
   // Local variables
 
   fsm_state_t state;
-  logic [15:0] game_setup_mem [8:0];
+  logic [15:0] game_setup_mem [NUMBER_OF_REGISTERS-1:0];
 
     
   always_ff @(posedge clk) begin : fsm_blk
@@ -121,7 +121,13 @@ module main_fsm(
   
   
   always_ff @(posedge clk) begin
-    if (!game_settings.stall_i && game_settings.stb_o && !game_settings.we_o) begin
+    if(rst) begin
+      game_settings.ack_i <= 1'b0;
+      game_settings.dat_i <= 16'b0;
+    end
+    else if (!game_settings.stall_i && game_settings.stb_o && !game_settings.we_o) begin
+      game_settings.ack_i <= 1'b1;
+
       case (game_settings.adr_o)
         ROW_COLUMN_NUMBER_ADDR: game_settings.dat_i <= game_setup_mem [ROW_COLUMN_NUMBER_REG_NUM]; 
         MINE_NUM_ADDR:          game_settings.dat_i <= game_setup_mem [MINE_NUM_REG_NUM]; 
@@ -135,9 +141,11 @@ module main_fsm(
         default:                game_settings.dat_i <= 16'hDEAD;
       endcase
     end
-  end
-
-  assign game_settings.ack_i = !game_settings.stall_i && game_settings.stb_o;
+    else begin
+      game_settings.ack_i <= 1'b0;
+      game_settings.dat_i <= 16'b0;
+    end
+  end 
 
     
 endmodule
