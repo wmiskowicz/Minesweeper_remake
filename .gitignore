@@ -105,3 +105,4 @@ images
 *.vscode
 *.png
 *.jpg
+*vunit_out*

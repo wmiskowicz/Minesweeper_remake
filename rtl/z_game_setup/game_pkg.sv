@@ -10,7 +10,7 @@ package game_pkg;
   import vga_pkg::*;
 
   // ==== Definition types ====
-  typedef enum logic [2:0] {MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} fsm_state_t;
+  enum logic [2:0] {MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} fsm_state;
 
 // ======== EASY ========
   localparam E_ROW_COLUMN_NUMBER = 8; 

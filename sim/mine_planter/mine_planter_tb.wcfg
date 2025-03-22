@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="mine_planter_tb.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_wishbone_if_sv_738257884 " />
+            <top_module name="game_pkg" />
+            <top_module name="glbl" />
+            <top_module name="logger_pkg" />
+            <top_module name="mine_planter_tb" />
+            <top_module name="vga_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="19.804 ns"></ZoomStartTime>
+      <ZoomEndTime time="2,499.805 ns"></ZoomEndTime>
+      <Cursor1Time time="1,421.804 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="404"></NameColumnWidth>
+      <ValueColumnWidth column_width="172"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="19" />
+   <wvobject fp_name="/mine_planter_tb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_set_wb/adr_o" type="array">
+      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
+      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_set_wb/stb_o" type="logic">
+      <obj_property name="ElementShortName">stb_o</obj_property>
+      <obj_property name="ObjectShortName">stb_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_set_wb/cyc_o" type="logic">
+      <obj_property name="ElementShortName">cyc_o</obj_property>
+      <obj_property name="ObjectShortName">cyc_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_set_wb/dat_i" type="array">
+      <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_set_wb/ack_i" type="logic">
+      <obj_property name="ElementShortName">ack_i</obj_property>
+      <obj_property name="ObjectShortName">ack_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/planter_state" type="array">
+      <obj_property name="ElementShortName">planter_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">planter_state[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/settings_read_en" type="logic">
+      <obj_property name="ElementShortName">settings_read_en</obj_property>
+      <obj_property name="ObjectShortName">settings_read_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/settings_read_ready" type="logic">
+      <obj_property name="ElementShortName">settings_read_ready</obj_property>
+      <obj_property name="ObjectShortName">settings_read_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/settings_read_data" type="array">
+      <obj_property name="ElementShortName">settings_read_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">settings_read_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/row_col_num" type="array">
+      <obj_property name="ElementShortName">row_col_num[15:0]</obj_property>
+      <obj_property name="ObjectShortName">row_col_num[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/mines_left" type="array">
+      <obj_property name="ElementShortName">mines_left[15:0]</obj_property>
+      <obj_property name="ObjectShortName">mines_left[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/ind_x" type="array">
+      <obj_property name="ElementShortName">ind_x[3:0]</obj_property>
+      <obj_property name="ObjectShortName">ind_x[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/ind_y" type="array">
+      <obj_property name="ElementShortName">ind_y[3:0]</obj_property>
+      <obj_property name="ObjectShortName">ind_y[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/mine_map" type="array">
+      <obj_property name="ElementShortName">mine_map[15:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">mine_map[15:0][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_write_addr" type="array">
+      <obj_property name="ElementShortName">game_write_addr[7:0]</obj_property>
+      <obj_property name="ObjectShortName">game_write_addr[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_write_data" type="array">
+      <obj_property name="ElementShortName">game_write_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_write_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_write_en" type="logic">
+      <obj_property name="ElementShortName">game_write_en</obj_property>
+      <obj_property name="ObjectShortName">game_write_en</obj_property>
+   </wvobject>
+   <wvobject fp_name="/mine_planter_tb/dut/game_write_ready" type="logic">
+      <obj_property name="ElementShortName">game_write_ready</obj_property>
+      <obj_property name="ObjectShortName">game_write_ready</obj_property>
+   </wvobject>
+</wave_config>

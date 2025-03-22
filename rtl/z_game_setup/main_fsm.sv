@@ -44,23 +44,22 @@ module main_fsm(
 
   // Local variables
 
-  fsm_state_t state;
   logic [15:0] game_setup_mem [NUMBER_OF_REGISTERS-1:0];
 
     
   always_ff @(posedge clk) begin : fsm_blk
     if(rst)begin
-      state <= MENU;
+      fsm_state <= MENU;
       state_out <= MENU;
       game_settings.stall_i <= 1'b1;
       for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'b0;
     end
     else begin
-      state_out <= state;
-      case(state)
+      state_out <= fsm_state;
+      case(fsm_state)
         MENU: begin
           if(level > 0) begin 
-            state <= PLAY;
+            fsm_state <= PLAY;
             game_settings.stall_i <= 1'b1;
             case(level)
               2'd1: begin
@@ -98,23 +97,23 @@ module main_fsm(
         end
         PLAY: begin
           game_settings.stall_i <= 1'b0;
-          if(timer_stop)     state <= PAUSE;
-          else if(game_won)  state <= WIN; 
-          else if(game_lost) state <= LOST; 
+          if(timer_stop)     fsm_state <= PAUSE;
+          else if(game_won)  fsm_state <= WIN; 
+          else if(game_lost) fsm_state <= LOST; 
         end
-        PAUSE: if(~timer_stop) state <= PLAY;
+        PAUSE: if(~timer_stop) fsm_state <= PLAY;
         WIN: begin
           game_setup_mem[GAMES_WON_REG_NUM]++;
-          state <= GAME_OVER;
+          fsm_state <= GAME_OVER;
         end
         LOST: begin
           game_setup_mem[GAMES_LOST_REG_NUM]++;
-          state <= GAME_OVER;
+          fsm_state <= GAME_OVER;
         end
         GAME_OVER: begin
-          if(retry) state <= MENU;
+          if(retry) fsm_state <= MENU;
         end
-        default: state <= MENU;
+        default: fsm_state <= MENU;
       endcase  
     end
   end   
