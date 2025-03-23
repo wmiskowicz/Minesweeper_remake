@@ -12,6 +12,7 @@ module mine_planter (
     input wire rst,
 
     input logic [2:0] main_state,
+    output logic      planting_complete,
 
     wishbone_if.master game_set_wb,
     wishbone_if.master game_board_wb
@@ -57,6 +58,7 @@ module mine_planter (
         for (int j = 0; j < 16; j++)  mine_map[i][j] <= 1'b0;
 
       planter_state <= IDLE;
+      planting_complete <= 1'b0;
 
       settings_burst_active <= 1'b0;
       settings_read_en <= 1'b0;
@@ -80,8 +82,9 @@ module mine_planter (
             for (int j = 0; j < 16; j++)  mine_map[i][j] <= 1'b0;
 
           settings_read_addr <= 8'b0;
-          game_write_addr   <= 8'h0;
-          row_col_num <= 16'b1;
+          game_write_addr    <= 8'h0;
+          row_col_num        <= 16'b1;
+          planting_complete  <= 1'b0;
         end
         READ_SETTINGS: begin
           settings_read_en <= 1'b0;
@@ -128,7 +131,10 @@ module mine_planter (
             planter_state <= DONE;
           end
         end
-        DONE: planter_state <= main_state == GAME_OVER ? IDLE : DONE; 
+        DONE: begin 
+          planter_state <= main_state == GAME_OVER ? IDLE : DONE; 
+          planting_complete <= 1'b1;
+        end
         default: planter_state <= IDLE;
       endcase
     end

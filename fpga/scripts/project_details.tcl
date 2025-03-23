@@ -50,16 +50,16 @@ set sv_files {
     ../rtl/top_vga/draw_bg.sv
     ../rtl/top_vga/draw_board.sv
     ../rtl/top_vga/draw_image.sv
-    ../rtl/top_vga/draw_rect.sv
     ../rtl/top_vga/image_rom.sv
-    ../rtl/top_vga/top_draw_board.sv
     ../rtl/top_vga/top_vga.sv
     ../rtl/top_vga/vga_if.sv
     ../rtl/top_vga/vga_out.sv
     ../rtl/top_vga/vga_pkg.sv
     ../rtl/top_vga/vga_timing.sv
     ../rtl/z_game_setup/game_pkg.sv
+    ../rtl/z_game_setup/lfsr.sv
     ../rtl/z_game_setup/main_fsm.sv
+    ../rtl/z_game_setup/mine_planter.sv
     rtl/top_vga_basys3.sv
 }
 

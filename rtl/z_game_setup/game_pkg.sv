@@ -39,5 +39,13 @@ package game_pkg;
   localparam H_BOARD_XPOS        = X_CENTER - (H_BOARD_SIZE / 2); 
   localparam H_BOARD_YPOS        = Y_CENTER - (H_BOARD_SIZE / 2);
 
+// ======== REGISTER NUM ========
+  localparam ROW_COLUMN_NUMBER_REG_NUM = 0; 
+  localparam MINE_NUM_REG_NUM          = 1;
+  localparam TIMER_SECONDS_REG_NUM     = 2;
+  localparam FIELD_SIZE_REG_NUM        = 3;
+  localparam BOARD_SIZE_REG_NUM        = 4; 
+  localparam BOARD_XPOS_REG_NUM        = 5; 
+  localparam BOARD_YPOS_REG_NUM        = 6;
 
 endpackage

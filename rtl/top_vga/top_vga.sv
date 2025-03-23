@@ -90,8 +90,8 @@ draw_board u_draw_board (
   .in        (back_obj_vga.in),
   .out       (board_vga.out),
 
-  .game_settings_wb(game_settings_wb.master),
-  .game_board_wb(game_board_wb.master)
+  .game_settings_wb(game_settings_wb),
+  .game_board_wb(game_board_wb)
 );
 
  draw_mouse u_draw_mouse(

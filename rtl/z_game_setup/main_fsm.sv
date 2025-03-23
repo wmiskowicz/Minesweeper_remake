@@ -17,7 +17,10 @@ module main_fsm(
   input  wire  retry,
 
   output logic [2:0] state_out,
-  wishbone_if.slave game_settings
+
+  wishbone_if.slave game_set_wb1,
+  wishbone_if.slave game_set_wb2,
+  wishbone_if.slave game_set_wb3
 );
 
   localparam NUMBER_OF_REGISTERS = 9;
@@ -51,7 +54,9 @@ module main_fsm(
     if(rst)begin
       fsm_state <= MENU;
       state_out <= MENU;
-      game_settings.stall_i <= 1'b1;
+      game_set_wb1.stall_i <= 1'b1;
+      game_set_wb2.stall_i <= 1'b1;
+      game_set_wb3.stall_i <= 1'b1;
       for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'b0;
     end
     else begin
@@ -60,7 +65,9 @@ module main_fsm(
         MENU: begin
           if(level > 0) begin 
             fsm_state <= PLAY;
-            game_settings.stall_i <= 1'b1;
+            game_set_wb1.stall_i <= 1'b1;
+            game_set_wb2.stall_i <= 1'b1;
+            game_set_wb3.stall_i <= 1'b1;
             case(level)
               2'd1: begin
                 game_setup_mem[0] <= E_ROW_COLUMN_NUMBER; 
@@ -96,7 +103,9 @@ module main_fsm(
           else for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'b0;
         end
         PLAY: begin
-          game_settings.stall_i <= 1'b0;
+          game_set_wb1.stall_i <= 1'b0;
+          game_set_wb2.stall_i <= 1'b0;
+          game_set_wb3.stall_i <= 1'b0;
           if(timer_stop)     fsm_state <= PAUSE;
           else if(game_won)  fsm_state <= WIN; 
           else if(game_lost) fsm_state <= LOST; 
@@ -119,30 +128,85 @@ module main_fsm(
   end   
   
   
+  
   always_ff @(posedge clk) begin
     if(rst) begin
-      game_settings.ack_i <= 1'b0;
-      game_settings.dat_i <= 16'b0;
+      game_set_wb1.ack_i <= 1'b0;
+      game_set_wb1.dat_i <= 16'b0;
     end
-    else if (!game_settings.stall_i && game_settings.stb_o && !game_settings.we_o) begin
-      game_settings.ack_i <= 1'b1;
+    else if (!game_set_wb1.stall_i && game_set_wb1.stb_o && !game_set_wb1.we_o) begin
+      game_set_wb1.ack_i <= 1'b1;
 
-      case (game_settings.adr_o)
-        ROW_COLUMN_NUMBER_ADDR: game_settings.dat_i <= game_setup_mem [ROW_COLUMN_NUMBER_REG_NUM]; 
-        MINE_NUM_ADDR:          game_settings.dat_i <= game_setup_mem [MINE_NUM_REG_NUM]; 
-        TIMER_SECONDS_ADDR:     game_settings.dat_i <= game_setup_mem [TIMER_SECONDS_REG_NUM]; 
-        FIELD_SIZE_ADDR:        game_settings.dat_i <= game_setup_mem [FIELD_SIZE_REG_NUM]; 
-        BOARD_SIZE_ADDR:        game_settings.dat_i <= game_setup_mem [BOARD_SIZE_REG_NUM]; 
-        BOARD_XPOS_ADDR:        game_settings.dat_i <= game_setup_mem [BOARD_XPOS_REG_NUM]; 
-        BOARD_YPOS_ADDR:        game_settings.dat_i <= game_setup_mem [BOARD_YPOS_REG_NUM]; 
-        GAMES_WON_ADDR:         game_settings.dat_i <= game_setup_mem [GAMES_WON_REG_NUM]; 
-        GAMES_LOST_ADDR:        game_settings.dat_i <= game_setup_mem [GAMES_LOST_REG_NUM]; 
-        default:                game_settings.dat_i <= 16'hDEAD;
+      case (game_set_wb1.adr_o)
+        ROW_COLUMN_NUMBER_ADDR: game_set_wb1.dat_i <= game_setup_mem [ROW_COLUMN_NUMBER_REG_NUM]; 
+        MINE_NUM_ADDR:          game_set_wb1.dat_i <= game_setup_mem [MINE_NUM_REG_NUM]; 
+        TIMER_SECONDS_ADDR:     game_set_wb1.dat_i <= game_setup_mem [TIMER_SECONDS_REG_NUM]; 
+        FIELD_SIZE_ADDR:        game_set_wb1.dat_i <= game_setup_mem [FIELD_SIZE_REG_NUM]; 
+        BOARD_SIZE_ADDR:        game_set_wb1.dat_i <= game_setup_mem [BOARD_SIZE_REG_NUM]; 
+        BOARD_XPOS_ADDR:        game_set_wb1.dat_i <= game_setup_mem [BOARD_XPOS_REG_NUM]; 
+        BOARD_YPOS_ADDR:        game_set_wb1.dat_i <= game_setup_mem [BOARD_YPOS_REG_NUM]; 
+        GAMES_WON_ADDR:         game_set_wb1.dat_i <= game_setup_mem [GAMES_WON_REG_NUM]; 
+        GAMES_LOST_ADDR:        game_set_wb1.dat_i <= game_setup_mem [GAMES_LOST_REG_NUM]; 
+        default:                game_set_wb1.dat_i <= 16'hDEAD;
       endcase
     end
     else begin
-      game_settings.ack_i <= 1'b0;
-      game_settings.dat_i <= 16'b0;
+      game_set_wb1.ack_i <= 1'b0;
+      game_set_wb1.dat_i <= 16'b0;
+    end
+  end 
+
+  always_ff @(posedge clk) begin
+    if(rst) begin
+      game_set_wb2.ack_i <= 1'b0;
+      game_set_wb2.dat_i <= 16'b0;
+    end
+    else if (!game_set_wb2.stall_i && game_set_wb2.stb_o && !game_set_wb2.we_o) begin
+      game_set_wb2.ack_i <= 1'b1;
+
+      case (game_set_wb2.adr_o)
+        ROW_COLUMN_NUMBER_ADDR: game_set_wb2.dat_i <= game_setup_mem [ROW_COLUMN_NUMBER_REG_NUM]; 
+        MINE_NUM_ADDR:          game_set_wb2.dat_i <= game_setup_mem [MINE_NUM_REG_NUM]; 
+        TIMER_SECONDS_ADDR:     game_set_wb2.dat_i <= game_setup_mem [TIMER_SECONDS_REG_NUM]; 
+        FIELD_SIZE_ADDR:        game_set_wb2.dat_i <= game_setup_mem [FIELD_SIZE_REG_NUM]; 
+        BOARD_SIZE_ADDR:        game_set_wb2.dat_i <= game_setup_mem [BOARD_SIZE_REG_NUM]; 
+        BOARD_XPOS_ADDR:        game_set_wb2.dat_i <= game_setup_mem [BOARD_XPOS_REG_NUM]; 
+        BOARD_YPOS_ADDR:        game_set_wb2.dat_i <= game_setup_mem [BOARD_YPOS_REG_NUM]; 
+        GAMES_WON_ADDR:         game_set_wb2.dat_i <= game_setup_mem [GAMES_WON_REG_NUM]; 
+        GAMES_LOST_ADDR:        game_set_wb2.dat_i <= game_setup_mem [GAMES_LOST_REG_NUM]; 
+        default:                game_set_wb2.dat_i <= 16'hDEAD;
+      endcase
+    end
+    else begin
+      game_set_wb2.ack_i <= 1'b0;
+      game_set_wb2.dat_i <= 16'b0;
+    end
+  end 
+
+  always_ff @(posedge clk) begin
+    if(rst) begin
+      game_set_wb3.ack_i <= 1'b0;
+      game_set_wb3.dat_i <= 16'b0;
+    end
+    else if (!game_set_wb3.stall_i && game_set_wb3.stb_o && !game_set_wb3.we_o) begin
+      game_set_wb3.ack_i <= 1'b1;
+
+      case (game_set_wb3.adr_o)
+        ROW_COLUMN_NUMBER_ADDR: game_set_wb3.dat_i <= game_setup_mem [ROW_COLUMN_NUMBER_REG_NUM]; 
+        MINE_NUM_ADDR:          game_set_wb3.dat_i <= game_setup_mem [MINE_NUM_REG_NUM]; 
+        TIMER_SECONDS_ADDR:     game_set_wb3.dat_i <= game_setup_mem [TIMER_SECONDS_REG_NUM]; 
+        FIELD_SIZE_ADDR:        game_set_wb3.dat_i <= game_setup_mem [FIELD_SIZE_REG_NUM]; 
+        BOARD_SIZE_ADDR:        game_set_wb3.dat_i <= game_setup_mem [BOARD_SIZE_REG_NUM]; 
+        BOARD_XPOS_ADDR:        game_set_wb3.dat_i <= game_setup_mem [BOARD_XPOS_REG_NUM]; 
+        BOARD_YPOS_ADDR:        game_set_wb3.dat_i <= game_setup_mem [BOARD_YPOS_REG_NUM]; 
+        GAMES_WON_ADDR:         game_set_wb3.dat_i <= game_setup_mem [GAMES_WON_REG_NUM]; 
+        GAMES_LOST_ADDR:        game_set_wb3.dat_i <= game_setup_mem [GAMES_LOST_REG_NUM]; 
+        default:                game_set_wb3.dat_i <= 16'hDEAD;
+      endcase
+    end
+    else begin
+      game_set_wb3.ack_i <= 1'b0;
+      game_set_wb3.dat_i <= 16'b0;
     end
   end 
 

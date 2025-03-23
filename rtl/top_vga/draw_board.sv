@@ -60,12 +60,14 @@ module draw_board (
     IDLE,
     READ_SETTINGS,
     DRAW
-  } state;
+  } board_state;
+
+
 
 
   always_ff @(posedge clk) begin
     if(rst)begin
-      state <= IDLE;
+      board_state <= IDLE;
       out.vcount  <= '0;
       out.vsync   <= '0;
       out.vblnk   <= '0;
@@ -87,10 +89,10 @@ module draw_board (
       out.hsync   <= in.hsync;
       out.hblnk   <= in.hblnk;
 
-      case(state)
+      case(board_state)
         IDLE: begin 
           burst_active <= 1'b0;
-          state <= main_state == PLAY ? READ_SETTINGS : IDLE;
+          board_state <= main_state == PLAY ? READ_SETTINGS : IDLE;
           read_en <= main_state == PLAY;
           read_addr <= 8'h0;
           out.rgb <= in.rgb;
@@ -98,7 +100,7 @@ module draw_board (
         READ_SETTINGS: begin
           burst_active <= 1'b1;
           read_en <= 1'b0;
-          state <= settings_read_ctr == SETTINGS_REG_NUM ? DRAW : READ_SETTINGS; 
+          board_state <= settings_read_ctr == SETTINGS_REG_NUM ? DRAW : READ_SETTINGS; 
 
           if (read_ready && settings_read_ctr < SETTINGS_REG_NUM) begin
             game_setup_cashe[settings_read_ctr] <= read_data;
@@ -110,13 +112,16 @@ module draw_board (
         DRAW: begin 
           burst_active <= 1'b0;
           read_en <= 1'b0;
-          state <= main_state == GAME_OVER ? IDLE : DRAW;
+          board_state <= main_state == GAME_OVER ? IDLE : DRAW;
           out.rgb <= draw_button();
         end
-        default: state <= IDLE;
+        default: board_state <= IDLE;
       endcase
     end
   end
+
+  // Auto read logic
+  // TODO
 
   wishbone_master u_wishbone_master (
     .clk         (clk),

@@ -12,9 +12,9 @@ module top_memory (
   input wire clk40MHz,
   input wire rst,
 
-  wishbone_if.slave write1_if,
-  wishbone_if.slave write2_if,
-  wishbone_if.slave read_if
+  wishbone_if.master write1_wb,
+  wishbone_if.master write2_wb,
+  wishbone_if.slave read_wb
 );
 
 wishbone_if write_if();
@@ -26,7 +26,7 @@ wishbone_board_mem #(
 u_wishbone_board_mem (
   .clk     (clk100MHz),
   .rst     (rst),
-  .slave_rd(read_if),
+  .slave_rd(read_wb),
   .slave_wr(write_if.slave)
 );
 
@@ -34,9 +34,9 @@ wishbone_arbiter u_wishbone_arbiter (
   .clk     (clk100MHz),
   .rst     (rst),
 
-  .master_0(write1_if),
-  .master_1(write2_if),
-  .slave_if(write_if.master)
+  .master_prior(write1_wb),
+  .master_2(write2_wb),
+  .slave_if(write_if.slave)
 );
   
 endmodule
