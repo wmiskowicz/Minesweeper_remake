@@ -1,6 +1,6 @@
 interface wishbone_if (
-  input logic CLK_I, 
-  input logic RST_I
+  // input logic CLK_I, 
+  // input logic RST_I
 );
 
   logic [15:0] dat_i;   // Data input to master

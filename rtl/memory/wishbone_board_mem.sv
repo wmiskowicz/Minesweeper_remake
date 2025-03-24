@@ -9,7 +9,6 @@ module wishbone_board_mem #(
   wishbone_if.slave slave_rd
 );
 
-  (* ram_style = "block" *)
   field_t board_mem [15:0][15:0];
 
   logic [3:0] row_w;

@@ -140,6 +140,7 @@ defuser u_defuser (
   .rst              (rst),
 
   .planting_complete(planting_complete),
+  .main_state       (main_state),
 
   .mouse_xpos       (mouse_xpos),
   .mouse_ypos       (mouse_ypos),

@@ -19,14 +19,19 @@ module defuser_tb;
   wishbone_if defuser_game_board_wb();
 
   reg [15:0] settings_mem [0:SETTINGS_REG_NUM-1];
-  reg [7:0]  board_mem     [15:0][15:0];
+  reg [7:0]  board_mem    [15:0][15:0];
 
   enum logic [2:0] {
     IDLE,
     READ_SETTINGS,
     READ_BOARD,
-    DEFUSE
+    DONE
   } defuser_state;
+
+  enum logic [1:0] {
+    WAIT,
+    AUTO_WRITE
+  } auto_write_state;
 
   initial begin
 
@@ -51,11 +56,15 @@ module defuser_tb;
   defuser dut (
     .clk              (clk),
     .rst              (rst),
+
     .planting_complete(planting_complete),
+    .main_state(PLAY),
+
     .mouse_xpos       (mouse_xpos),
     .mouse_ypos       (mouse_ypos),
     .left             (left),
     .right            (right),
+
     .game_set_wb      (defuser_game_set_wb.master),
     .game_board_wb    (defuser_game_board_wb.master)
   );
@@ -75,6 +84,10 @@ module defuser_tb;
       defuser_game_board_wb.ack_i <= 1'b1;
       defuser_game_board_wb.dat_i <= {8'h00, board_mem[defuser_game_board_wb.adr_o[7:4]][defuser_game_board_wb.adr_o[3:0]]};
     end
+    else if ((defuser_game_board_wb.stb_o && defuser_game_board_wb.cyc_o && defuser_game_board_wb.we_o)) begin
+      defuser_game_board_wb.ack_i <= 1'b1;
+      board_mem[defuser_game_board_wb.adr_o[7:4]][defuser_game_board_wb.adr_o[3:0]] <= defuser_game_board_wb.dat_o[7:0];
+    end
   end
 
   initial begin
@@ -90,20 +103,26 @@ module defuser_tb;
     `log_info($sformatf("Starting test at, %t", $time));
     WaitClocks(50);
     planting_complete = 1'b1;
-    WaitClocks(400);
-    `check_eq(dut.defuser_state, IDLE);
+    wait(dut.defuser_state == DONE);
+    `check_eq(dut.board_ready, 1'b1);
 
     for (int i = 0; i < SETTINGS_REG_NUM; i++)
       `check_eq(dut.game_setup_cashe[i], settings_mem[i]);
-    for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++)
-        `check_eq(dut.game_board_mem[i][j], board_mem[i][j]);
 
-    mouse_xpos = 12'd5;
-    mouse_ypos = 12'd5;
-    left = 1'b1;
-    WaitClocks(2);
-    left = 1'b0;
+    for (int i = 0; i < 16; i++)
+      for (int j = 0; j < 16; j++) begin
+        `log_info($sformatf("i = %d, j=%d", i, j));
+        `check_eq(dut.game_board_mem[i][j], board_mem[i][j]);
+      end
+
+    // WaitClocks(2_000_000);
+    wait(dut.auto_write_state == AUTO_WRITE);
+    wait(dut.auto_write_state == WAIT);
+    for (int i = 0; i < 16; i++)
+      for (int j = 0; j < 16; j++) begin
+        `log_info($sformatf("i = %d, j=%d", i, j));
+        `check_eq(dut.game_board_mem[i][j], board_mem[i][j]);
+      end
     WaitClocks(10);
     #50 $finish;
   end

@@ -56,6 +56,7 @@ set sv_files {
     ../rtl/top_vga/vga_out.sv
     ../rtl/top_vga/vga_pkg.sv
     ../rtl/top_vga/vga_timing.sv
+    ../rtl/z_game_setup/defuser.sv
     ../rtl/z_game_setup/game_pkg.sv
     ../rtl/z_game_setup/lfsr.sv
     ../rtl/z_game_setup/main_fsm.sv

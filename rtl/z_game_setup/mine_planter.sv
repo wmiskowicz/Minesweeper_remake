@@ -18,7 +18,6 @@ module mine_planter (
     wishbone_if.master game_board_wb
   );
 
-  (* ram_style = "block" *)
   logic mine_map[15:0][15:0];
   logic current_field_mine;
 
