@@ -38,10 +38,10 @@
     .right(right),
     .new_event(),
     .value(12'd100),
-    .setx(0),
-    .sety(0),
-    .setmax_x(0),
-    .setmax_y(0)
+    .setx('0),
+    .sety('0),
+    .setmax_x('0),
+    .setmax_y('0)
  );
 
 

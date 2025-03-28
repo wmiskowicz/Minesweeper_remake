@@ -25,7 +25,6 @@ module mine_planter (
   logic [15:0] row_col_num;
   logic [15:0] mines_left;
 
-  logic [3:0]  din_x, din_y;
   logic [3:0]  ind_x, ind_y;
 
   logic settings_burst_active;
@@ -34,7 +33,7 @@ module mine_planter (
   logic [15:0] settings_read_data;
   logic [7:0]  settings_read_addr;
 
-  logic [7:0]  game_write_addr;
+  logic [8:0]  game_write_addr;
   logic [15:0] game_write_data;
   logic game_write_en;
   logic game_write_ready;
@@ -66,7 +65,7 @@ module mine_planter (
       mines_left  <= 16'b0;
 
       game_burst_active <= 1'b0;
-      game_write_addr   <= 8'h0;
+      game_write_addr   <= 9'h0;
     end
     else begin
       case (planter_state)
@@ -81,7 +80,7 @@ module mine_planter (
             for (int j = 0; j < 16; j++)  mine_map[i][j] <= 1'b0;
 
           settings_read_addr <= 8'b0;
-          game_write_addr    <= 8'h0;
+          game_write_addr    <= 9'h0;
           row_col_num        <= 16'b1;
           planting_complete  <= 1'b0;
         end
@@ -113,18 +112,18 @@ module mine_planter (
             planter_state <= WRITE_BOARD;
             game_burst_active <= 1'b1;
             game_write_en     <= 1'b1;
-            game_write_addr   <= 8'h0;
+            game_write_addr   <= 9'h0;
           end
         end
         WRITE_BOARD: begin
           game_write_en   <= 1'b0;
 
           if (game_write_ready) begin
-            game_write_addr <= game_write_addr + 8'd2;
+            game_write_addr <= game_write_addr + 8'd1;
             game_write_en   <= 1'b1;
           end
 
-          if (game_write_addr == 8'hFE) begin
+          if (game_write_addr == 9'h100) begin
             game_write_en   <= 1'b0;
             game_burst_active <= 1'b0;
             planter_state <= DONE;
@@ -144,7 +143,7 @@ module mine_planter (
   logic [17:0] din0, dout0;
   logic [16:0] din1, dout1;
   logic [15:0] din2, dout2;
-  logic signed [18:0] dout=0;
+  logic signed [18:0] dout;
 
   lfsr #(.WIDTH(18)) lfsr0 (.datain(din0), .dataout(dout0));
   lfsr #(.WIDTH(17)) lfsr1 (.datain(din1), .dataout(dout1));
@@ -154,7 +153,7 @@ module mine_planter (
   assign ind_y = dout[7:4] % row_col_num;
 
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       din0 <= 18'b1;
       din1 <= 17'b1;
@@ -200,7 +199,7 @@ module mine_planter (
     .read_ready  (),
     .burst_active(game_burst_active),
 
-    .write_addr  (game_write_addr),
+    .write_addr  (game_write_addr[7:0]),
     .write_data  (game_write_data),
     .write_en    (game_write_en),
     .write_ready (game_write_ready),

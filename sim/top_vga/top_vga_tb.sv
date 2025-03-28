@@ -45,6 +45,12 @@ logic clk, rst;
 wire vs, hs;
 wire [3:0] r, g, b;
 
+enum logic [2:0] {
+    IDLE,
+    READ_SETTINGS,
+    DRAW
+  } board_state;
+
 
 /**
  * Clock generation
@@ -91,6 +97,7 @@ tiff_writer #(
 
 initial begin
     InitReset();
+
 
     $display("If simulation ends before the testbench");
     $display("completes, use the menu option to run all.");

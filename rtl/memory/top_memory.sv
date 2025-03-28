@@ -14,10 +14,10 @@ module top_memory (
 
   wishbone_if.master write1_wb,
   wishbone_if.master write2_wb,
-  wishbone_if.slave read_wb
+  wishbone_if.master read_wb
 );
 
-wishbone_if write_if();
+wishbone_if selected_wb_if();
 
 
 wishbone_board_mem #(
@@ -26,17 +26,17 @@ wishbone_board_mem #(
 u_wishbone_board_mem (
   .clk     (clk100MHz),
   .rst     (rst),
-  .slave_rd(read_wb),
-  .slave_wr(write_if.slave)
+  .slave(selected_wb_if.slave)
 );
 
 wishbone_arbiter u_wishbone_arbiter (
   .clk     (clk100MHz),
   .rst     (rst),
 
-  .master_prior(write1_wb),
-  .master_2(write2_wb),
-  .slave_if(write_if.slave)
+  .master_prior (write1_wb),
+  .master_2     (write2_wb),
+  .master_3     (read_wb),
+  .slave_if     (selected_wb_if.slave)
 );
   
 endmodule

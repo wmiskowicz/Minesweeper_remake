@@ -74,10 +74,10 @@ module defuser (
   logic board_ready;
 
 
-  assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_ypos < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
+  assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] && mouse_ypos < game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
   assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_xpos < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
 
-  assign mouse_board_ind_y = mouse_ypos_valid && mouse_xpos_valid ? mouse_ypos - game_setup_cashe[BOARD_XPOS_REG_NUM] : 5'h1_f;
+  assign mouse_board_ind_y = mouse_ypos_valid && mouse_xpos_valid ? mouse_ypos - game_setup_cashe[BOARD_YPOS_REG_NUM] : 5'h1_f;
   assign mouse_board_ind_x = mouse_ypos_valid && mouse_xpos_valid ? mouse_xpos - game_setup_cashe[BOARD_XPOS_REG_NUM] : 5'h1_f;
 
   assign game_burst_active = game_burst_write || game_burst_read;

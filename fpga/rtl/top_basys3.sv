@@ -14,7 +14,7 @@
 
 `timescale 1 ns / 1 ps
 
-module top_vga_basys3 (
+module top_basys3 (
     input  wire       clk,
     input  wire       btnD,
     input  wire       btnL,
@@ -85,7 +85,7 @@ wishbone_if vga_set_wb_if();
 
  clk_wiz_1 clk0_wiz(
   .clk      (clk),
-  .reset    (rst),
+  .reset    (1'b0),
   .locked   (locked),
   .clk100MHz(clk100MHz),
   .clk74MHz (clk74MHz),
@@ -130,13 +130,13 @@ top_memory u_top_memory (
   .clk74MHz (clk74MHz),
   .rst      (rst),
 
-  .read_wb  (vga_board_wb_if.slave),
+  .read_wb  (vga_board_wb_if.master),
   .write1_wb(planter_board_wb_if.master),
   .write2_wb(defuser_board_wb_if.master)
 );
 
 defuser u_defuser (
-  .clk              (clk),
+  .clk              (clk100MHz),
   .rst              (rst),
 
   .planting_complete(planting_complete),
@@ -154,7 +154,7 @@ defuser u_defuser (
 
 
 mine_planter u_mine_planter (
-  .clk          (clk),
+  .clk          (clk100MHz),
   .rst          (rst),
 
   .main_state   (main_state),

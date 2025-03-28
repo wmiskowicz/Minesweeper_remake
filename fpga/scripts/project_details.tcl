@@ -44,6 +44,7 @@ set sv_files {
     ../rtl/timer/bin2bcd.sv
     ../rtl/timer/time_controller.sv
     ../rtl/timer/top_timer.sv
+    ../rtl/top_vga/animation_controller.sv
     ../rtl/top_vga/char_pos_conv.sv
     ../rtl/top_vga/color_pkg.sv
     ../rtl/top_vga/draw_back_objects.sv
@@ -61,7 +62,7 @@ set sv_files {
     ../rtl/z_game_setup/lfsr.sv
     ../rtl/z_game_setup/main_fsm.sv
     ../rtl/z_game_setup/mine_planter.sv
-    rtl/top_vga_basys3.sv
+    rtl/top_basys3.sv
 }
 
 # Specify Verilog design files location

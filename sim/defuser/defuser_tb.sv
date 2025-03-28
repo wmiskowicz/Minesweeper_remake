@@ -124,6 +124,15 @@ module defuser_tb;
         `check_eq(dut.game_board_mem[i][j], board_mem[i][j]);
       end
     WaitClocks(10);
+
+    mouse_xpos = M_BOARD_XPOS + 20;
+    mouse_ypos = M_BOARD_YPOS + 20;
+    left = 1'b1;
+    WaitClocks(1);
+    left = 1'b0;
+
+    WaitClocks(100);
+    `check_eq(dut.game_board_mem[0][0].defused, 1'b1);
     #50 $finish;
   end
 
