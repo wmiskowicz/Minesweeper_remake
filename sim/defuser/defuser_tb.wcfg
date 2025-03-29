@@ -15,53 +15,319 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000000000 ms"></ZoomStartTime>
-      <ZoomEndTime time="70.800000001 ms"></ZoomEndTime>
-      <Cursor1Time time="50.028037500 ms"></Cursor1Time>
+      <ZoomStartTime time="15,494,182.906 ns"></ZoomStartTime>
+      <ZoomEndTime time="15,496,734.907 ns"></ZoomEndTime>
+      <Cursor1Time time="15,495,282.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="154"></ValueColumnWidth>
+      <ValueColumnWidth column_width="136"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="10" />
+   <WVObjectSize size="12" />
    <wvobject fp_name="/defuser_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
+   <wvobject fp_name="/defuser_tb/left" type="logic">
+      <obj_property name="ElementShortName">left</obj_property>
+      <obj_property name="ObjectShortName">left</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/right" type="logic">
+      <obj_property name="ElementShortName">right</obj_property>
+      <obj_property name="ObjectShortName">right</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/mouse_xpos_valid" type="logic">
+      <obj_property name="ElementShortName">mouse_xpos_valid</obj_property>
+      <obj_property name="ObjectShortName">mouse_xpos_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/mouse_ypos_valid" type="logic">
+      <obj_property name="ElementShortName">mouse_ypos_valid</obj_property>
+      <obj_property name="ObjectShortName">mouse_ypos_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/mouse_board_ind_x" type="array">
+      <obj_property name="ElementShortName">mouse_board_ind_x[3:0]</obj_property>
+      <obj_property name="ObjectShortName">mouse_board_ind_x[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/mouse_board_ind_y" type="array">
+      <obj_property name="ElementShortName">mouse_board_ind_y[3:0]</obj_property>
+      <obj_property name="ObjectShortName">mouse_board_ind_y[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/col_ctr" type="array">
+      <obj_property name="ElementShortName">col_ctr[3:0]</obj_property>
+      <obj_property name="ObjectShortName">col_ctr[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/row_ctr" type="array">
+      <obj_property name="ElementShortName">row_ctr[3:0]</obj_property>
+      <obj_property name="ObjectShortName">row_ctr[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/game_board_mem" type="array">
+      <obj_property name="ElementShortName">game_board_mem[15:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_board_mem[15:0][15:0]</obj_property>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[15]" type="array">
+         <obj_property name="ElementShortName">[15][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[14]" type="array">
+         <obj_property name="ElementShortName">[14][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][15:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][15]" type="array">
+            <obj_property name="ElementShortName">[15]</obj_property>
+            <obj_property name="ObjectShortName">[15]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][14]" type="array">
+            <obj_property name="ElementShortName">[14]</obj_property>
+            <obj_property name="ObjectShortName">[14]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][13]" type="array">
+            <obj_property name="ElementShortName">[13]</obj_property>
+            <obj_property name="ObjectShortName">[13]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][12]" type="array">
+            <obj_property name="ElementShortName">[12]</obj_property>
+            <obj_property name="ObjectShortName">[12]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][11]" type="array">
+            <obj_property name="ElementShortName">[11]</obj_property>
+            <obj_property name="ObjectShortName">[11]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][10]" type="array">
+            <obj_property name="ElementShortName">[10]</obj_property>
+            <obj_property name="ObjectShortName">[10]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][9]" type="array">
+            <obj_property name="ElementShortName">[9]</obj_property>
+            <obj_property name="ObjectShortName">[9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][8]" type="array">
+            <obj_property name="ElementShortName">[8]</obj_property>
+            <obj_property name="ObjectShortName">[8]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][7]" type="array">
+            <obj_property name="ElementShortName">[7]</obj_property>
+            <obj_property name="ObjectShortName">[7]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][6]" type="array">
+            <obj_property name="ElementShortName">[6]</obj_property>
+            <obj_property name="ObjectShortName">[6]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][5]" type="array">
+            <obj_property name="ElementShortName">[5]</obj_property>
+            <obj_property name="ObjectShortName">[5]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][4]" type="array">
+            <obj_property name="ElementShortName">[4]</obj_property>
+            <obj_property name="ObjectShortName">[4]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][3]" type="array">
+            <obj_property name="ElementShortName">[3]</obj_property>
+            <obj_property name="ObjectShortName">[3]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][2]" type="array">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">[2]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][1]" type="array">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">[1]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][0]" type="array">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">[0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][15]" type="array">
+            <obj_property name="ElementShortName">[15]</obj_property>
+            <obj_property name="ObjectShortName">[15]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][14]" type="array">
+            <obj_property name="ElementShortName">[14]</obj_property>
+            <obj_property name="ObjectShortName">[14]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][13]" type="array">
+            <obj_property name="ElementShortName">[13]</obj_property>
+            <obj_property name="ObjectShortName">[13]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][12]" type="array">
+            <obj_property name="ElementShortName">[12]</obj_property>
+            <obj_property name="ObjectShortName">[12]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][11]" type="array">
+            <obj_property name="ElementShortName">[11]</obj_property>
+            <obj_property name="ObjectShortName">[11]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][10]" type="array">
+            <obj_property name="ElementShortName">[10]</obj_property>
+            <obj_property name="ObjectShortName">[10]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][9]" type="array">
+            <obj_property name="ElementShortName">[9]</obj_property>
+            <obj_property name="ObjectShortName">[9]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][8]" type="array">
+            <obj_property name="ElementShortName">[8]</obj_property>
+            <obj_property name="ObjectShortName">[8]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][7]" type="array">
+            <obj_property name="ElementShortName">[7]</obj_property>
+            <obj_property name="ObjectShortName">[7]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][6]" type="array">
+            <obj_property name="ElementShortName">[6]</obj_property>
+            <obj_property name="ObjectShortName">[6]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][5]" type="array">
+            <obj_property name="ElementShortName">[5]</obj_property>
+            <obj_property name="ObjectShortName">[5]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][4]" type="array">
+            <obj_property name="ElementShortName">[4]</obj_property>
+            <obj_property name="ObjectShortName">[4]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][3]" type="array">
+            <obj_property name="ElementShortName">[3]</obj_property>
+            <obj_property name="ObjectShortName">[3]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][2]" type="array">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">[2]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][1]" type="array">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">[1]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/defuser_tb/dut/game_board_mem[14][0]" type="array">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">[0]</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[13]" type="array">
+         <obj_property name="ElementShortName">[13][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[12]" type="array">
+         <obj_property name="ElementShortName">[12][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[11]" type="array">
+         <obj_property name="ElementShortName">[11][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[10]" type="array">
+         <obj_property name="ElementShortName">[10][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[9]" type="array">
+         <obj_property name="ElementShortName">[9][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[8]" type="array">
+         <obj_property name="ElementShortName">[8][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[7]" type="array">
+         <obj_property name="ElementShortName">[7][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[6]" type="array">
+         <obj_property name="ElementShortName">[6][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[5]" type="array">
+         <obj_property name="ElementShortName">[5][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[4]" type="array">
+         <obj_property name="ElementShortName">[4][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[15]" type="array">
+         <obj_property name="ElementShortName">[15][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[14]" type="array">
+         <obj_property name="ElementShortName">[14][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[13]" type="array">
+         <obj_property name="ElementShortName">[13][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[12]" type="array">
+         <obj_property name="ElementShortName">[12][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[11]" type="array">
+         <obj_property name="ElementShortName">[11][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[10]" type="array">
+         <obj_property name="ElementShortName">[10][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[9]" type="array">
+         <obj_property name="ElementShortName">[9][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[8]" type="array">
+         <obj_property name="ElementShortName">[8][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[7]" type="array">
+         <obj_property name="ElementShortName">[7][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[6]" type="array">
+         <obj_property name="ElementShortName">[6][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[5]" type="array">
+         <obj_property name="ElementShortName">[5][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[4]" type="array">
+         <obj_property name="ElementShortName">[4][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/defuser_tb/dut/game_board_mem[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+      </wvobject>
+   </wvobject>
    <wvobject fp_name="/defuser_tb/dut/defuser_state" type="array">
-      <obj_property name="ElementShortName">defuser_state[2:0]</obj_property>
-      <obj_property name="ObjectShortName">defuser_state[2:0]</obj_property>
+      <obj_property name="ElementShortName">defuser_state[3:0]</obj_property>
+      <obj_property name="ObjectShortName">defuser_state[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/defuser_tb/dut/auto_write_state" type="array">
-      <obj_property name="ElementShortName">auto_write_state[1:0]</obj_property>
-      <obj_property name="ObjectShortName">auto_write_state[1:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/dut/timing_ctr" type="array">
-      <obj_property name="ElementShortName">timing_ctr[19:0]</obj_property>
-      <obj_property name="ObjectShortName">timing_ctr[19:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/defuser_game_board_wb/dat_o" type="array">
-      <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/defuser_game_board_wb/adr_o" type="array">
-      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/defuser_game_board_wb/we_o" type="logic">
-      <obj_property name="ElementShortName">we_o</obj_property>
-      <obj_property name="ObjectShortName">we_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/defuser_game_board_wb/stb_o" type="logic">
-      <obj_property name="ElementShortName">stb_o</obj_property>
-      <obj_property name="ObjectShortName">stb_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/defuser_game_board_wb/ack_i" type="logic">
-      <obj_property name="ElementShortName">ack_i</obj_property>
-      <obj_property name="ObjectShortName">ack_i</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/defuser_game_board_wb/cyc_o" type="logic">
-      <obj_property name="ElementShortName">cyc_o</obj_property>
-      <obj_property name="ObjectShortName">cyc_o</obj_property>
+   <wvobject fp_name="/defuser_tb/dut/count_en" type="logic">
+      <obj_property name="ElementShortName">count_en</obj_property>
+      <obj_property name="ObjectShortName">count_en</obj_property>
    </wvobject>
 </wave_config>

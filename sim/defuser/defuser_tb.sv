@@ -19,7 +19,7 @@ module defuser_tb;
   wishbone_if defuser_game_board_wb();
 
   reg [15:0] settings_mem [0:SETTINGS_REG_NUM-1];
-  reg [7:0]  board_mem    [15:0][15:0];
+  field_t  board_mem    [15:0][15:0];
 
   enum logic [2:0] {
     IDLE,
@@ -44,8 +44,12 @@ module defuser_tb;
     settings_mem[BOARD_YPOS_REG_NUM]        = M_BOARD_YPOS;
 
     for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++)
-        board_mem[i][j] = i*16 + j;
+      for (int j = 0; j < 16; j++) begin
+        board_mem[i][j] = 8'h0;
+        board_mem[i][j].mine = ((i*16 + j) % 4) == 2;
+        board_mem[i][j].flag = ((i*16 + j) % 4) == 2;
+        board_mem[i][j].defused = !board_mem[i][j].mine;
+      end
   end
 
   initial begin
@@ -128,11 +132,11 @@ module defuser_tb;
     mouse_xpos = M_BOARD_XPOS + 20;
     mouse_ypos = M_BOARD_YPOS + 20;
     left = 1'b1;
-    WaitClocks(1);
+    WaitClocks(2);
     left = 1'b0;
 
-    WaitClocks(100);
-    `check_eq(dut.game_board_mem[0][0].defused, 1'b1);
+    WaitClocks(1000);
+    `check_eq(dut.game_won, 1'b1);
     #50 $finish;
   end
 

@@ -55,8 +55,8 @@ logic [1:0] level;
 wire planting_complete;
 wire left;
 wire right;
-wire game_set_wb;
-wire game_board_wb;
+wire game_lost;
+wire game_won;
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
@@ -148,6 +148,9 @@ defuser u_defuser (
   .left             (left),
   .right            (right),
 
+  .game_lost        (game_lost),
+  .game_won         (game_won),
+
   .game_board_wb    (defuser_board_wb_if.master),
   .game_set_wb      (defuser_set_wb_if.master)
 );
@@ -181,8 +184,8 @@ main_fsm u_main_fsm (
   .rst       (rst),
   .level     (level),
 
-  .game_lost (1'b0),
-  .game_won  (1'b0),
+  .game_lost (game_lost),
+  .game_won  (game_won),
   .retry     (1'b0),
   .timer_stop(1'b0),
 

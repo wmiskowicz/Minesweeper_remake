@@ -48,5 +48,9 @@ module board_mem_tb;
       $display("[TEST] TC002 - Another test case");
     end
 
+    `TEST_CASE("TC005") begin
+    $display("[TEST] TC005 - Another test case");
+    end
+
   `TEST_SUITE_END
 endmodule
