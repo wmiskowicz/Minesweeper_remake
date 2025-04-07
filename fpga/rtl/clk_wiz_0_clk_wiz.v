@@ -135,25 +135,25 @@ wire clk_in2_clk_wiz_1;
 
   MMCME2_ADV
   #(.BANDWIDTH            ("OPTIMIZED"),
-    .CLKOUT4_CASCADE      ("FALSE"),
+    .CLKOUT4_CASCADE      (0),
     .COMPENSATION         ("ZHOLD"),
-    .STARTUP_WAIT         ("FALSE"),
+    .STARTUP_WAIT         (0),
     .DIVCLK_DIVIDE        (1),
     .CLKFBOUT_MULT_F      (11.125),
     .CLKFBOUT_PHASE       (0.000),
-    .CLKFBOUT_USE_FINE_PS ("FALSE"),
+    .CLKFBOUT_USE_FINE_PS (0),
     .CLKOUT0_DIVIDE_F     (11.125),
     .CLKOUT0_PHASE        (0.000),
     .CLKOUT0_DUTY_CYCLE   (0.500),
-    .CLKOUT0_USE_FINE_PS  ("FALSE"),
+    .CLKOUT0_USE_FINE_PS  (0),
     .CLKOUT1_DIVIDE       (15),
     .CLKOUT1_PHASE        (0.000),
     .CLKOUT1_DUTY_CYCLE   (0.500),
-    .CLKOUT1_USE_FINE_PS  ("FALSE"),
+    .CLKOUT1_USE_FINE_PS  (0),
     .CLKOUT2_DIVIDE       (28),
     .CLKOUT2_PHASE        (0.000),
     .CLKOUT2_DUTY_CYCLE   (0.500),
-    .CLKOUT2_USE_FINE_PS  ("FALSE"),
+    .CLKOUT2_USE_FINE_PS  (0),
     .CLKIN1_PERIOD        (10.000))
   mmcm_adv_inst
     // Output clocks

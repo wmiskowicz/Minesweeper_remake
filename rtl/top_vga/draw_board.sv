@@ -6,6 +6,7 @@
  Description:   Implements module for drawing game board.
  */
 //////////////////////////////////////////////////////////////////////////////
+ `include "../memory/wishbone_defs.svh"
 module draw_board (
     input  wire  clk,
     input  wire  rst,
@@ -164,7 +165,7 @@ module draw_board (
     else begin
       case (auto_read_state)
         WAIT: begin
-          if (in.vcount == 10) begin //(in.vcount == VCOUNT_MAX - 1 && in.hcount < 10) begin
+          if (in.vcount == 3 && in.hcount < 10) begin //(in.vcount == VCOUNT_MAX - 1 && in.hcount < 10) begin
             auto_read_state <= AUTO_READ;
 
             game_burst_active <= 1'b1;

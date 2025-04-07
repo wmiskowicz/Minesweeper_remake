@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_memory_logic_tb.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_wishbone_if_sv_690282801 " />
+            <top_module name="color_pkg" />
+            <top_module name="game_pkg" />
+            <top_module name="glbl" />
+            <top_module name="logger_pkg" />
+            <top_module name="top_memory_logic_tb" />
+            <top_module name="vga_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="52,089.318 ns"></ZoomStartTime>
+      <ZoomEndTime time="54,605.319 ns"></ZoomEndTime>
+      <Cursor1Time time="50,000.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="404"></NameColumnWidth>
+      <ValueColumnWidth column_width="154"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="15" />
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/u_wishbone_board_mem/board_mem" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">board_mem[15:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">board_mem[15:0][15:0]</obj_property>
+      <obj_property name="label">central_board_mem[15:0][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">game_board_mem[15:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_board_mem[15:0][15:0]</obj_property>
+      <obj_property name="label">draw_game_board[15:0][15:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[15]" type="array">
+         <obj_property name="ElementShortName">[15][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[14]" type="array">
+         <obj_property name="ElementShortName">[14][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[13]" type="array">
+         <obj_property name="ElementShortName">[13][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[12]" type="array">
+         <obj_property name="ElementShortName">[12][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[11]" type="array">
+         <obj_property name="ElementShortName">[11][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[10]" type="array">
+         <obj_property name="ElementShortName">[10][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[9]" type="array">
+         <obj_property name="ElementShortName">[9][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[8]" type="array">
+         <obj_property name="ElementShortName">[8][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[7]" type="array">
+         <obj_property name="ElementShortName">[7][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[6]" type="array">
+         <obj_property name="ElementShortName">[6][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[5]" type="array">
+         <obj_property name="ElementShortName">[5][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[4]" type="array">
+         <obj_property name="ElementShortName">[4][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][15:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[15]" type="array">
+         <obj_property name="ElementShortName">[15][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[14]" type="array">
+         <obj_property name="ElementShortName">[14][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[13]" type="array">
+         <obj_property name="ElementShortName">[13][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[12]" type="array">
+         <obj_property name="ElementShortName">[12][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[11]" type="array">
+         <obj_property name="ElementShortName">[11][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[10]" type="array">
+         <obj_property name="ElementShortName">[10][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[9]" type="array">
+         <obj_property name="ElementShortName">[9][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[8]" type="array">
+         <obj_property name="ElementShortName">[8][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[7]" type="array">
+         <obj_property name="ElementShortName">[7][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[6]" type="array">
+         <obj_property name="ElementShortName">[6][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[5]" type="array">
+         <obj_property name="ElementShortName">[5][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[4]" type="array">
+         <obj_property name="ElementShortName">[4][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_mem[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/write1_wb/stall_i" type="logic">
+      <obj_property name="ElementShortName">stall_i</obj_property>
+      <obj_property name="ObjectShortName">stall_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/write2_wb/stall_i" type="logic">
+      <obj_property name="ElementShortName">stall_i</obj_property>
+      <obj_property name="ObjectShortName">stall_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/auto_read_state" type="array">
+      <obj_property name="ElementShortName">auto_read_state[1:0]</obj_property>
+      <obj_property name="ObjectShortName">auto_read_state[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/read_wb/stall_i" type="logic">
+      <obj_property name="ElementShortName">stall_i</obj_property>
+      <obj_property name="ObjectShortName">stall_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/write1_wb/cyc_o" type="logic">
+      <obj_property name="ElementShortName">cyc_o</obj_property>
+      <obj_property name="ObjectShortName">cyc_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/write2_wb/cyc_o" type="logic">
+      <obj_property name="ElementShortName">cyc_o</obj_property>
+      <obj_property name="ObjectShortName">cyc_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/read_wb/cyc_o" type="logic">
+      <obj_property name="ElementShortName">cyc_o</obj_property>
+      <obj_property name="ObjectShortName">cyc_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_memory/read_wb/dat_i" type="array">
+      <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_wb/ack_i" type="logic">
+      <obj_property name="ElementShortName">ack_i</obj_property>
+      <obj_property name="ObjectShortName">ack_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_board_wb/stall_i" type="logic">
+      <obj_property name="ElementShortName">stall_i</obj_property>
+      <obj_property name="ObjectShortName">stall_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_read_data" type="array">
+      <obj_property name="ElementShortName">game_read_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_read_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/game_read_ready" type="logic">
+      <obj_property name="ElementShortName">game_read_ready</obj_property>
+      <obj_property name="ObjectShortName">game_read_ready</obj_property>
+   </wvobject>
+</wave_config>

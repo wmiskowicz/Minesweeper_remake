@@ -2,8 +2,7 @@
 /*
  Module name:   top_mouse
  Author:        Wojciech Miskowicz
- Last modified: 2023-06-25
- Description:  Top module for mouse signals
+ Description:   Top module for mouse peripherial.
  */
 //////////////////////////////////////////////////////////////////////////////
 
@@ -11,11 +10,12 @@
 
  module top_mouse (
      input  wire clk100MHz,
-     input  wire clk40MHz,
      input  wire clk74MHz,
      input  wire rst,
+
      inout  ps2_clk,
      inout  ps2_data,
+
      output logic right,
      output logic left,
      output logic [11:0] mouse_xpos,
@@ -25,6 +25,8 @@
  wire [11:0] xpos_in;
  wire [11:0] ypos_in;
 
+ wire left_in, right_in;
+
  MouseCtl u_MouseCtl(
     .clk(clk100MHz),
     .rst,
@@ -33,9 +35,9 @@
     .ps2_clk,
     .ps2_data,
     .zpos(),
-    .left(left),
+    .left(left_in),
     .middle(),
-    .right(right),
+    .right(right_in),
     .new_event(),
     .value(12'd100),
     .setx('0),
@@ -50,8 +52,14 @@
    .slow_clk     (clk74MHz),
    .clk100MHz    (clk100MHz),
    .rst     (rst),
+
    .xpos_in (xpos_in),
    .ypos_in (ypos_in),
+   .left_in(left_in),
+   .right_in(right_in),
+
+   .left_out(left),
+   .right_out(right),
    .xpos_out(mouse_xpos),
    .ypos_out(mouse_ypos)
  );

@@ -13,6 +13,8 @@ module mine_planter_tb;
 
   logic clk;
   logic rst;
+  logic planting_complete;
+
 
   logic [2:0] main_state;
 
@@ -40,7 +42,9 @@ module mine_planter_tb;
 mine_planter dut (
   .clk          (clk),
   .rst          (rst),
-  .main_state   (main_state),
+
+  .main_state       (main_state),
+  .planting_complete(planting_complete),
 
   .game_board_wb(game_board_wb.master),
   .game_set_wb  (game_set_wb.master)

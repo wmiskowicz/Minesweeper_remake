@@ -63,6 +63,7 @@ set sv_files {
     ../rtl/z_game_setup/main_fsm.sv
     ../rtl/z_game_setup/mine_planter.sv
     rtl/top_basys3.sv
+    rtl/top_memory_logic.sv
 }
 
 # Specify Verilog design files location

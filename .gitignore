@@ -106,3 +106,4 @@ images
 *.png
 *.jpg
 *vunit_out*
+*.cxl*

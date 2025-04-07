@@ -5,6 +5,7 @@
  Description:   Module for implementing Minesweeper defuse algorithm.
  */
 //////////////////////////////////////////////////////////////////////////////
+`include "../memory/wishbone_defs.svh"
 import game_pkg::*;
 
 module defuser (
@@ -20,8 +21,14 @@ module defuser (
     input logic left,
     input logic right,
 
+    output logic [3:0] mouse_board_ind_x,
+    output logic [3:0] mouse_board_ind_y,
+
     output logic game_lost,
     output logic game_won,
+
+    output logic mouse_xpos_valid,
+    output logic mouse_ypos_valid,
 
     wishbone_if.master game_set_wb,
     wishbone_if.master game_board_wb
@@ -76,21 +83,21 @@ module defuser (
   logic game_read_en;
   logic game_read_ready;
 
-  logic mouse_xpos_valid;
-  logic mouse_ypos_valid;
+  // logic mouse_xpos_valid;
+  // logic mouse_ypos_valid;
 
   logic [11:0] mouse_board_xpos;
   logic [11:0] mouse_board_ypos;
   
-  logic [3:0] mouse_board_ind_x;
-  logic [3:0] mouse_board_ind_y;
+  // logic [3:0] mouse_board_ind_x;
+  // logic [3:0] mouse_board_ind_y;
 
   logic [19:0] timing_ctr;
   logic board_ready;
 
 
-  assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] && mouse_ypos < game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
-  assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_xpos < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
+  assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM];// && mouse_ypos < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
+  assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM];// && mouse_xpos < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 
   assign mouse_board_ypos = mouse_ypos_valid && mouse_xpos_valid ? mouse_ypos - game_setup_cashe[BOARD_YPOS_REG_NUM] : 12'hFFF;
   assign mouse_board_xpos = mouse_ypos_valid && mouse_xpos_valid ? mouse_xpos - game_setup_cashe[BOARD_XPOS_REG_NUM] : 12'hFFF;
@@ -138,7 +145,7 @@ module defuser (
           read_en <= 1'b0;
           
           if (settings_read_ctr == SETTINGS_REG_NUM && !game_burst_write) begin
-            auto_read_state   <= READ_BOARD;
+            auto_read_state <= READ_BOARD;
             game_burst_read <= 1'b1;
             game_read_en    <= 1'b1;
             game_read_addr  <= 9'h00;
@@ -162,7 +169,7 @@ module defuser (
           if (game_read_addr == 9'h100) begin
             game_read_en    <= 1'b0;
             game_burst_read <= 1'b0;
-            auto_read_state   <= DONE;
+            auto_read_state <= DONE;
             board_ready     <= 1'b1;
           end
         end
@@ -326,8 +333,9 @@ module defuser (
           end
 
           game_won <= 1'b1;
-          for (int i = 0; i < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]; i++) begin
-            for (int j = 0; j < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]; j++) begin
+          for (int i = 0; i < 16; i++) begin
+            for (int j = 0; j < 16; j++) begin
+              if(i < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] && j < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM])
               if(!(game_board_mem[i][j].defused || (game_board_mem[i][j].mine && game_board_mem[i][j].flag))) begin
                 game_won <= 1'b0;
               end
@@ -335,7 +343,8 @@ module defuser (
           end
 
           defuser_state <= (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 && 
-                            col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) ? DEF_WIN_CHECK : DEFUSE;
+                            col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 || 
+                            game_won) ? DEF_WIN_CHECK : DEFUSE;
         end
 
         DEF_WIN_CHECK: defuser_state <= game_won ? DEF_IDLE : DEF_WAIT_FOR_MOUSE;

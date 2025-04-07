@@ -59,25 +59,25 @@ package logger_pkg;
   //Comparison macros
   `define check_eq(num1, num2) \
     assert (num1 === num2) else begin\
-      `log_err($sformatf("expected: %0h got %0h", num1, num2));  \
+      `log_err($sformatf("got: %0h expected %0h", num1, num2));  \
       $finish(); \
     end
 
   `define check_neq(num1, num2) \
     assert (num1 !== num2) else begin   \
-      `log_err($sformatf("expected: %0h got %0h", num1, num2)); \
+      `log_err($sformatf("got: %0h expected %0h", num1, num2)); \
       $finish();  \
     end
 
   `define check_greater(num1, num2) \
     assert (num1 > num2) else begin\
-      `log_err($sformatf("expected: %0h got %0h", num1, num2));  \
+      `log_err($sformatf("got: %0h expected %0h", num1, num2));  \
       $finish();  \
     end
   
   `define check_less(num1, num2) \
     assert (num1 < num2) else begin  \
-      `log_err($sformatf("expected: %0h got %0h", num1, num2)); \
+      `log_err($sformatf("got: %0h expected %0h", num1, num2)); \
       $finish(); \
     end
 

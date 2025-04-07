@@ -54,9 +54,9 @@ module main_fsm(
     if(rst)begin
       fsm_state <= MENU;
       state_out <= MENU;
-      game_set_wb1.stall_i <= 1'b1;
-      game_set_wb2.stall_i <= 1'b1;
-      game_set_wb3.stall_i <= 1'b1;
+      game_set_wb1.stall_i <= 1'b0;
+      game_set_wb2.stall_i <= 1'b0;
+      game_set_wb3.stall_i <= 1'b0;
       for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'b0;
     end
     else begin

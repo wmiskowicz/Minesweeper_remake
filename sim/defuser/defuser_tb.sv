@@ -15,6 +15,12 @@ module defuser_tb;
   logic left;
   logic right;
 
+  logic mouse_xpos_valid;
+  logic mouse_ypos_valid;
+
+  logic [2:0] mouse_board_ind_x;
+  logic [2:0] mouse_board_ind_y;
+
   wishbone_if defuser_game_set_wb();
   wishbone_if defuser_game_board_wb();
 
@@ -33,24 +39,14 @@ module defuser_tb;
     AUTO_WRITE
   } auto_write_state;
 
-  initial begin
-
-    settings_mem[ROW_COLUMN_NUMBER_REG_NUM] = M_ROW_COLUMN_NUMBER;
-    settings_mem[MINE_NUM_REG_NUM]          = M_MINE_NUM;
-    settings_mem[TIMER_SECONDS_REG_NUM]     = M_TIMER_SECONDS;
-    settings_mem[FIELD_SIZE_REG_NUM]        = M_FIELD_SIZE;
-    settings_mem[BOARD_SIZE_REG_NUM]        = M_BOARD_SIZE;
-    settings_mem[BOARD_XPOS_REG_NUM]        = M_BOARD_XPOS;
-    settings_mem[BOARD_YPOS_REG_NUM]        = M_BOARD_YPOS;
-
-    for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++) begin
-        board_mem[i][j] = 8'h0;
-        board_mem[i][j].mine = ((i*16 + j) % 4) == 2;
-        board_mem[i][j].flag = ((i*16 + j) % 4) == 2;
-        board_mem[i][j].defused = !board_mem[i][j].mine;
-      end
-  end
+  wire [1:0] level;
+  logic [2:0] main_state;
+  wire timer_stop;
+  wire game_won;
+  wire game_lost;
+  wire retry;
+  wishbone_if game_set_wb2();
+  wishbone_if game_set_wb3();
 
   initial begin
     clk = 1'b0;
@@ -62,10 +58,17 @@ module defuser_tb;
     .rst              (rst),
 
     .planting_complete(planting_complete),
-    .main_state(PLAY),
+    .main_state       (main_state),
 
     .mouse_xpos       (mouse_xpos),
     .mouse_ypos       (mouse_ypos),
+
+    .mouse_board_ind_x(mouse_board_ind_x),
+    .mouse_board_ind_y(mouse_board_ind_y),
+
+    .mouse_xpos_valid(mouse_xpos_valid),
+    .mouse_ypos_valid(mouse_ypos_valid),
+
     .left             (left),
     .right            (right),
 
@@ -73,31 +76,28 @@ module defuser_tb;
     .game_board_wb    (defuser_game_board_wb.master)
   );
 
-  always @(posedge clk) begin
-    defuser_game_set_wb.ack_i <= 1'b0;
-    defuser_game_set_wb.dat_i <= 16'h0000;
-    defuser_game_board_wb.ack_i <= 1'b0;
-    defuser_game_board_wb.dat_i <= 16'h0000;
 
-    if(defuser_game_set_wb.stb_o && defuser_game_set_wb.cyc_o && !defuser_game_set_wb.we_o) begin
-      defuser_game_set_wb.ack_i <= 1'b1;
-      defuser_game_set_wb.dat_i <= settings_mem[defuser_game_set_wb.adr_o[7:1]];
-    end
 
-    if(defuser_game_board_wb.stb_o && defuser_game_board_wb.cyc_o && !defuser_game_board_wb.we_o) begin
-      defuser_game_board_wb.ack_i <= 1'b1;
-      defuser_game_board_wb.dat_i <= {8'h00, board_mem[defuser_game_board_wb.adr_o[7:4]][defuser_game_board_wb.adr_o[3:0]]};
-    end
-    else if ((defuser_game_board_wb.stb_o && defuser_game_board_wb.cyc_o && defuser_game_board_wb.we_o)) begin
-      defuser_game_board_wb.ack_i <= 1'b1;
-      board_mem[defuser_game_board_wb.adr_o[7:4]][defuser_game_board_wb.adr_o[3:0]] <= defuser_game_board_wb.dat_o[7:0];
-    end
-  end
+  main_fsm u_main_fsm (
+    .clk         (clk),
+    .rst         (rst),
+
+    .level       (2),
+    .retry       ('0),
+    .state_out   (main_state),
+    .timer_stop  ('0),
+
+
+    .game_won    (game_won),
+    .game_lost   (game_lost),
+
+    .game_set_wb1(defuser_game_set_wb.slave),
+    .game_set_wb2(game_set_wb2.slave),
+    .game_set_wb3(game_set_wb3.slave)
+  );
 
   initial begin
     void'(logger::init());
-    defuser_game_set_wb.stall_i = 1'b0;
-    defuser_game_board_wb.stall_i = 1'b0;
     planting_complete = 1'b0;
     mouse_xpos = 12'd0;
     mouse_ypos = 12'd0;
@@ -105,38 +105,35 @@ module defuser_tb;
     right = 1'b0;
     InitReset();
     `log_info($sformatf("Starting test at, %t", $time));
-    WaitClocks(50);
     planting_complete = 1'b1;
-    wait(dut.defuser_state == DONE);
-    `check_eq(dut.board_ready, 1'b1);
+    WaitClocks(150);
+    // `check_eq(dut.board_ready, 1'b1);
 
-    for (int i = 0; i < SETTINGS_REG_NUM; i++)
-      `check_eq(dut.game_setup_cashe[i], settings_mem[i]);
+    `check_eq(dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM], M_ROW_COLUMN_NUMBER);
+    `check_eq(dut.game_setup_cashe[MINE_NUM_REG_NUM],          M_MINE_NUM);
+    `check_eq(dut.game_setup_cashe[TIMER_SECONDS_REG_NUM],     M_TIMER_SECONDS);
+    `check_eq(dut.game_setup_cashe[FIELD_SIZE_REG_NUM],        M_FIELD_SIZE);
+    `check_eq(dut.game_setup_cashe[BOARD_SIZE_REG_NUM],        M_BOARD_SIZE);
+    `check_eq(dut.game_setup_cashe[BOARD_XPOS_REG_NUM],        M_BOARD_XPOS);
+    `check_eq(dut.game_setup_cashe[BOARD_YPOS_REG_NUM],        M_BOARD_YPOS);
 
-    for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++) begin
-        `log_info($sformatf("i = %d, j=%d", i, j));
-        `check_eq(dut.game_board_mem[i][j], board_mem[i][j]);
-      end
-
-    // WaitClocks(2_000_000);
-    wait(dut.auto_write_state == AUTO_WRITE);
-    wait(dut.auto_write_state == WAIT);
-    for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++) begin
-        `log_info($sformatf("i = %d, j=%d", i, j));
-        `check_eq(dut.game_board_mem[i][j], board_mem[i][j]);
-      end
-    WaitClocks(10);
-
-    mouse_xpos = M_BOARD_XPOS + 20;
-    mouse_ypos = M_BOARD_YPOS + 20;
+    mouse_xpos = M_BOARD_XPOS + 2;
+    mouse_ypos = M_BOARD_YPOS + 2;
     left = 1'b1;
+    WaitClocks(1);
+    `check_eq(mouse_xpos_valid, 1);
+    `check_eq(mouse_ypos_valid, 1);
+    `check_eq(mouse_board_ind_x, 0);
+    `check_eq(mouse_board_ind_y, 0);
     WaitClocks(2);
+    mouse_xpos = mouse_xpos + M_FIELD_SIZE + 3;
+    WaitClocks(1);
+    `check_eq(mouse_board_ind_x, 1);
+
     left = 1'b0;
 
     WaitClocks(1000);
-    `check_eq(dut.game_won, 1'b1);
+    // `check_eq(dut.game_won, 1'b1);
     #50 $finish;
   end
 

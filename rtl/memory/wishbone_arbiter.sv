@@ -1,9 +1,9 @@
 module wishbone_arbiter (
   input logic clk, rst,
-  wishbone_if.master master_prior,  // Highest priority master
-  wishbone_if.master master_2,     // Medium priority master
-  wishbone_if.master master_3,     // Lowest priority master
-  wishbone_if.slave slave_if
+  wishbone_if.slave master_prior,  // Highest priority master
+  wishbone_if.slave master_2,     // Medium priority master
+  wishbone_if.slave master_3,     // Lowest priority master
+  wishbone_if.master slave_if
 );
 
   typedef enum logic [1:0] {

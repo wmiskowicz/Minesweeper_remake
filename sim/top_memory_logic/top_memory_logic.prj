@@ -16,6 +16,7 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/z_game_setup/game_pkg.sv \
         ../common/logger_pkg.sv \
         ../../fpga/rtl/top_basys3.sv \
+        ../../fpga/rtl/top_memory_logic.sv \
         ../../rtl/common/cross_buffer.sv \
         ../../rtl/common/delay_vga.sv \
         ../../rtl/common/edge_detector.sv \
@@ -43,7 +44,7 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/z_game_setup/main_fsm.sv \
         ../../rtl/z_game_setup/mine_planter.sv \
         ../common/tiff_writer.sv \
-        ./top_basys3_tb.sv \
+        ./top_memory_logic_tb.sv \
 
 verilog work ../../fpga/rtl/clk_wiz_0.v \
             ../../fpga/rtl/clk_wiz_0_clk_wiz.v \
