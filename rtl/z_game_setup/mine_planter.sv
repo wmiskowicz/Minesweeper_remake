@@ -149,8 +149,8 @@ module mine_planter (
   lfsr #(.WIDTH(17)) lfsr1 (.datain(din1), .dataout(dout1));
   lfsr #(.WIDTH(16)) lfsr2 (.datain(din2), .dataout(dout2));
 
-  assign ind_x = dout[18:15] % row_col_num;
-  assign ind_y = dout[7:4] % row_col_num;
+  // assign ind_x = dout[18:15] % row_col_num;
+  // assign ind_y = dout[7:4] % row_col_num;
 
 
   always_ff @(posedge clk or posedge rst) begin
@@ -159,12 +159,16 @@ module mine_planter (
       din1 <= 17'b1;
       din2 <= 16'b1;
       dout <= 19'b0;
+      ind_x <= 4'd0;
+      ind_y <= 4'd0;
     end
     else begin
       din0 <= dout0;
       din1 <= dout1;
       din2 <= dout2;
       dout <= din0[17:0] + din1[16:0] + din2[15:0];
+      ind_x <= dout[18:15] % row_col_num;
+      ind_y <= dout[7:4] % row_col_num;
     end
   end
 
