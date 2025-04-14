@@ -303,7 +303,6 @@ module defuser (
             end
             if (right) begin 
               game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag <= !game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag;
-              defuser_state <= DEFUSE;
             end
           end
         end

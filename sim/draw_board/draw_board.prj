@@ -15,6 +15,8 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/top_vga/vga_pkg.sv \
         ../../rtl/z_game_setup/game_pkg.sv \
         ../common/logger_pkg.sv \
+        ../../fpga/rtl/top_basys3.sv \
+        ../../fpga/rtl/top_memory_logic.sv \
         ../../rtl/common/cross_buffer.sv \
         ../../rtl/common/delay_vga.sv \
         ../../rtl/common/edge_detector.sv \
@@ -27,10 +29,12 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/timer/bin2bcd.sv \
         ../../rtl/timer/time_controller.sv \
         ../../rtl/timer/top_timer.sv \
+        ../../rtl/top_vga/animation_controller.sv \
         ../../rtl/top_vga/char_pos_conv.sv \
         ../../rtl/top_vga/draw_back_objects.sv \
         ../../rtl/top_vga/draw_bg.sv \
         ../../rtl/top_vga/draw_board.sv \
+        ../../rtl/top_vga/draw_char.sv \
         ../../rtl/top_vga/draw_image.sv \
         ../../rtl/top_vga/image_rom.sv \
         ../../rtl/top_vga/top_vga.sv \
@@ -43,8 +47,11 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../common/tiff_writer.sv \
         ./draw_board_tb.sv \
 
-verilog work ../../rtl/common/delay.v \
+verilog work ../../fpga/rtl/clk_wiz_0.v \
+            ../../fpga/rtl/clk_wiz_0_clk_wiz.v \
+            ../../rtl/common/delay.v \
             ../../rtl/sseg_disp.v \
+            ../../rtl/top_vga/font_rom.v \
             ../common/glbl.v \
 
 vhdl work ../../rtl/mouse/MouseCtl.vhd \

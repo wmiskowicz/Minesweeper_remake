@@ -25,7 +25,9 @@
  wire [11:0] xpos_in;
  wire [11:0] ypos_in;
 
- wire left_in, right_in;
+ logic left_in, right_in;
+ logic left_prev, right_prev;
+ logic left_pulse, right_pulse;
 
  MouseCtl u_MouseCtl(
     .clk(clk100MHz),
@@ -46,22 +48,29 @@
     .setmax_y('0)
  );
 
+ always_ff @(posedge clk100MHz) begin
+  left_prev  <= left_in;
+  right_prev <= right_in;
+ end
+
+ assign left_pulse = !left_prev && left_in;
+ assign right_pulse = !right_prev && right_in;
 
 
  cross_buffer u_cross_buffer (
-   .slow_clk     (clk74MHz),
-   .clk100MHz    (clk100MHz),
-   .rst     (rst),
+   .slow_clk  (clk74MHz),
+   .clk100MHz (clk100MHz),
+   .rst       (rst),
 
-   .xpos_in (xpos_in),
-   .ypos_in (ypos_in),
-   .left_in(left_in),
-   .right_in(right_in),
+   .xpos_in   (xpos_in),
+   .ypos_in   (ypos_in),
+   .left_in   (left_pulse),
+   .right_in  (right_pulse),
 
-   .left_out(left),
-   .right_out(right),
-   .xpos_out(mouse_xpos),
-   .ypos_out(mouse_ypos)
+   .left_out  (left),
+   .right_out (right),
+   .xpos_out  (mouse_xpos),
+   .ypos_out  (mouse_ypos)
  );
 
  endmodule

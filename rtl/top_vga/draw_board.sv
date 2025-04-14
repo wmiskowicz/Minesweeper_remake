@@ -30,6 +30,7 @@ module draw_board (
 
   vga_if bomb_vga();
   vga_if flag_vga();
+  vga_if num_vga();
 
   //------------------------------------------------------------------------------
   // Local parameters
@@ -63,6 +64,9 @@ module draw_board (
 
   logic [3:0] board_ind_x;
   logic [3:0] board_ind_y;
+
+  logic [11:0] char_code;
+  logic [11:0] num_color;
   //------------------------------------------------------------------------------
   // signal assignments
 
@@ -84,6 +88,26 @@ module draw_board (
     READ_SETTINGS,
     DRAW
   } board_state;
+
+  always_comb begin
+    if (game_board_mem[board_ind_x][board_ind_y].mine_ind == 0) begin
+      char_code = 0;
+      num_color = 0;
+    end
+    else begin
+      char_code = game_board_mem[board_ind_x][board_ind_y].mine_ind + 12'h30;
+      case (game_board_mem[board_ind_x][board_ind_y].mine_ind)
+        4'h1: num_color    = NUM_1;
+        4'h2: num_color    = NUM_2;
+        4'h3: num_color    = NUM_3;
+        4'h4: num_color    = NUM_4;
+        4'h5: num_color    = NUM_5;
+        4'h6: num_color    = NUM_6;
+        4'h7: num_color    = NUM_7;
+        default: num_color = NUM_DEFAULT;
+      endcase
+    end
+  end
 
   always_ff @(posedge clk) begin
     if(rst)begin
@@ -133,14 +157,17 @@ module draw_board (
         DRAW: begin
           burst_active <= 1'b0;
           read_en <= 1'b0;
-          board_state <= main_state == GAME_OVER ? IDLE : DRAW;
+          board_state <= main_state == MENU ? IDLE : DRAW;
           out.rgb <= draw_button();
 
 
           if (game_board_mem[board_ind_y][board_ind_x].mine && game_board_mem[board_ind_y][board_ind_x].defused)  
             out.rgb <= draw_bomb();
           else if (game_board_mem[board_ind_y][board_ind_x].defused)
-            out.rgb <= draw_uncovered();
+            if (game_board_mem[board_ind_y][board_ind_x].mine_ind == 0)
+              out.rgb <= draw_uncovered();
+            else
+              out.rgb <= draw_number();
           else if (game_board_mem[board_ind_y][board_ind_x].flag) 
             out.rgb <= draw_flag();
 
@@ -260,18 +287,25 @@ module draw_board (
   endfunction
 
   function logic [11:0] draw_bomb;
-      return bomb_vga.rgb;
+    return bomb_vga.rgb;
   endfunction
 
   function logic [11:0] draw_flag;
-    return flag_vga.rgb;
-endfunction
+    if(flag_vga.rgb != 12'hCCC)
+      return flag_vga.rgb;
+    else 
+      return draw_uncovered();
+  endfunction
+
+  function logic [11:0] draw_number();
+    return num_vga.rgb;
+  endfunction 
 
 
 draw_image #(
   .RECT_WIDTH (64),
   .RECT_HEIGHT(64),
-  .PATH       ("../../rtl/top_vga/data/bomb.data")
+  .PATH       ("../../rtl/top_vga/data/red_bomb.data")
 )
 u_draw_bomb1 (
   .clk       (clk),
@@ -294,6 +328,22 @@ u_draw_flag1 (
   .rect_x_pos(game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM]),
   .rect_y_pos(game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM]),
   .rst       (rst)
+);
+
+
+draw_char #(
+  .PRESCALER(1)
+)u_draw_char (
+  .clk      (clk),
+  .rst      (rst),
+
+  .char_code(12'h31),//(char_code),
+  .char_xpos(game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM]),
+  .char_ypos(game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM]),
+  .num_color(num_color),
+
+  .in       (in),
+  .out      (num_vga.out)
 );
 
 endmodule

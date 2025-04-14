@@ -86,5 +86,6 @@ set mem_files {
     ../rtl/top_vga/data/agh.data
     ../rtl/top_vga/data/bomb.data
     ../rtl/top_vga/data/flag.data
+    ../rtl/top_vga/data/red_bomb.data
 }
 

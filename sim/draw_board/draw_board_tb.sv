@@ -52,6 +52,7 @@ module draw_board_tb;
 
   assign {r,g,b} = out_vga.rgb;
   assign vs      = out_vga.vsync;
+  assign in_vga.rgb = 12'h777;
 
   /**
    * Submodules instances
@@ -139,10 +140,12 @@ module draw_board_tb;
     dut.game_setup_cashe[BOARD_SIZE_REG_NUM] = M_BOARD_SIZE;
     dut.game_setup_cashe[BOARD_XPOS_REG_NUM] = M_BOARD_XPOS;
     dut.game_setup_cashe[BOARD_YPOS_REG_NUM] = M_BOARD_YPOS;
-    dut.game_board_mem[2][2].defused = 1'b1;
-    dut.game_board_mem[9][8].flag = 1'b1;
-    dut.game_board_mem[3][9].mine = 1'b1;
-    dut.game_board_mem[3][9].defused = 1'b1;
+    dut.game_board_mem[0][1].mine = 1'b1;
+    dut.game_board_mem[1][0].mine = 1'b1;
+    dut.game_board_mem[2][2].mine = 1'b1;
+    dut.game_board_mem[1][1].defused = 1'b1;
+    dut.game_board_mem[1][1].mine_ind = 3;
+
 
     wait (vs == 1'b0);
     @(negedge vs) $display("Info: negedge VS at %t",$time);
