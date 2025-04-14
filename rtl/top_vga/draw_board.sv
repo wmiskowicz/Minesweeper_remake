@@ -291,14 +291,23 @@ module draw_board (
   endfunction
 
   function logic [11:0] draw_flag;
-    if(flag_vga.rgb != 12'hCCC)
+    if (flag_vga.rgb != 12'hCCC)
       return flag_vga.rgb;
     else 
-      return draw_uncovered();
+      return draw_button();
   endfunction
 
   function logic [11:0] draw_number();
-    return num_vga.rgb;
+    if (num_vga.rgb == NUM_1 || 
+        num_vga.rgb == NUM_2 ||
+        num_vga.rgb == NUM_3 ||
+        num_vga.rgb == NUM_4 ||
+        num_vga.rgb == NUM_5 ||
+        num_vga.rgb == NUM_6 ||
+        num_vga.rgb == NUM_7 )
+      return num_vga.rgb;
+    else
+      return draw_uncovered();
   endfunction 
 
 
@@ -332,12 +341,13 @@ u_draw_flag1 (
 
 
 draw_char #(
-  .PRESCALER(1)
-)u_draw_char (
+  .PRESCALER(4),
+  .OFFSET_X(32)
+) u_draw_char (
   .clk      (clk),
   .rst      (rst),
 
-  .char_code(12'h31),//(char_code),
+  .char_code(char_code),
   .char_xpos(game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM]),
   .char_ypos(game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM]),
   .num_color(num_color),

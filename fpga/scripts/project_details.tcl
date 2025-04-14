@@ -50,6 +50,7 @@ set sv_files {
     ../rtl/top_vga/draw_back_objects.sv
     ../rtl/top_vga/draw_bg.sv
     ../rtl/top_vga/draw_board.sv
+    ../rtl/top_vga/draw_char.sv
     ../rtl/top_vga/draw_image.sv
     ../rtl/top_vga/image_rom.sv
     ../rtl/top_vga/top_vga.sv
@@ -70,6 +71,7 @@ set sv_files {
 set verilog_files {
     ../rtl/common/delay.v
     ../rtl/sseg_disp.v
+    ../rtl/top_vga/font_rom.v
     rtl/clk_wiz_0.v
     rtl/clk_wiz_0_clk_wiz.v
 }

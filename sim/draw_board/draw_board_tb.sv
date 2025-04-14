@@ -144,7 +144,7 @@ module draw_board_tb;
     dut.game_board_mem[1][0].mine = 1'b1;
     dut.game_board_mem[2][2].mine = 1'b1;
     dut.game_board_mem[1][1].defused = 1'b1;
-    dut.game_board_mem[1][1].mine_ind = 3;
+    dut.game_board_mem[1][1].mine_ind = 1;
 
 
     wait (vs == 1'b0);

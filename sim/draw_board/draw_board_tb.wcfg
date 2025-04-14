@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="13,284,546.726 ns"></ZoomStartTime>
-      <ZoomEndTime time="13,284,856.655 ns"></ZoomEndTime>
-      <Cursor1Time time="13,284,805.000 ns"></Cursor1Time>
+      <ZoomStartTime time="4,854,717.883 ns"></ZoomStartTime>
+      <ZoomEndTime time="4,854,967.084 ns"></ZoomEndTime>
+      <Cursor1Time time="4,854,879.083 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="184"></ValueColumnWidth>
+      <ValueColumnWidth column_width="166"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="9" />
+   <WVObjectSize size="6" />
    <wvobject fp_name="/draw_board_tb/dut/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -33,32 +33,20 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_code" type="array">
-      <obj_property name="ElementShortName">char_code[11:0]</obj_property>
-      <obj_property name="ObjectShortName">char_code[11:0]</obj_property>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/scale_hcount" type="array">
+      <obj_property name="ElementShortName">scale_hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">scale_hcount[10:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_xpos" type="array">
-      <obj_property name="ElementShortName">char_xpos[11:0]</obj_property>
-      <obj_property name="ObjectShortName">char_xpos[11:0]</obj_property>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/in/hcount" type="array">
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_ypos" type="array">
-      <obj_property name="ElementShortName">char_ypos[11:0]</obj_property>
-      <obj_property name="ObjectShortName">char_ypos[11:0]</obj_property>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/in/vcount" type="array">
+      <obj_property name="ElementShortName">vcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">vcount[10:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/num_color" type="array">
-      <obj_property name="ElementShortName">num_color[11:0]</obj_property>
-      <obj_property name="ObjectShortName">num_color[11:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_mask" type="array">
-      <obj_property name="ElementShortName">char_mask[10:0]</obj_property>
-      <obj_property name="ObjectShortName">char_mask[10:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_line" type="array">
-      <obj_property name="ElementShortName">char_line[3:0]</obj_property>
-      <obj_property name="ObjectShortName">char_line[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_pixels" type="array">
-      <obj_property name="ElementShortName">char_pixels[7:0]</obj_property>
-      <obj_property name="ObjectShortName">char_pixels[7:0]</obj_property>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/scale_vcount" type="array">
+      <obj_property name="ElementShortName">scale_vcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">scale_vcount[10:0]</obj_property>
    </wvobject>
 </wave_config>

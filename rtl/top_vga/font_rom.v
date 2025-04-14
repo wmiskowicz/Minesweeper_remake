@@ -18,21 +18,19 @@ module font_rom #(
     reg [7:0] data;
     reg [(PRESCALER*8)-1:0] prescaled_data;
 
+    integer i, j;
+
     // body
     always @(posedge clk)
-        char_line_pixels <= data;//prescaled_data;
+        char_line_pixels <= prescaled_data;
 
         // Pixel expansion logic
     always @*
     begin
         // prescaled_data = '0;
-        for (integer i = 0; i < 8; i = i + 1) begin
-            if (data[i]) begin
-                for (integer j = 0; j < PRESCALER; j = j + 1) begin
-                    if (i*PRESCALER + j < 16) begin
-                        prescaled_data[i*PRESCALER + j] = 1'b1;
-                    end
-                end
+        for (i = 0; i < 8; i = i + 1) begin 
+            for (j = 0; j < PRESCALER; j = j + 1) begin
+                prescaled_data[i*PRESCALER + j] = data[i];
             end
         end
     end
