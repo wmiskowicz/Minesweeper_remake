@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////
+ /*
+  Module name:   Draw char
+  Author:        Wojciech Miskowicz
+  Description:   Draws a char contained in font_rom. It can be upscaled using PRESCALER parameter.
+  */
+//////////////////////////////////////////////////////////////////////////////
+
 module draw_char #(
   parameter PRESCALER = 1,
   parameter OFFSET_X = 0
@@ -23,7 +31,6 @@ logic [10:0] char_hcount, scale_hcount;
 logic [10:0] char_vcount, scale_vcount;
 logic [10:0] vcount_reg;
 logic [3:0] char_line;
-logic [10:0] hcount_del;
 
 logic [(PRESCALER*8)-1:0] char_pixels;
 
@@ -37,8 +44,8 @@ assign char_hcount = in.hcount - char_xpos;
 
 always_ff @(posedge clk) begin
   if (rst) begin
-    scale_vcount <= 11'h0; 
-    scale_hcount <= 11'h0; 
+    scale_vcount <= 11'h0;
+    scale_hcount <= 11'h0;
     vcount_reg   <= 11'h0;
   end
   else if (PRESCALER != 1) begin
@@ -74,8 +81,8 @@ always_ff @(posedge clk) begin
     if (char_pixels & (PIXEL_MASK >> char_hcount[MASK_LEN-1:0])) begin
       out.rgb <= num_color;
     end
-    else begin                             
-      out.rgb <= in.rgb;   
+    else begin
+      out.rgb <= in.rgb;
     end   end
 end
 
@@ -93,11 +100,11 @@ delay #(
   .CLK_DEL(OFFSET_X)
 )
 u_delay (
-  .clk (clk), 
+  .clk (clk),
   .rst (rst),
 
-  .din (in.vcount), 
+  .din (in.vcount),
   .dout(hcount_del)
 );
-  
+
 endmodule

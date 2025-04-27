@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////
+/*
+ Module name:   Draw background objects
+ Author:        Wojciech Miskowicz
+ Description:   Draws images in the background display.
+ */
+//////////////////////////////////////////////////////////////////////////////
+
 module draw_back_objects (
   input  logic clk,
   input  logic rst,
