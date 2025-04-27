@@ -23,6 +23,7 @@ set target xc7a35tcpg236-1
 #-----------------------------------------------------#
 #                    Design sources                   #
 #-----------------------------------------------------#
+set ip_files C:/Users/wojte/Documents/Saper_new/rtl/mouse/fifo/fifo_generator_0.xci
 # Specify .xdc files location
 set xdc_files {
     constraints/clk_wiz_0.xdc
@@ -81,6 +82,7 @@ set vhdl_files {
     ../rtl/mouse/MouseCtl.vhd
     ../rtl/mouse/MouseDisplay.vhd
     ../rtl/mouse/Ps2Interface.vhd
+    ../rtl/mouse/fifo/fifo_generator_0.vhd
 }
 
 # Specify files for a memory initialization
