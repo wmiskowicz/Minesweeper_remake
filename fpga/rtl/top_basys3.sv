@@ -24,7 +24,7 @@ module top_basys3 (
     inout  wire       PS2Clk,
     inout  wire       PS2Data,
 
-    output wire [3:0] led,
+    output logic [3:0] led,
 
     output wire       Vsync,
     output wire       Hsync,
@@ -40,6 +40,14 @@ module top_basys3 (
 /**
  * Local variables and signals
  */
+
+ //DEBUG
+ wire left;
+ wire right;
+logic [3:0] debug_ctr;
+ logic [3:0] debug_ctr2;
+
+
 
 wire clk100MHz;
 wire clk74MHz;
@@ -62,10 +70,10 @@ wire mouse_ypos_valid;
  * Signals assignments
  */
 assign rst = btnD;
-assign led[0] = locked;
-assign led[1] = mouse_xpos_valid;
-assign led[2] = mouse_ypos_valid;
-assign led[3] = planting_complete;
+assign led[0] = left;
+assign led[1] = right;
+assign led[2] = right ? !led[2] : led[2];
+assign led[3] = right ? !led[3] : led[3];
 assign level = {btnR || btnC, btnL || btnR};
 
 
@@ -77,6 +85,17 @@ wishbone_if defuser_board_wb_if();
 
 wishbone_if vga_board_wb_if();
 wishbone_if vga_set_wb_if();
+
+always_ff @(posedge clk74MHz) begin
+  if(rst) begin
+    debug_ctr <= '0;
+    debug_ctr2 <= '0;
+  end
+  else begin
+    debug_ctr <=  left ? debug_ctr + 1 : debug_ctr;
+    debug_ctr2 <= right ? debug_ctr2 + 1 : debug_ctr2;
+  end
+ end
 
 
 /**
@@ -98,8 +117,8 @@ sseg_disp u_disp(
   .reset  (rst),
   .hex3   (mouse_board_ind_x), 
   .hex2   (mouse_board_ind_y), 
-  .hex1   ('0), 
-  .hex0   ('0),
+  .hex1   (debug_ctr), 
+  .hex0   (debug_ctr2),
   .an     (an), 
   .sseg   (seg)
 );
@@ -110,6 +129,10 @@ top_memory_logic u_top_memory_logic (
   .rst              (rst),
 
   .level            (level),
+
+  //DEBUG
+  .left(left),
+  .right(right),
 
   .PS2Clk           (PS2Clk),
   .PS2Data          (PS2Data),

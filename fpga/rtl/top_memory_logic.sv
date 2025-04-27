@@ -10,6 +10,10 @@
  
      output wire       planting_complete,
 
+     //DEBUG
+      output logic left,
+      output logic right,
+
  
      output wire       Vsync,
      output wire       Hsync,
@@ -33,8 +37,8 @@
  wire [11:0] mouse_xpos;
  wire [11:0] mouse_ypos;
  
- wire left;
- wire right;
+//  wire left;
+//  wire right;
  wire game_lost;
  wire game_won;
  

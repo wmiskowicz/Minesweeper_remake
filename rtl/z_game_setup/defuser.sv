@@ -96,8 +96,8 @@ module defuser (
   logic board_ready;
 
 
-  assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM];// && mouse_ypos < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
-  assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM];// && mouse_xpos < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
+  assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] && mouse_ypos < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
+  assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_xpos < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 
   assign mouse_board_ypos = mouse_ypos_valid && mouse_xpos_valid ? mouse_ypos - game_setup_cashe[BOARD_YPOS_REG_NUM] : 12'hFFF;
   assign mouse_board_xpos = mouse_ypos_valid && mouse_xpos_valid ? mouse_xpos - game_setup_cashe[BOARD_XPOS_REG_NUM] : 12'hFFF;
