@@ -35,14 +35,6 @@ module top_basys3 (
  * Local variables and signals
  */
 
-//DEBUG
-wire left;
-wire right;
-logic [3:0] debug_ctr;
-logic [3:0] debug_ctr2;
-
-
-
 wire clk100MHz;
 wire clk74MHz;
 wire locked;
@@ -52,9 +44,6 @@ logic [1:0] level;
 wire [3:0] mouse_board_ind_x;
 wire [3:0] mouse_board_ind_y;
 
-logic debug_full;
-logic debug_empty;
-
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
 
@@ -62,10 +51,10 @@ logic debug_empty;
  * Signals assignments
  */
 assign rst = btnD;
-assign led[0] = debug_full;
-assign led[1] = debug_empty;
-always_ff @(posedge clk74MHz) led[2] = right ? !led[2] : led[2];
-always_ff @(posedge clk74MHz) led[3] = left ? !led[3] : led[3];
+assign led[0] = locked;
+assign led[1] = 0;
+assign led[2] = 1;
+assign led[3] = 0;
 assign level = {btnR || btnC, btnL || btnR};
 
 
@@ -77,18 +66,6 @@ wishbone_if defuser_board_wb_if();
 
 wishbone_if vga_board_wb_if();
 wishbone_if vga_set_wb_if();
-
-// DEBUG
-always_ff @(posedge clk74MHz) begin
-  if(rst) begin
-    debug_ctr <= '0;
-    debug_ctr2 <= '0;
-  end
-  else begin
-    debug_ctr <=  left ? debug_ctr + 1 : debug_ctr;
-    debug_ctr2 <= right ? debug_ctr2 + 1 : debug_ctr2;
-  end
-end
 
 
 /**
@@ -110,8 +87,8 @@ sseg_disp u_disp(
   .reset  (rst),
   .hex3   (mouse_board_ind_x),
   .hex2   (mouse_board_ind_y),
-  .hex1   (debug_ctr),
-  .hex0   (debug_ctr2),
+  .hex1   (0),
+  .hex0   (0),
   .an     (an),
   .sseg   (seg)
 );
@@ -122,13 +99,6 @@ top_memory_logic u_top_memory_logic (
   .rst              (rst),
 
   .level            (level),
-
-  //DEBUG
-  .left(left),
-  .right(right),
-
-  .debug_empty(debug_empty),
-  .debug_full(debug_full),
 
   .PS2Clk           (PS2Clk),
   .PS2Data          (PS2Data),

@@ -18,10 +18,6 @@ module top_mouse (
   inout  ps2_clk,
   inout  ps2_data,
 
-  //DEBUG
-  output logic debug_empty,
-  output logic debug_full,
-
   output logic right,
   output logic left,
   output logic [11:0] mouse_xpos,
@@ -36,6 +32,7 @@ logic rd_en;
 logic full;
 logic empty;
 
+logic [17:0] data_out;
 
 logic left_in, right_in;
 logic left_del, right_del;
@@ -46,14 +43,8 @@ logic wr_en_pulse;
 always_ff @(posedge clk100MHz) wr_en <= !full && (left_in || right_in);
 always_ff @(posedge clk74MHz)  rd_en <= !empty;
 
-//DEBUG
-
-assign debug_empty = right_sync;
-assign debug_full = left_sync; 
-
-// Na następnym kliknięciu wpisuje się wartość z poprzedniego
-
-
+assign right_sync = rd_en ? 1'b0 : data_out[0];
+assign left_sync  = rd_en ? 1'b0 : data_out[1];
 
 posedge_detector posedge_detector_0 (
   .clk        (clk74MHz),
@@ -127,8 +118,6 @@ u_delay (
   .dout({left_del, right_del})         
 );
 
-logic [17:0] data_out;
-
 fifo_generator_1 fifo_0 (
   .wr_clk (clk100MHz),
   .rd_clk (clk74MHz),
@@ -147,9 +136,7 @@ fifo_generator_1 fifo_0 (
   .rd_rst_busy()
 );
 
-// tutaj sobie zbiera jeszcze z poprzedniej próbki
-assign right_sync = rd_en ? 1'b0 : data_out[0];
-assign left_sync  = rd_en ? 1'b0 : data_out[1];
+
 
 
 endmodule

@@ -15,14 +15,6 @@ module top_memory_logic (
   inout  wire       PS2Clk,
   inout  wire       PS2Data,
 
-  //DEBUG
-  output logic left,
-  output logic right,
-
-  output logic debug_empty,
-  output logic debug_full,
-
-
   output wire       Vsync,
   output wire       Hsync,
   output wire [3:0] vgaRed,
@@ -43,8 +35,8 @@ wire [2:0] main_state;
 wire [11:0] mouse_xpos;
 wire [11:0] mouse_ypos;
 
-//  wire left;
-//  wire right;
+ wire left;
+ wire right;
 
 
 wire game_lost;
@@ -92,10 +84,6 @@ top_mouse u_top_mouse (
   .rst       (rst),
   .ps2_clk   (PS2Clk),
   .ps2_data  (PS2Data),
-
-  //DEBUG
-  .debug_empty(debug_empty),
-  .debug_full(debug_full),
 
   .left      (left),
   .right     (right),
