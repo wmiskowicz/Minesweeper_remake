@@ -23,7 +23,7 @@ set target xc7a35tcpg236-1
 #-----------------------------------------------------#
 #                    Design sources                   #
 #-----------------------------------------------------#
-set ip_files C:/Users/wojte/Documents/Saper_new/rtl/mouse/fifo/fifo_generator_0.xci
+set ip_files C:/Users/wojte/Documents/Saper_new/rtl/mouse/fifo/fifo_generator_1.xci
 # Specify .xdc files location
 set xdc_files {
     constraints/clk_wiz_0.xdc
@@ -34,7 +34,7 @@ set xdc_files {
 set sv_files {
     ../rtl/common/cross_buffer.sv
     ../rtl/common/delay_vga.sv
-    ../rtl/common/edge_detector.sv
+    ../rtl/common/posedge_detector.sv
     ../rtl/memory/top_memory.sv
     ../rtl/memory/wishbone_arbiter.sv
     ../rtl/memory/wishbone_board_mem.sv
@@ -82,7 +82,7 @@ set vhdl_files {
     ../rtl/mouse/MouseCtl.vhd
     ../rtl/mouse/MouseDisplay.vhd
     ../rtl/mouse/Ps2Interface.vhd
-    ../rtl/mouse/fifo/fifo_generator_0.vhd
+    ../rtl/mouse/fifo/fifo_generator_1.vhd
 }
 
 # Specify files for a memory initialization

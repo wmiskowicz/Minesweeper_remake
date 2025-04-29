@@ -52,6 +52,9 @@ logic [1:0] level;
 wire [3:0] mouse_board_ind_x;
 wire [3:0] mouse_board_ind_y;
 
+logic debug_full;
+logic debug_empty;
+
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
 
@@ -59,8 +62,8 @@ wire [3:0] mouse_board_ind_y;
  * Signals assignments
  */
 assign rst = btnD;
-assign led[0] = left;
-assign led[1] = right;
+assign led[0] = debug_full;
+assign led[1] = debug_empty;
 assign led[2] = right ? !led[2] : led[2];
 assign led[3] = left ? !led[3] : led[3];
 assign level = {btnR || btnC, btnL || btnR};
@@ -123,6 +126,9 @@ top_memory_logic u_top_memory_logic (
   //DEBUG
   .left(left),
   .right(right),
+
+  .debug_empty(debug_empty),
+  .debug_full(debug_full),
 
   .PS2Clk           (PS2Clk),
   .PS2Data          (PS2Data),

@@ -19,6 +19,9 @@ module top_memory_logic (
   output logic left,
   output logic right,
 
+  output logic debug_empty,
+  output logic debug_full,
+
 
   output wire       Vsync,
   output wire       Hsync,
@@ -42,6 +45,7 @@ wire [11:0] mouse_ypos;
 
 //  wire left;
 //  wire right;
+
 
 wire game_lost;
 wire game_won;
@@ -88,6 +92,10 @@ top_mouse u_top_mouse (
   .rst       (rst),
   .ps2_clk   (PS2Clk),
   .ps2_data  (PS2Data),
+
+  //DEBUG
+  .debug_empty(debug_empty),
+  .debug_full(debug_full),
 
   .left      (left),
   .right     (right),

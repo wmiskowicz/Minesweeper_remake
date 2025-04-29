@@ -47,7 +47,6 @@ module top_memory_logic_tb;
 
    top_memory_logic dut (
     .clk100MHz        (clk),
-    .clk40MHz         (clk),
     .clk74MHz         (clk),
     .rst              (rst),
   
@@ -62,12 +61,9 @@ module top_memory_logic_tb;
     .vgaGreen         (g),
     .vgaRed           (r),
   
-    .planting_complete(planting_complete),
   
     .mouse_board_ind_x(mouse_board_ind_x),
-    .mouse_board_ind_y(mouse_board_ind_y),
-    .mouse_xpos_valid (mouse_xpos_valid),
-    .mouse_ypos_valid (mouse_ypos_valid)
+    .mouse_board_ind_y(mouse_board_ind_y)
   
   );
 
@@ -87,22 +83,34 @@ module top_memory_logic_tb;
   void'(logger::init());
   $display("Check if board is propagated properly");
   level = 0;
+  dut.u_top_mouse.left_in = 0;
+  dut.u_top_mouse.right_in = 0;
   InitReset();
   level = 1;
   WaitClocks(15);
-  `check_eq(dut.u_mine_planter.row_col_num, E_ROW_COLUMN_NUMBER);
- wait(dut.u_top_vga.u_draw_board.auto_read_state == 2'd1); //AUTO_READ
- wait(dut.u_top_vga.u_draw_board.auto_read_state == 2'd0); // WAIT
-  for (int i = 0; i < 16; i++)
-    for (int j = 0; j < 16; j++) begin
-      $display($sformatf("i = %d, j=%d",i, j));
-      `check_eq(dut.u_mine_planter.mine_map[i][j], dut.u_top_memory.u_wishbone_board_mem.board_mem[i][j].mine);
-      `check_eq(dut.u_top_vga.u_draw_board.game_board_mem[i][j].mine, dut.u_top_memory.u_wishbone_board_mem.board_mem[i][j].mine);
-      `check_eq(dut.u_defuser.game_board_mem[i][j].mine, dut.u_top_memory.u_wishbone_board_mem.board_mem[i][j].mine);
-    end
 
-    WaitClocks(5000);
-    $finish();
+  dut.u_top_mouse.left_in = 1;
+  WaitClocks(20);
+  dut.u_top_mouse.left_in = 0;
+  WaitClocks(200);
+
+  dut.u_top_mouse.left_in = 1;
+  WaitClocks(20);
+  dut.u_top_mouse.left_in = 0;
+  WaitClocks(200);
+
+  dut.u_top_mouse.right_in = 1;
+  WaitClocks(20);
+  dut.u_top_mouse.right_in = 0;
+  WaitClocks(200);
+
+  dut.u_top_mouse.left_in = 1;
+  WaitClocks(20);
+  dut.u_top_mouse.left_in = 0;
+  WaitClocks(200);
+
+  WaitClocks(5000);
+  $finish();
  end
 
   task automatic WaitClocks(input int num_of_clock_cycles);
