@@ -64,8 +64,8 @@ logic debug_empty;
 assign rst = btnD;
 assign led[0] = debug_full;
 assign led[1] = debug_empty;
-assign led[2] = right ? !led[2] : led[2];
-assign led[3] = left ? !led[3] : led[3];
+always_ff @(posedge clk74MHz) led[2] = right ? !led[2] : led[2];
+always_ff @(posedge clk74MHz) led[3] = left ? !led[3] : led[3];
 assign level = {btnR || btnC, btnL || btnR};
 
 

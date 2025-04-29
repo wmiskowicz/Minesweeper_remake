@@ -51,6 +51,7 @@ always_ff @(posedge clk74MHz)  rd_en <= !empty;
 assign debug_empty = right_sync;
 assign debug_full = left_sync; 
 
+// Na następnym kliknięciu wpisuje się wartość z poprzedniego
 
 
 
@@ -146,8 +147,9 @@ fifo_generator_1 fifo_0 (
   .rd_rst_busy()
 );
 
-assign right_sync = empty ? 1'b0 : data_out[0];
-assign left_sync  = empty ? 1'b0 : data_out[1];
+// tutaj sobie zbiera jeszcze z poprzedniej próbki
+assign right_sync = rd_en ? 1'b0 : data_out[0];
+assign left_sync  = rd_en ? 1'b0 : data_out[1];
 
 
 endmodule
