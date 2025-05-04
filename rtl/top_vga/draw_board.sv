@@ -1,4 +1,3 @@
-`timescale 1 ns / 1 ps
 //////////////////////////////////////////////////////////////////////////////
  /*
   Module name:   Draw board
@@ -6,7 +5,8 @@
   Description:   Implements module for drawing game board.
   */
 //////////////////////////////////////////////////////////////////////////////
- `include "../memory/wishbone_defs.svh"
+`timescale 1 ns / 1 ps
+`include "../memory/wishbone_defs.svh"
 module draw_board (
   input  wire  clk,
   input  wire  rst,
@@ -341,7 +341,7 @@ u_draw_flag1 (
 
 
 draw_char #(
-  .PRESCALER(4),
+  .PRESCALER(4),//4
   .OFFSET_X(32)
 ) u_draw_char (
   .clk      (clk),

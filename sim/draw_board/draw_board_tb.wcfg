@@ -5,7 +5,7 @@
    <db_ref_list>
       <db_ref path="draw_board_tb.wdb" id="1">
          <top_modules>
-            <top_module name="\$unit_wishbone_if_sv_3259169484 " />
+            <top_module name="\$unit_wishbone_if_sv_3391430920 " />
             <top_module name="color_pkg" />
             <top_module name="draw_board_tb" />
             <top_module name="game_pkg" />
@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4,854,717.883 ns"></ZoomStartTime>
-      <ZoomEndTime time="4,854,967.084 ns"></ZoomEndTime>
-      <Cursor1Time time="4,854,879.083 ns"></Cursor1Time>
+      <ZoomStartTime time="14,055.450000 us"></ZoomStartTime>
+      <ZoomEndTime time="14,166.350001 us"></ZoomEndTime>
+      <Cursor1Time time="14,095.100000 us"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="166"></ValueColumnWidth>
+      <ValueColumnWidth column_width="154"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="6" />
+   <WVObjectSize size="10" />
    <wvobject fp_name="/draw_board_tb/dut/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -48,5 +48,21 @@
    <wvobject fp_name="/draw_board_tb/dut/u_draw_char/scale_vcount" type="array">
       <obj_property name="ElementShortName">scale_vcount[10:0]</obj_property>
       <obj_property name="ObjectShortName">scale_vcount[10:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_code" type="array">
+      <obj_property name="ElementShortName">char_code[11:0]</obj_property>
+      <obj_property name="ObjectShortName">char_code[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_line" type="array">
+      <obj_property name="ElementShortName">char_line[3:0]</obj_property>
+      <obj_property name="ObjectShortName">char_line[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/frame_ctr" type="array">
+      <obj_property name="ElementShortName">frame_ctr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">frame_ctr[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_char/char_pixels" type="array">
+      <obj_property name="ElementShortName">char_pixels[31:0]</obj_property>
+      <obj_property name="ObjectShortName">char_pixels[31:0]</obj_property>
    </wvobject>
 </wave_config>

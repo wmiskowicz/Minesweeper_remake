@@ -19,7 +19,7 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../fpga/rtl/top_memory_logic.sv \
         ../../rtl/common/cross_buffer.sv \
         ../../rtl/common/delay_vga.sv \
-        ../../rtl/common/edge_detector.sv \
+        ../../rtl/common/posedge_detector.sv \
         ../../rtl/memory/top_memory.sv \
         ../../rtl/memory/wishbone_arbiter.sv \
         ../../rtl/memory/wishbone_board_mem.sv \
@@ -57,3 +57,4 @@ verilog work ../../fpga/rtl/clk_wiz_0.v \
 vhdl work ../../rtl/mouse/MouseCtl.vhd \
           ../../rtl/mouse/MouseDisplay.vhd \
           ../../rtl/mouse/Ps2Interface.vhd \
+          ../../rtl/mouse/fifo/fifo_generator_1.vhd \

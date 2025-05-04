@@ -34,7 +34,7 @@ logic [3:0] char_line;
 
 logic [(PRESCALER*8)-1:0] char_pixels;
 
-assign char_line = char_vcount[3:0];
+assign char_line = char_vcount[3:0]; // coś jest tu nie tak - rozsynchronizowuje się między klatkami
 
 assign char_vcount = scale_vcount - char_ypos;
 assign char_hcount = in.hcount - char_xpos;
@@ -50,7 +50,11 @@ always_ff @(posedge clk) begin
   end
   else if (PRESCALER != 1) begin
     vcount_reg   <= in.vcount;
-    scale_vcount <= (vcount_reg != in.vcount && in.vcount % PRESCALER == 0) ? scale_vcount + 1 : scale_vcount;
+    if (in.vcount == 0) 
+      scale_vcount <= 11'h0;
+    else if(vcount_reg != in.vcount && in.vcount % PRESCALER == 0) begin
+      scale_vcount <= scale_vcount + 1;
+    end
     scale_hcount <= (in.hcount % PRESCALER == 0) ? scale_hcount + 1 : scale_hcount;
   end
   else begin
