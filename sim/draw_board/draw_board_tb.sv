@@ -146,7 +146,6 @@ initial begin
   wait (vs == 1'b0);
   @(negedge vs) $display("Info: negedge VS at %t",$time);
   @(negedge vs) $display("Info: negedge VS at %t",$time);
-  wait (frame_ctr == 0);
 
   $finish();
 end

@@ -341,8 +341,9 @@ u_draw_flag1 (
 
 
 draw_char #(
-  .PRESCALER(4),//4
-  .OFFSET_X(32)
+  .PRESCALER (4),
+  .OFFSET_X  (16),
+  .OFFSET_Y  (3)
 ) u_draw_char (
   .clk      (clk),
   .rst      (rst),
