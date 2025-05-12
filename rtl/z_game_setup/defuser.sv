@@ -92,6 +92,8 @@ logic [11:0] mouse_board_ypos;
 logic [19:0] timing_ctr;
 logic board_ready;
 
+logic [3:0] mine_ind;
+
 
 assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] && mouse_ypos < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_xpos < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
@@ -258,6 +260,7 @@ always_ff @(posedge clk) begin
 
         game_lost <= 1'b0;
         game_won  <= 1'b0;
+        mine_ind  <= 4'h0;
       end
 
       DEF_READ_BOARD: begin
@@ -276,13 +279,17 @@ always_ff @(posedge clk) begin
                 (col_ctr+dx >= 0) && (col_ctr+dx < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) &&
                 game_board_mem[row_ctr+dy][col_ctr+dx].mine) begin
 
-              game_board_mem[row_ctr][col_ctr].mine_ind <= game_board_mem[row_ctr][col_ctr].mine_ind + 1;
+
+              mine_ind++;
             end
           end
         end
 
+        game_board_mem[row_ctr][col_ctr].mine_ind <= mine_ind;
+        mine_ind <= 4'h0;
+
         defuser_state <= (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 &&
-          col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) ? DEF_WAIT_FOR_MOUSE : DEF_WRITE_MINE_IND;
+                          col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) ? DEF_WAIT_FOR_MOUSE : DEF_WRITE_MINE_IND;
       end
 
       DEF_WAIT_FOR_MOUSE: begin

@@ -52,6 +52,8 @@ assign in_char_field = (in.hcount >= actual_char_xpos) &&
   (in.vcount >= actual_char_ypos) &&
   (in.vcount < (actual_char_ypos + (16 * PRESCALER)));
 
+
+//prescaler logic should be moved to one module in the future
 always_ff @(posedge clk) begin
   if (rst) begin
     scale_vcount <= 11'h0;
