@@ -109,7 +109,10 @@ module top_memory_logic_tb;
   dut.u_top_mouse.left_in = 0;
   WaitClocks(200);
 
-  WaitClocks(5000);
+  wait (vs == 1'b0);
+  @(negedge vs) $display("Info: negedge VS at %t",$time);
+  @(negedge vs) $display("Info: negedge VS at %t",$time);
+
   $finish();
  end
 

@@ -16,65 +16,174 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4,835.934 ns"></ZoomStartTime>
-      <ZoomEndTime time="4,964.135 ns"></ZoomEndTime>
-      <Cursor1Time time="4,884.734 ns"></Cursor1Time>
+      <ZoomStartTime time="19.277144 us"></ZoomStartTime>
+      <ZoomEndTime time="21.270479 us"></ZoomEndTime>
+      <Cursor1Time time="357.315000 us"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="130"></ValueColumnWidth>
+      <ValueColumnWidth column_width="118"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="13" />
+   <WVObjectSize size="8" />
    <wvobject fp_name="/top_memory_logic_tb/dut/u_top_vga/u_draw_board/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/wr_en_pulse" type="logic">
-      <obj_property name="ElementShortName">wr_en_pulse</obj_property>
-      <obj_property name="ObjectShortName">wr_en_pulse</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/defuser_state" type="array">
+      <obj_property name="ElementShortName">defuser_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">defuser_state[2:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/left_in" type="logic">
-      <obj_property name="ElementShortName">left_in</obj_property>
-      <obj_property name="ObjectShortName">left_in</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/col_ctr" type="array">
+      <obj_property name="ElementShortName">col_ctr[3:0]</obj_property>
+      <obj_property name="ObjectShortName">col_ctr[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/right_in" type="logic">
-      <obj_property name="ElementShortName">right_in</obj_property>
-      <obj_property name="ObjectShortName">right_in</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/row_ctr" type="array">
+      <obj_property name="ElementShortName">row_ctr[3:0]</obj_property>
+      <obj_property name="ObjectShortName">row_ctr[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/left_del" type="logic">
-      <obj_property name="ElementShortName">left_del</obj_property>
-      <obj_property name="ObjectShortName">left_del</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/mine_ind" type="array">
+      <obj_property name="ElementShortName">mine_ind[3:0]</obj_property>
+      <obj_property name="ObjectShortName">mine_ind[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/right_del" type="logic">
-      <obj_property name="ElementShortName">right_del</obj_property>
-      <obj_property name="ObjectShortName">right_del</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/count_en" type="logic">
+      <obj_property name="ElementShortName">count_en</obj_property>
+      <obj_property name="ObjectShortName">count_en</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/left_sync" type="logic">
-      <obj_property name="ElementShortName">left_sync</obj_property>
-      <obj_property name="ObjectShortName">left_sync</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem" type="array">
+      <obj_property name="ElementShortName">game_board_mem[15:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_board_mem[15:0][15:0]</obj_property>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[15]" type="array">
+         <obj_property name="ElementShortName">[15][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[14]" type="array">
+         <obj_property name="ElementShortName">[14][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[13]" type="array">
+         <obj_property name="ElementShortName">[13][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[12]" type="array">
+         <obj_property name="ElementShortName">[12][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[11]" type="array">
+         <obj_property name="ElementShortName">[11][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[10]" type="array">
+         <obj_property name="ElementShortName">[10][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[9]" type="array">
+         <obj_property name="ElementShortName">[9][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[8]" type="array">
+         <obj_property name="ElementShortName">[8][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[7]" type="array">
+         <obj_property name="ElementShortName">[7][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[6]" type="array">
+         <obj_property name="ElementShortName">[6][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[5]" type="array">
+         <obj_property name="ElementShortName">[5][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[4]" type="array">
+         <obj_property name="ElementShortName">[4][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[15]" type="array">
+         <obj_property name="ElementShortName">[15][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[14]" type="array">
+         <obj_property name="ElementShortName">[14][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[13]" type="array">
+         <obj_property name="ElementShortName">[13][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[12]" type="array">
+         <obj_property name="ElementShortName">[12][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[11]" type="array">
+         <obj_property name="ElementShortName">[11][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[10]" type="array">
+         <obj_property name="ElementShortName">[10][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[9]" type="array">
+         <obj_property name="ElementShortName">[9][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[8]" type="array">
+         <obj_property name="ElementShortName">[8][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[7]" type="array">
+         <obj_property name="ElementShortName">[7][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[6]" type="array">
+         <obj_property name="ElementShortName">[6][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[5]" type="array">
+         <obj_property name="ElementShortName">[5][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[4]" type="array">
+         <obj_property name="ElementShortName">[4][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[3]" type="array">
+         <obj_property name="ElementShortName">[3][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[2]" type="array">
+         <obj_property name="ElementShortName">[2][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[1]" type="array">
+         <obj_property name="ElementShortName">[1][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/game_board_mem[0]" type="array">
+         <obj_property name="ElementShortName">[0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/right_sync" type="logic">
-      <obj_property name="ElementShortName">right_sync</obj_property>
-      <obj_property name="ObjectShortName">right_sync</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/right" type="logic">
-      <obj_property name="ElementShortName">right</obj_property>
-      <obj_property name="ObjectShortName">right</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/left" type="logic">
-      <obj_property name="ElementShortName">left</obj_property>
-      <obj_property name="ObjectShortName">left</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/data_out" type="array">
-      <obj_property name="ElementShortName">data_out[17:0]</obj_property>
-      <obj_property name="ObjectShortName">data_out[17:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/full" type="logic">
-      <obj_property name="ElementShortName">full</obj_property>
-      <obj_property name="ObjectShortName">full</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_memory_logic_tb/dut/u_top_mouse/empty" type="logic">
-      <obj_property name="ElementShortName">empty</obj_property>
-      <obj_property name="ObjectShortName">empty</obj_property>
+   <wvobject fp_name="/top_memory_logic_tb/dut/u_defuser/debug_mine_ind" type="array">
+      <obj_property name="ElementShortName">debug_mine_ind[3:0]</obj_property>
+      <obj_property name="ObjectShortName">debug_mine_ind[3:0]</obj_property>
    </wvobject>
 </wave_config>

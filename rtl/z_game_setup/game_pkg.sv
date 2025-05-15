@@ -14,7 +14,7 @@ package game_pkg;
 
 // ======== EASY ========
   localparam E_ROW_COLUMN_NUMBER = 8; 
-  localparam E_MINE_NUM          = 19;
+  localparam E_MINE_NUM          = 10;
   localparam E_TIMER_SECONDS     = 45;
   localparam E_FIELD_SIZE        = 64;
   localparam E_BOARD_SIZE        = E_FIELD_SIZE * E_ROW_COLUMN_NUMBER; 
@@ -23,7 +23,7 @@ package game_pkg;
 
 // ======== MEDIUM ========
   localparam M_ROW_COLUMN_NUMBER = 10; 
-  localparam M_MINE_NUM          = 30;
+  localparam M_MINE_NUM          = 20;
   localparam M_TIMER_SECONDS     = 50;
   localparam M_FIELD_SIZE        = 64;
   localparam M_BOARD_SIZE        = M_FIELD_SIZE * M_ROW_COLUMN_NUMBER; 

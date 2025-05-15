@@ -90,13 +90,13 @@ enum logic [STATE_BITS-1 :0] {
 } board_state;
 
 always_comb begin
-  if (game_board_mem[board_ind_x][board_ind_y].mine_ind == 0) begin
+  if (game_board_mem[board_ind_y][board_ind_x].mine_ind == 0) begin
     char_code = 0;
     num_color = 0;
   end
   else begin
-    char_code = game_board_mem[board_ind_x][board_ind_y].mine_ind + 12'h30;
-    case (game_board_mem[board_ind_x][board_ind_y].mine_ind)
+    char_code = game_board_mem[board_ind_y][board_ind_x].mine_ind + 12'h30;
+    case (game_board_mem[board_ind_y][board_ind_x].mine_ind)
       4'h1: num_color    = NUM_1;
       4'h2: num_color    = NUM_2;
       4'h3: num_color    = NUM_3;

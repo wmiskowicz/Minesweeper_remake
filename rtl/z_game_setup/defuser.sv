@@ -229,14 +229,24 @@ logic [3:0] col_ctr;
 logic [3:0] row_ctr;
 logic count_en;
 
+
 always_ff @(posedge clk) begin
   if (rst) begin
     col_ctr <= 4'b0;
     row_ctr <= 4'b0;
   end
   else if (count_en) begin
-    col_ctr <= col_ctr + 1;
-    if (col_ctr == 4'hF) row_ctr <= row_ctr + 1;
+    if (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) begin
+      row_ctr <= 4'h0;
+      col_ctr <= col_ctr + 4'd1;
+    end
+    else if(col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) begin
+      row_ctr <= 4'h0;
+      col_ctr <= 4'd0;
+    end
+    else begin
+      row_ctr <= row_ctr + 4'd1;
+    end
   end
   else begin
     col_ctr <= 4'b0;
