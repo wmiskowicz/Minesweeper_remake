@@ -59,12 +59,7 @@ module top_memory_logic_tb;
     .Hsync            (hs),
     .vgaBlue          (b),
     .vgaGreen         (g),
-    .vgaRed           (r),
-  
-  
-    .mouse_board_ind_x(mouse_board_ind_x),
-    .mouse_board_ind_y(mouse_board_ind_y)
-  
+    .vgaRed           (r)  
   );
 
   tiff_writer #(

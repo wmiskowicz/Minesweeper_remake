@@ -31,33 +31,29 @@ module top_basys3 (
 );
 
 
-/**
- * Local variables and signals
- */
-
+// ----- Local variables -----
 wire clk100MHz;
 wire clk74MHz;
 wire locked;
+
 logic rst;
 logic [1:0] level;
-
-wire [3:0] mouse_board_ind_x;
-wire [3:0] mouse_board_ind_y;
 
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
 
-/**
- * Signals assignments
- */
+
+// ----- Signal assignments -----
 assign rst = btnD;
+assign level = {btnR || btnC, btnL || btnR};
+
 assign led[0] = locked;
 assign led[1] = 0;
 assign led[2] = 1;
 assign led[3] = 0;
-assign level = {btnR || btnC, btnL || btnR};
 
 
+// ----- Signal intefaces -----
 wishbone_if planter_set_wb_if();
 wishbone_if planter_board_wb_if();
 
@@ -85,8 +81,8 @@ clk_wiz_1 clk0_wiz(
 sseg_disp u_disp(
   .clk    (clk74MHz),
   .reset  (rst),
-  .hex3   (mouse_board_ind_x),
-  .hex2   (mouse_board_ind_y),
+  .hex3   (0),
+  .hex2   (0),
   .hex1   (0),
   .hex0   (0),
   .an     (an),
@@ -107,12 +103,7 @@ top_memory_logic u_top_memory_logic (
   .Hsync            (Hsync),
   .vgaBlue          (vgaBlue),
   .vgaGreen         (vgaGreen),
-  .vgaRed           (vgaRed),
-
-
-  .mouse_board_ind_x(mouse_board_ind_x),
-  .mouse_board_ind_y(mouse_board_ind_y)
-
+  .vgaRed           (vgaRed)
 );
 
 

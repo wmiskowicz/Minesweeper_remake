@@ -1,14 +1,14 @@
 //////////////////////////////////////////////////////////////////////////////
- /*
+/*
   Module name:   top_mouse
   Author:        Wojciech Miskowicz
   Description:   Top module for mouse peripherial. The output mouse signals
                  are clocked using 74MHz clock. 'left' and 'right' signals
                  are of 1 clock cycle width.
-  */
+*/
 //////////////////////////////////////////////////////////////////////////////
 
- `timescale 1 ns / 1 ps
+`timescale 1 ns / 1 ps
 
 module top_mouse (
   input  wire clk100MHz,
@@ -24,6 +24,7 @@ module top_mouse (
   output logic [11:0] mouse_ypos
 );
 
+// ----- Local variables -----
 wire [11:0] xpos_in;
 wire [11:0] ypos_in;
 
@@ -39,12 +40,14 @@ logic left_del, right_del;
 logic left_sync, right_sync;
 logic wr_en_pulse;
 
+// ----- Signal assignments -----
+assign right_sync = rd_en ? 1'b0 : data_out[0];
+assign left_sync  = rd_en ? 1'b0 : data_out[1];
+
 
 always_ff @(posedge clk100MHz) wr_en <= !full && (left_in || right_in);
 always_ff @(posedge clk74MHz)  rd_en <= !empty;
 
-assign right_sync = rd_en ? 1'b0 : data_out[0];
-assign left_sync  = rd_en ? 1'b0 : data_out[1];
 
 posedge_detector posedge_detector_0 (
   .clk        (clk74MHz),
@@ -135,8 +138,6 @@ fifo_generator_1 fifo_0 (
   .wr_rst_busy(),
   .rd_rst_busy()
 );
-
-
 
 
 endmodule

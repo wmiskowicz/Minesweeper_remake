@@ -6,6 +6,8 @@
  */
 //////////////////////////////////////////////////////////////////////////////
 `include "../memory/wishbone_defs.svh"
+`include "defuser.svh"
+
 import game_pkg::*;
 
 module defuser (
@@ -21,9 +23,6 @@ module defuser (
   input logic left,
   input logic right,
 
-  output logic [3:0] mouse_board_ind_x,
-  output logic [3:0] mouse_board_ind_y,
-
   output logic game_lost,
   output logic game_won,
 
@@ -31,32 +30,12 @@ module defuser (
   wishbone_if.master game_board_wb
 );
 
+// ----- Local parameters -----
 localparam SETTINGS_REG_NUM = 9;
 localparam HALF_FRAME_CYCLES = 618750;
 
 
-enum logic [2:0] {
-  IDLE,
-  READ_SETTINGS,
-  READ_BOARD,
-  DONE
-} auto_read_state;
-
-enum logic [1:0] {
-  WAIT,
-  AUTO_WRITE
-} auto_write_state;
-
-enum logic [2:0] {
-  DEF_IDLE,
-  DEF_READ_BOARD,
-  DEF_WAIT_FOR_MOUSE,
-  DEF_WRITE_MINE_IND,
-  DEFUSE,
-  DEF_WIN_CHECK
-} defuser_state;
-
-
+// ----- Local variables -----
 field_t game_board_mem [15:0][15:0];
 logic [15:0] game_setup_cashe [SETTINGS_REG_NUM-1:0];
 
@@ -86,15 +65,20 @@ logic mouse_ypos_valid;
 logic [11:0] mouse_board_xpos;
 logic [11:0] mouse_board_ypos;
 
-// logic [3:0] mouse_board_ind_x;
-// logic [3:0] mouse_board_ind_y;
+logic [3:0] mouse_board_ind_x;
+logic [3:0] mouse_board_ind_y;
 
 logic [19:0] timing_ctr;
 logic board_ready;
 
 logic [3:0] mine_ind;
 
+logic [3:0] col_ctr;
+logic [3:0] row_ctr;
+logic count_en;
 
+
+// ----- Signal assignments -----
 assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] && mouse_ypos < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_xpos < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 
@@ -128,10 +112,10 @@ always_ff @(posedge clk) begin
   else begin
     case(auto_read_state)
       IDLE: begin
-        burst_active <= 1'b0;
+        burst_active    <= 1'b0;
         auto_read_state <= planting_complete ? READ_SETTINGS : IDLE;
-        read_en <= planting_complete;
-        read_addr <= 8'h0;
+        read_en         <= planting_complete;
+        read_addr       <= 8'h0;
 
         game_burst_read <= 1'b0;
         game_read_addr  <= 9'h00;
@@ -151,10 +135,12 @@ always_ff @(posedge clk) begin
         end
 
         if (read_ready && settings_read_ctr < SETTINGS_REG_NUM) begin
+
           game_setup_cashe[settings_read_ctr] <= read_data;
           settings_read_ctr <= settings_read_ctr + 1;
+
           read_addr <= (settings_read_ctr + 1) * 8'h2;
-          read_en <= 1'b1;
+          read_en   <= 1'b1;
         end
       end
       READ_BOARD: begin
@@ -194,7 +180,7 @@ always_ff @(posedge clk) begin
         if (timing_ctr == HALF_FRAME_CYCLES) begin
           if (!game_burst_read) begin
             auto_write_state <= AUTO_WRITE;
-            timing_ctr <= 20'b0;
+            timing_ctr       <= 20'b0;
 
             game_burst_write <= 1'b1;
             game_write_en    <= 1'b1;
@@ -225,24 +211,21 @@ end
 
 
 // Defuse logic
-logic [3:0] col_ctr;
-logic [3:0] row_ctr;
-logic count_en;
-
-
 always_ff @(posedge clk) begin
   if (rst) begin
     col_ctr <= 4'b0;
     row_ctr <= 4'b0;
   end
   else if (count_en) begin
-    if (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) begin
+    if(row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) begin
       row_ctr <= 4'h0;
-      col_ctr <= col_ctr + 4'd1;
-    end
-    else if(col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) begin
-      row_ctr <= 4'h0;
-      col_ctr <= 4'd0;
+
+      if (col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) begin
+        col_ctr <= 4'd0;
+      end
+      else begin
+        col_ctr <= col_ctr + 4'd1;
+      end
     end
     else begin
       row_ctr <= row_ctr + 4'd1;
@@ -266,7 +249,7 @@ always_ff @(posedge clk) begin
     case (defuser_state)
       DEF_IDLE: begin
         defuser_state <= main_state == PLAY ? DEF_READ_BOARD : DEF_IDLE;
-        count_en      <= 1'b0;
+        count_en  <= 1'b0;
 
         game_lost <= 1'b0;
         game_won  <= 1'b0;
@@ -311,7 +294,7 @@ always_ff @(posedge clk) begin
             defuser_state <= DEFUSE;
 
             if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine) begin
-              game_lost <= 1'b1;
+              game_lost     <= 1'b1;
               defuser_state <= DEF_IDLE;
             end
           end

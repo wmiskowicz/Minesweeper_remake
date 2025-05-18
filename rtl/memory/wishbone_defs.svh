@@ -1,11 +1,6 @@
 `ifndef WISHBONE_DEFS_SVH
 `define WISHBONE_DEFS_SVH
 
-typedef enum logic {
-    IDLE,
-    BUS_WAIT
-} master_state_t;
-
 typedef struct packed {
   logic [15:0] row_column_number; 
   logic [15:0] mine_number;       

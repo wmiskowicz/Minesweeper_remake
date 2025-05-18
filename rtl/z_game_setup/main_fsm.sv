@@ -23,6 +23,8 @@ module main_fsm(
   wishbone_if.slave game_set_wb3
 );
 
+
+// ----- Local parameters -----
 localparam NUMBER_OF_REGISTERS = 9;
 
 localparam ROW_COLUMN_NUMBER_ADDR = 8'h00;
@@ -45,8 +47,8 @@ localparam BOARD_YPOS_REG_NUM        = 6;
 localparam GAMES_WON_REG_NUM         = 7;
 localparam GAMES_LOST_REG_NUM        = 8;
 
-// Local variables
 
+// ----- Local variables -----
 logic [15:0] game_setup_mem [NUMBER_OF_REGISTERS-1:0];
 
 

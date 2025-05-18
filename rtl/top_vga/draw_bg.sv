@@ -38,14 +38,6 @@ always_ff @(posedge clk) begin
 end
 
 
-
-
-
-
-/**
- * Internal logic
- */
-
 always_ff @(posedge clk) begin : background_ff_blk
   if (rst) begin
     out.vcount  <= '0;

@@ -19,25 +19,18 @@ module top_memory_logic (
   output wire       Hsync,
   output wire [3:0] vgaRed,
   output wire [3:0] vgaGreen,
-  output wire [3:0] vgaBlue,
-
-  output wire [3:0] mouse_board_ind_x,
-  output wire [3:0] mouse_board_ind_y
-
+  output wire [3:0] vgaBlue
 );
 
 
-/**
- * Local variables and signals
- */
-wire [2:0] main_state;
+// ----- Local variables -----
+wire [2:0]  main_state;
 
 wire [11:0] mouse_xpos;
 wire [11:0] mouse_ypos;
 
- wire left;
- wire right;
-
+wire left;
+wire right;
 
 wire game_lost;
 wire game_won;
@@ -45,7 +38,7 @@ wire game_won;
 wire planting_complete;
 
 
-
+// ----- Signal intefaces -----
 wishbone_if planter_set_wb_if();
 wishbone_if planter_board_wb_if();
 
@@ -109,9 +102,6 @@ defuser u_defuser (
 
   .mouse_xpos       (mouse_xpos),
   .mouse_ypos       (mouse_ypos),
-
-  .mouse_board_ind_x(mouse_board_ind_x),
-  .mouse_board_ind_y(mouse_board_ind_y),
 
   .left             (left),
   .right            (right),

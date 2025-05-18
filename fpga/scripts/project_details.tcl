@@ -46,7 +46,6 @@ set sv_files {
     ../rtl/timer/time_controller.sv
     ../rtl/timer/top_timer.sv
     ../rtl/top_vga/animation_controller.sv
-    ../rtl/top_vga/char_pos_conv.sv
     ../rtl/top_vga/color_pkg.sv
     ../rtl/top_vga/draw_back_objects.sv
     ../rtl/top_vga/draw_bg.sv

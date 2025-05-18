@@ -18,10 +18,11 @@ module mine_planter (
   wishbone_if.master game_board_wb
 );
 
+
+// ----- Local variables -----
 logic mine_map[15:0][15:0];
 logic current_field_mine;
 
-logic [15:0] counter;
 logic [15:0] row_col_num;
 logic [15:0] mines_left;
 
@@ -47,22 +48,28 @@ enum logic [2:0] {
   DONE
 } planter_state;
 
+
+// ----- Signal assignments -----
 assign current_field_mine = mine_map[game_write_addr[7:4]][game_write_addr[3:0]];
 assign game_write_data = {8'b0, current_field_mine, 7'b0};
 
+
+
 always_ff @(posedge clk) begin
   if (rst) begin
-    for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++)  mine_map[i][j] <= 1'b0;
 
-    planter_state <= IDLE;
+    for (int i = 0; i < 16; i++)
+      for (int j = 0; j < 16; j++)  
+        mine_map[i][j] <= 1'b0;
+
+    planter_state     <= IDLE;
     planting_complete <= 1'b0;
 
     settings_burst_active <= 1'b0;
-    settings_read_en <= 1'b0;
-    settings_read_addr <= 8'b0;
-    row_col_num <= 16'b1;
-    mines_left  <= 16'b0;
+    settings_read_en      <= 1'b0;
+    settings_read_addr    <= 8'b0;
+    row_col_num           <= 16'b1;
+    mines_left            <= 16'b0;
 
     game_burst_active <= 1'b0;
     game_write_addr   <= 9'h0;
@@ -71,13 +78,15 @@ always_ff @(posedge clk) begin
     case (planter_state)
       IDLE: begin
         if (main_state == PLAY) begin
-          planter_state <= READ_SETTINGS;
-          settings_read_en <= 1'b1;
+
+          planter_state         <= READ_SETTINGS;
+          settings_read_en      <= 1'b1;
           settings_burst_active <= 1'b1;
         end
 
         for (int i = 0; i < 16; i++)
-          for (int j = 0; j < 16; j++)  mine_map[i][j] <= 1'b0;
+          for (int j = 0; j < 16; j++)  
+            mine_map[i][j] <= 1'b0;
 
         settings_read_addr <= 8'b0;
         game_write_addr    <= 9'h0;
@@ -89,8 +98,10 @@ always_ff @(posedge clk) begin
 
         if (settings_read_ready && settings_read_addr < 8'd4) begin
 
-          if (settings_read_addr == 0) row_col_num <= settings_read_data;
-          else mines_left  <= settings_read_data;
+          if (settings_read_addr == 0) 
+            row_col_num <= settings_read_data;
+          else 
+            mines_left  <= settings_read_data;
 
           settings_read_addr <= settings_read_addr + 8'd2;
           settings_read_en <= 1'b1;
@@ -109,7 +120,7 @@ always_ff @(posedge clk) begin
           end
         end
         else begin
-          planter_state <= WRITE_BOARD;
+          planter_state     <= WRITE_BOARD;
           game_burst_active <= 1'b1;
           game_write_en     <= 1'b1;
           game_write_addr   <= 9'h0;
@@ -124,9 +135,9 @@ always_ff @(posedge clk) begin
         end
 
         if (game_write_addr == 9'h100) begin
-          game_write_en   <= 1'b0;
+          game_write_en     <= 1'b0;
           game_burst_active <= 1'b0;
-          planter_state <= DONE;
+          planter_state     <= DONE;
         end
       end
       DONE: begin
@@ -149,9 +160,6 @@ lfsr #(.WIDTH(18)) lfsr0 (.datain(din0), .dataout(dout0));
 lfsr #(.WIDTH(17)) lfsr1 (.datain(din1), .dataout(dout1));
 lfsr #(.WIDTH(16)) lfsr2 (.datain(din2), .dataout(dout2));
 
-// assign ind_x = dout[18:15] % row_col_num;
-// assign ind_y = dout[7:4] % row_col_num;
-
 
 always_ff @(posedge clk or posedge rst) begin
   if (rst) begin
@@ -171,8 +179,6 @@ always_ff @(posedge clk or posedge rst) begin
     ind_y <= dout[7:4] % row_col_num;
   end
 end
-
-
 
 
 wishbone_master u_settings_master (

@@ -2,10 +2,11 @@
 /*
  Module name:   main_fsm.sv
  Author:        Wojciech Miskowicz
- Description:   Module containing the FSM controlling the game. 
+ Description:   Module responsible for managing game board memory.
  */
 //////////////////////////////////////////////////////////////////////////////
 `include "wishbone_defs.svh"
+ 
 module top_memory (
   input wire clk74MHz,
   input wire rst,
@@ -24,7 +25,7 @@ wishbone_board_mem #(
 u_wishbone_board_mem (
   .clk     (clk74MHz),
   .rst     (rst),
-  .slave(selected_wb_if.slave)
+  .slave   (selected_wb_if.slave)
 );
 
 wishbone_arbiter u_wishbone_arbiter (

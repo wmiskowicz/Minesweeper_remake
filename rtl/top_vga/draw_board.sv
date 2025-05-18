@@ -5,8 +5,8 @@
   Description:   Implements module for drawing game board.
   */
 //////////////////////////////////////////////////////////////////////////////
-`timescale 1 ns / 1 ps
 `include "../memory/wishbone_defs.svh"
+  
 module draw_board (
   input  wire  clk,
   input  wire  rst,
@@ -32,15 +32,13 @@ vga_if bomb_vga();
 vga_if flag_vga();
 vga_if num_vga();
 
-//------------------------------------------------------------------------------
-// Local parameters
-
+// ----- Local parameters -----
 localparam STATE_BITS = 3;
 localparam MARGIN = 5;
 localparam SETTINGS_REG_NUM = 9;
 
-//------------------------------------------------------------------------------
-// local variables
+
+// ----- Local variables -----
 logic [15:0] game_setup_cashe [SETTINGS_REG_NUM-1:0];
 field_t game_board_mem [15:0][15:0];
 
@@ -67,9 +65,15 @@ logic [3:0] board_ind_y;
 
 logic [11:0] char_code;
 logic [11:0] num_color;
-//------------------------------------------------------------------------------
-// signal assignments
 
+enum logic [STATE_BITS-1 :0] {
+  IDLE,
+  READ_SETTINGS,
+  DRAW
+} board_state;
+
+
+// ----- Signal assignments -----
 assign vcount_valid = in.vcount >= game_setup_cashe[BOARD_YPOS_REG_NUM] && in.vcount < game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
 assign hcount_valid = in.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] && in.hcount < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
 
@@ -83,11 +87,7 @@ assign board_ind_x = board_hcount[9:6];
 assign board_ind_y = board_vcount[9:6];
 
 
-enum logic [STATE_BITS-1 :0] {
-  IDLE,
-  READ_SETTINGS,
-  DRAW
-} board_state;
+
 
 always_comb begin
   if (game_board_mem[board_ind_y][board_ind_x].mine_ind == 0) begin
@@ -109,6 +109,8 @@ always_comb begin
   end
 end
 
+
+// Draw board logic
 always_ff @(posedge clk) begin
   if(rst)begin
     board_state <= IDLE;
@@ -120,10 +122,10 @@ always_ff @(posedge clk) begin
     out.hblnk   <= '0;
     out.rgb     <= '0;
 
-    burst_active <= 1'b0;
-    read_addr    <= 8'b0;
+    burst_active      <= 1'b0;
+    read_addr         <= 8'b0;
     settings_read_ctr <= 4'b0;
-    read_en <= 1'b0;
+    read_en           <= 1'b0;
   end
   else begin
     out.vcount  <= in.vcount;
@@ -136,29 +138,31 @@ always_ff @(posedge clk) begin
     case(board_state)
       IDLE: begin
         burst_active <= 1'b0;
-        board_state <= main_state == PLAY ? READ_SETTINGS : IDLE;
-        read_en <= main_state == PLAY;
-        read_addr <= 8'h0;
-        out.rgb <= in.rgb;
+        board_state  <= main_state == PLAY ? READ_SETTINGS : IDLE;
+        read_en      <= main_state == PLAY;
+        read_addr    <= 8'h0;
+        out.rgb      <= in.rgb;
       end
       READ_SETTINGS: begin
-        out.rgb <= in.rgb;
+        out.rgb      <= in.rgb;
         burst_active <= 1'b1;
-        read_en <= 1'b0;
-        board_state <= settings_read_ctr == SETTINGS_REG_NUM ? DRAW : READ_SETTINGS;
+        read_en      <= 1'b0;
+        board_state  <= settings_read_ctr == SETTINGS_REG_NUM ? DRAW : READ_SETTINGS;
 
         if (read_ready && settings_read_ctr < SETTINGS_REG_NUM) begin
+
           game_setup_cashe[settings_read_ctr] <= read_data;
-          settings_read_ctr <= settings_read_ctr + 1;
+          settings_read_ctr                   <= settings_read_ctr + 1;
+
           read_addr <= (settings_read_ctr + 1) * 8'h2;
-          read_en <= 1'b1;
+          read_en   <= 1'b1;
         end
       end
       DRAW: begin
         burst_active <= 1'b0;
-        read_en <= 1'b0;
-        board_state <= main_state == MENU ? IDLE : DRAW;
-        out.rgb <= draw_button();
+        read_en      <= 1'b0;
+        board_state  <= main_state == MENU ? IDLE : DRAW;
+        out.rgb      <= draw_button();
 
 
         if (game_board_mem[board_ind_y][board_ind_x].mine && game_board_mem[board_ind_y][board_ind_x].defused)
@@ -192,12 +196,12 @@ always_ff @(posedge clk) begin
   else begin
     case (auto_read_state)
       WAIT: begin
-        if (in.vcount == 3 && in.hcount < 10) begin //(in.vcount == VCOUNT_MAX - 1 && in.hcount < 10) begin
+        if (in.vcount == 3 && in.hcount < 10) begin
           auto_read_state <= AUTO_READ;
 
           game_burst_active <= 1'b1;
-          game_read_en    <= 1'b1;
-          game_read_addr  <= 9'h00;
+          game_read_en      <= 1'b1;
+          game_read_addr    <= 9'h00;
         end
       end
       AUTO_READ: begin
@@ -210,9 +214,9 @@ always_ff @(posedge clk) begin
         end
 
         if (game_read_addr == 9'h100) begin
-          game_read_en    <= 1'b0;
+          game_read_en      <= 1'b0;
           game_burst_active <= 1'b0;
-          auto_read_state <= WAIT;
+          auto_read_state   <= WAIT;
         end
       end
       default: auto_read_state <= WAIT;

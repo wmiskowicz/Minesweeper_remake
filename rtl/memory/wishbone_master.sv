@@ -2,10 +2,12 @@
 /*
  Module name:   Wishbone master
  Author:        Wojciech Miskowicz
- Description:   Implements a wishbone compatible master.
+ Description:   Implements a wishbone compatible master and translates signals
+                to a custom logic interface.
  */
 //////////////////////////////////////////////////////////////////////////////
 `include "wishbone_defs.svh"
+ 
 module wishbone_master (
   input  wire clk,  
   input  wire rst,  
@@ -24,15 +26,15 @@ module wishbone_master (
   wishbone_if.master wb_master
 );
 
+typedef enum logic {
+    IDLE,
+    BUS_WAIT
+} master_state_t;
 
 master_state_t master_state;
 
 
-always_comb begin
-  
-end 
     
-// dodać logikę cyc_o tak, żeby był wysoki kiedy trwa burst (jak np podczas odczytu / zapisu całej tablicy)
 always_ff @(posedge clk) begin
   if(rst) begin
     wb_master.adr_o <= '0;
