@@ -3,7 +3,7 @@ package logger_pkg;
   typedef enum {DEBUG = 400, INFO = 300, WARNING = 200, ERROR = 100, FATAL = 0} e_msg_type;
 
   class logger;
-    
+
     static int print_threshold;
     static int num_fatals;
     static int num_errors;
@@ -14,27 +14,27 @@ package logger_pkg;
       $timeformat(-9, 0, " ns", 20);
       logger::print_threshold = print_threshold;
     endfunction
-    
+
     static function void log(input string msg, e_msg_type msg_type = INFO, string source = "");
       msg = $sformatf("%8s %t [%s]:\t%s\n", msg_type.name, $time, source, msg);
       if (msg_type <= print_threshold) begin
         $write(msg);
       end
-      
+
       case(msg_type)
         INFO:     num_infos++;
         WARNING:  num_warnings++;
         ERROR:    num_errors++;
         FATAL:    num_fatals++;
       endcase
-      
+
       if(msg_type == FATAL) begin
         summary();
         $finish();
       end
     endfunction
-    
-    static function void summary();      
+
+    static function void summary();
       log($sformatf("----====  End of test. ====----"));
       log($sformatf("-- Fatals   = %8d", num_fatals));
       log($sformatf("-- Errors   = %8d", num_errors));
@@ -46,7 +46,7 @@ package logger_pkg;
       else
         log("-- Test FAILED");
     endfunction
-  
+
   endclass
 
   //Logger macros
@@ -56,28 +56,32 @@ package logger_pkg;
   `define log_err(msg)    `log_msg($sformatf(msg),ERROR)
   `define log_fatal(msg)  `log_msg($sformatf(msg),FATAL)
 
-  //Comparison macros
-  `define check_eq(num1, num2) \
-    assert (num1 === num2) else begin\
-      `log_err($sformatf("got: %0h expected %0h", num1, num2));  \
+  
+`define check_eq(num1, num2, err_msg = "") \
+    if (!(num1 === num2)) begin \
+      if (err_msg != "") `log_err(err_msg); \
+      else `log_err($sformatf("Equality check failed: got %0h, expected %0h", num1, num2)); \
       $finish(); \
     end
 
-  `define check_neq(num1, num2) \
-    assert (num1 !== num2) else begin   \
-      `log_err($sformatf("got: %0h expected %0h", num1, num2)); \
-      $finish();  \
+`define check_neq(num1, num2, err_msg = "") \
+    if (!(num1 !== num2)) begin \
+      if (err_msg != "") `log_err(err_msg); \
+      else `log_err($sformatf("Inequality check failed: got %0h, expected not %0h", num1, num2)); \
+      $finish(); \
     end
 
-  `define check_greater(num1, num2) \
-    assert (num1 > num2) else begin\
-      `log_err($sformatf("got: %0h expected %0h", num1, num2));  \
-      $finish();  \
+`define check_greater(num1, num2, err_msg = "") \
+    if (!(num1 > num2)) begin \
+      if (err_msg != "") `log_err(err_msg); \
+      else `log_err($sformatf("Greater-than check failed: got %0h, expected > %0h", num1, num2)); \
+      $finish(); \
     end
   
-  `define check_less(num1, num2) \
-    assert (num1 < num2) else begin  \
-      `log_err($sformatf("got: %0h expected %0h", num1, num2)); \
+`define check_less(num1, num2, err_msg = "") \
+    if (!(num1 < num2)) begin \
+      if (err_msg != "") `log_err(err_msg); \
+      else `log_err($sformatf("Less-than check failed: got %0h, expected < %0h", num1, num2)); \
       $finish(); \
     end
 

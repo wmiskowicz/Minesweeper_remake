@@ -50,29 +50,39 @@ end
 always_ff @(posedge clk) begin
   out.rgb <= 12'h0_0_0;
 
-  if(out.hcount >= HSYNC_START && out.hcount <= HSYNC_STOP) begin
+  if(out.hcount >= HSYNC_START-1 && out.hcount <= HSYNC_STOP-1) begin
     out.hsync <= 1'b1;
   end
   else begin
     out.hsync <= 1'b0;
   end
 
-  if(out.hcount >= HBLNK_START_FRONT && out.hcount <= HBLNK_STOP_FRONT) begin
+  if(out.hcount >= HBLNK_START_FRONT-1 && out.hcount <= HBLNK_STOP_FRONT-1) begin
     out.hblnk <= 1'b1;
   end
   else begin
     out.hblnk <= 1'b0;
   end
 
-  if(out.vcount >= VBLNK_START_FRONT && out.vcount <= VBLNK_STOP_FRONT) begin
-    out.vblnk <= 1'b1;
+  if((out.vcount >= VBLNK_START_FRONT-1 && out.vcount <= VBLNK_STOP_FRONT && out.hcount == HCOUNT_MAX) ||
+     (out.vcount >= VBLNK_START_FRONT   && out.vcount <= VBLNK_STOP_FRONT)) begin
+    if (out.vcount == VBLNK_STOP_FRONT    && out.hcount == HCOUNT_MAX)
+      out.vblnk <= 1'b0;
+    else
+      out.vblnk <= 1'b1;
   end
   else begin
     out.vblnk <= 1'b0;
   end
 
-  if(out.vcount >= VSYNC_START && out.vcount <= VSYNC_STOP) begin
-    out.vsync <= 1'b1;
+  // (out.vcount == VSYNC_STOP    && out.hcount == HCOUNT_MAX)
+  if((out.vcount >= VSYNC_START-1 && out.vcount <= VSYNC_STOP && out.hcount == HCOUNT_MAX) ||
+     (out.vcount >= VSYNC_START   && out.vcount <= VSYNC_STOP))
+     begin
+      if (out.vcount == VSYNC_STOP    && out.hcount == HCOUNT_MAX)
+        out.vsync <= 1'b0;
+      else
+        out.vsync <= 1'b1;
   end
   else begin
     out.vsync <= 1'b0;

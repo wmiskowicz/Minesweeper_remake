@@ -3,78 +3,74 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="draw_board_tb.wdb" id="1">
+      <db_ref path="wishbone_board_mem_tb.wdb" id="1">
          <top_modules>
-            <top_module name="\$unit_wishbone_if_sv_2262496924 " />
-            <top_module name="color_pkg" />
-            <top_module name="draw_board_tb" />
+            <top_module name="\$unit_wishbone_if_sv_210699418 " />
             <top_module name="game_pkg" />
             <top_module name="glbl" />
             <top_module name="logger_pkg" />
             <top_module name="vga_pkg" />
+            <top_module name="wishbone_board_mem_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="211.092 ns"></ZoomStartTime>
-      <ZoomEndTime time="333.293 ns"></ZoomEndTime>
-      <Cursor1Time time="310.000 ns"></Cursor1Time>
+      <ZoomStartTime time="6,044.253 ns"></ZoomStartTime>
+      <ZoomEndTime time="7,278.254 ns"></ZoomEndTime>
+      <Cursor1Time time="6,637.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="190"></ValueColumnWidth>
+      <ValueColumnWidth column_width="178"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="13" />
-   <wvobject fp_name="/draw_board_tb/main_state" type="array">
-      <obj_property name="ElementShortName">main_state[2:0]</obj_property>
-      <obj_property name="ObjectShortName">main_state[2:0]</obj_property>
+   <WVObjectSize size="12" />
+   <wvobject fp_name="/wishbone_board_mem_tb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/adr_o" type="array">
-      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/dat_o" type="array">
-      <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/we_o" type="logic">
-      <obj_property name="ElementShortName">we_o</obj_property>
-      <obj_property name="ObjectShortName">we_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/stb_o" type="logic">
-      <obj_property name="ElementShortName">stb_o</obj_property>
-      <obj_property name="ObjectShortName">stb_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/cyc_o" type="logic">
-      <obj_property name="ElementShortName">cyc_o</obj_property>
-      <obj_property name="ObjectShortName">cyc_o</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/dat_i" type="array">
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/dat_i" type="array">
       <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
       <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/ack_i" type="logic">
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/dat_o" type="array">
+      <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
+      <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/adr_o" type="array">
+      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
+      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/we_o" type="logic">
+      <obj_property name="ElementShortName">we_o</obj_property>
+      <obj_property name="ObjectShortName">we_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/stb_o" type="logic">
+      <obj_property name="ElementShortName">stb_o</obj_property>
+      <obj_property name="ObjectShortName">stb_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/ack_i" type="logic">
       <obj_property name="ElementShortName">ack_i</obj_property>
       <obj_property name="ObjectShortName">ack_i</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_settings_wb/stall_i" type="logic">
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/cyc_o" type="logic">
+      <obj_property name="ElementShortName">cyc_o</obj_property>
+      <obj_property name="ObjectShortName">cyc_o</obj_property>
+   </wvobject>
+   <wvobject fp_name="/wishbone_board_mem_tb/board_wb_if/stall_i" type="logic">
       <obj_property name="ElementShortName">stall_i</obj_property>
       <obj_property name="ObjectShortName">stall_i</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/game_setup_cashe" type="array">
-      <obj_property name="ElementShortName">game_setup_cashe[8:0][15:0]</obj_property>
-      <obj_property name="ObjectShortName">game_setup_cashe[8:0][15:0]</obj_property>
+   <wvobject fp_name="/wishbone_board_mem_tb/dut/row" type="array">
+      <obj_property name="ElementShortName">row[3:0]</obj_property>
+      <obj_property name="ObjectShortName">row[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/read_en" type="logic">
-      <obj_property name="ElementShortName">read_en</obj_property>
-      <obj_property name="ObjectShortName">read_en</obj_property>
+   <wvobject fp_name="/wishbone_board_mem_tb/dut/col" type="array">
+      <obj_property name="ElementShortName">col[3:0]</obj_property>
+      <obj_property name="ObjectShortName">col[3:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/read_ready" type="logic">
-      <obj_property name="ElementShortName">read_ready</obj_property>
-      <obj_property name="ObjectShortName">read_ready</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/settings_read_ctr" type="array">
-      <obj_property name="ElementShortName">settings_read_ctr[3:0]</obj_property>
-      <obj_property name="ObjectShortName">settings_read_ctr[3:0]</obj_property>
+   <wvobject fp_name="/wishbone_board_mem_tb/dut/board_mem[0]" type="array">
+      <obj_property name="ElementShortName">[0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">[0][15:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
 </wave_config>

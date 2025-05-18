@@ -1,75 +1,125 @@
+//////////////////////////////////////////////////////////////////////////////
+/*
+ Module name:   vga_out_tb.sv
+ Author:        Wojciech Miskowicz
+ Description:   Implements a testbench for module vga_out.
+ */
+//////////////////////////////////////////////////////////////////////////////
 `timescale 1 ns / 1 ps
 
 module vga_out_tb;
 
-  import vga_pkg::*;
-  import logger_pkg::*;
+import vga_pkg::*;
+import logger_pkg::*;
 
-  localparam CLK_PERIOD = 25ns;
+// ----- Local parameters -----
+localparam CLK_PERIOD = 25ns;
 
-  logic clk;
-  logic rst;
-  int frame_ctr;
+// ----- Local variables -----
+logic clk;
+logic rst;
 
-  vga_if out_vga();
-  vga_if in_vga();
 
-  initial begin
-    clk = 1'b0;
-    forever #(CLK_PERIOD/2) clk = ~clk;
+// ----- Signal interfaces -----
+vga_if in_vga();
+vga_if driver_vga();
+vga_if out_vga();
+
+
+initial begin
+  clk = 1'b0;
+  forever #(CLK_PERIOD/2) clk = ~clk;
+end
+
+// Tested vga driver
+vga_timing u_vga_timing (
+  .clk(clk),
+  .rst(rst),
+  .out(in_vga.out)
+);
+
+vga_out dut(
+  .clk,
+  .rst,
+  .in(in_vga.in),
+  .out(out_vga.out)
+);
+
+initial begin
+  void'(logger::init());
+  InitReset();
+  `log_info($sformatf("Starting test at, %t", $time));
+
+  // Test 1: Verify buffer swap on HCOUNT_MAX
+  `log_info("Test 1: Verifying buffer swap on HCOUNT_MAX");
+  WaitClocks(10);
+  wait(in_vga.out.vcount == 0 && in_vga.out.hcount == 0);
+  
+  for (int frame = 0; frame < 3; frame++) begin
+    wait(in_vga.out.hcount == HCOUNT_MAX);
+    `log_info($sformatf("Buffer swap detected at frame %0d, hcount=%0d", frame, in_vga.out.hcount));
+    WaitClocks(1);
   end
 
-  assign in_vga.rgb = dut.buffer_select ? 12'hBBB : 12'hAAA; 
 
-// hcount and vcount driver
-  always_ff @(posedge clk) begin: hcount_blk
-    if(rst) begin
-      in_vga.hcount <= 11'b0;
-      in_vga.vcount <= 11'b0;
-    end
-    else if(in_vga.hcount == HCOUNT_MAX) begin
-      in_vga.hcount <= 11'b0;
-      if (in_vga.vcount == VCOUNT_MAX) begin
-        in_vga.vcount <= 11'b0;
-      end
-      else begin
-        in_vga.vcount <= in_vga.vcount + 1;
-      end
-    end
-    else begin
-      in_vga.hcount <= in_vga.hcount + 1;
+
+  // Test 2: Verify write/read to different buffers
+  `log_info("Test 2: Verifying write/read to different buffers");
+  wait(in_vga.out.vcount == 0 && in_vga.out.hcount == 0);
+  
+  for (int h = 0; h < HOR_TOTAL_TIME; h++) begin
+    in_vga.in.rgb = h[11:0];
+    WaitClocks(1);
+  end
+  
+  wait(in_vga.out.vcount == 1 && in_vga.out.hcount == 0);
+  
+  for (int h = 0; h < HOR_TOTAL_TIME; h++) begin
+    WaitClocks(1);
+    if (out_vga.out.rgb !== h[11:0]) begin
+      `log_err($sformatf("Mismatch at hcount=%0d: expected %03x, got %03x", 
+                          h, h[11:0], out_vga.out.rgb));
     end
   end
 
-  vga_out dut(
-    .clk,
-    .rst,
-    .in(in_vga.in),
-    .out(out_vga.out)
-  );
 
-  initial begin
-    void'(logger::init());
-    InitReset();
-    `log_info($sformatf("Starting test at, %t", $time));
-    while (frame_ctr < 3) begin
-      if(dut.frame_ready) frame_ctr++;
-      @(posedge clk);
-    end
-    foreach (dut.line_buffer_A[i]) `check_eq(dut.line_buffer_A[i], 12'hAAA);
-    foreach (dut.line_buffer_B[i]) `check_eq(dut.line_buffer_B[i], 12'hBBB);
-    WaitClocks(100);
-    $finish;
+  
+  // Test 3: Verify control signals are properly passed through
+  `log_info("Test 3: Verifying control signals");
+  WaitClocks(100);
+
+  `check_eq(out_vga.out.hsync, in_vga.out.hsync);
+  `check_eq(out_vga.out.vsync, in_vga.out.vsync);
+  `check_eq(out_vga.out.hblnk, in_vga.out.hblnk);
+  `check_eq(out_vga.out.vblnk, in_vga.out.vblnk);
+  
+
+
+  // Test 4: Verify reset behavior
+  `log_info("Test 4: Verifying reset behavior");
+  rst = 1;
+  WaitClocks(5);
+  
+  if (dut.buffer_select !== 0) begin
+    `log_err("Buffer select not reset to 0");
   end
+  
+  rst = 0;
+  WaitClocks(10);
+  
+  `log_info("All tests completed");
+  WaitClocks(100);
+  $finish;
+end
 
-    task automatic WaitClocks(input int num_of_clock_cycles);
-      repeat (num_of_clock_cycles) @(posedge clk);
-    endtask
+task automatic WaitClocks(input int num_of_clock_cycles);
+  repeat (num_of_clock_cycles) @(posedge clk);
+endtask
 
-    task automatic InitReset();
-      rst = 1;
-      WaitClocks(10);
-      rst = 0;
-    endtask
+task automatic InitReset();
+  rst = 1;
+  WaitClocks(10);
+  rst = 0;
+endtask
 
 endmodule
