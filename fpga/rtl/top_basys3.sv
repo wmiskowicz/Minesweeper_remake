@@ -39,6 +39,19 @@ wire locked;
 logic rst;
 logic [1:0] level;
 
+wire [2:0]  main_state;
+
+wire [11:0] mouse_xpos;
+wire [11:0] mouse_ypos;
+
+wire left;
+wire right;
+
+wire game_lost;
+wire game_won;
+
+wire planting_complete;
+
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
 
@@ -62,6 +75,7 @@ wishbone_if defuser_board_wb_if();
 
 wishbone_if vga_board_wb_if();
 wishbone_if vga_set_wb_if();
+
 
 
 /**
@@ -89,21 +103,95 @@ sseg_disp u_disp(
   .sseg   (seg)
 );
 
-top_memory_logic u_top_memory_logic (
-  .clk100MHz        (clk100MHz),
-  .clk74MHz         (clk74MHz),
+
+top_vga u_top_vga (
+  .clk          (clk74MHz),
+  .rst          (rst),
+  .r            (vgaRed),
+  .g            (vgaGreen),
+  .b            (vgaBlue),
+  .hs           (Hsync),
+  .vs           (Vsync),
+
+  .mouse_xpos   (mouse_xpos),
+  .mouse_ypos   (mouse_ypos),
+  .main_state   (main_state),
+
+  .game_settings_wb(vga_set_wb_if.master),
+  .game_board_wb   (vga_board_wb_if.master)
+
+);
+
+top_mouse u_top_mouse (
+  .clk100MHz  (clk100MHz),
+  .clk74MHz   (clk74MHz),
+  .rst       (rst),
+  .ps2_clk   (PS2Clk),
+  .ps2_data  (PS2Data),
+
+  .left      (left),
+  .right     (right),
+  .mouse_xpos(mouse_xpos),
+  .mouse_ypos(mouse_ypos)
+);
+
+top_memory u_top_memory (
+  .clk74MHz (clk74MHz),
+  .rst      (rst),
+
+  .read_wb  (vga_board_wb_if.slave),
+  .write1_wb(planter_board_wb_if.slave),
+  .write2_wb(defuser_board_wb_if.slave)
+);
+
+defuser u_defuser (
+  .clk              (clk74MHz),
   .rst              (rst),
 
-  .level            (level),
+  .planting_complete(planting_complete),
+  .main_state       (main_state),
 
-  .PS2Clk           (PS2Clk),
-  .PS2Data          (PS2Data),
+  .mouse_xpos       (mouse_xpos),
+  .mouse_ypos       (mouse_ypos),
 
-  .Vsync            (Vsync),
-  .Hsync            (Hsync),
-  .vgaBlue          (vgaBlue),
-  .vgaGreen         (vgaGreen),
-  .vgaRed           (vgaRed)
+  .left             (left),
+  .right            (right),
+
+  .game_lost        (game_lost),
+  .game_won         (game_won),
+
+  .game_board_wb    (defuser_board_wb_if.master),
+  .game_set_wb      (defuser_set_wb_if.master)
+);
+
+
+mine_planter u_mine_planter (
+  .clk          (clk74MHz),
+  .rst          (rst),
+
+  .main_state   (main_state),
+  .planting_complete(planting_complete),
+  .game_board_wb(planter_board_wb_if.master),
+  .game_set_wb  (planter_set_wb_if.master)
+);
+
+
+
+main_fsm u_main_fsm (
+  .clk       (clk74MHz),
+  .rst       (rst),
+  .level     (level),
+
+  .game_lost (game_lost),
+  .game_won  (game_won),
+  .retry     (1'b0),
+  .timer_stop(1'b0),
+
+  .state_out(main_state),
+
+  .game_set_wb1(planter_set_wb_if.slave),
+  .game_set_wb2(defuser_set_wb_if.slave),
+  .game_set_wb3(vga_set_wb_if.slave)
 );
 
 

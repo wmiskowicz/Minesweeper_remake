@@ -23,7 +23,11 @@ set target xc7a35tcpg236-1
 #-----------------------------------------------------#
 #                    Design sources                   #
 #-----------------------------------------------------#
-set ip_files C:/Users/wojte/Documents/Saper_new/rtl/mouse/fifo/fifo_generator_1.xci
+# Specify .xci files location
+set ip_files {
+    ../rtl/mouse/fifo/fifo_generator_1.xci
+}
+
 # Specify .xdc files location
 set xdc_files {
     constraints/clk_wiz_0.xdc

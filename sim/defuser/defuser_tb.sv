@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////
 /*
- Module name:   vga_out_tb.sv
+ Module name:   defuser_tb.sv
  Author:        Wojciech Miskowicz
- Description:   Implements a testbench for module vga_out.
+ Description:   Implements a testbench for module defuser.
  */
 //////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,6 @@ import game_pkg::*;
 
 
 // ----- Local parameters -----
-localparam SETTINGS_REG_NUM = 7;
 localparam CLK_PERIOD = 11ns;
 
 
@@ -31,9 +30,6 @@ logic left;
 logic right;
 
 logic [2:0] main_state;
-
-reg [15:0] settings_mem [0:SETTINGS_REG_NUM-1];
-field_t  board_mem    [15:0][15:0];
 
 
 // ----- Signal interfaces -----
