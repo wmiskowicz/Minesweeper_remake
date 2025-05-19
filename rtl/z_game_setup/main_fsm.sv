@@ -109,6 +109,7 @@ always_ff @(posedge clk) begin : fsm_blk
         game_set_wb2.stall_i <= 1'b0;
         game_set_wb3.stall_i <= 1'b0;
         if(timer_stop)     fsm_state <= PAUSE;
+        else if(retry)     fsm_state <= MENU;
         else if(game_won)  fsm_state <= WIN;
         else if(game_lost) fsm_state <= LOST;
       end

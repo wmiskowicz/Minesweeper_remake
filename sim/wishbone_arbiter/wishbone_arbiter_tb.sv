@@ -14,7 +14,7 @@ import logger_pkg::*;
 import game_pkg::*;
 
 // ----- Local parameters -----
-localparam CLK_PERIOD = 25ns;
+localparam CLK_PERIOD = 14ns;
 
 
 // ----- Local variables -----

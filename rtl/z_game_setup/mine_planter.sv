@@ -5,6 +5,7 @@
  Description:   Module responsible for random mine distribution on the board.
  */
 //////////////////////////////////////////////////////////////////////////////
+`include "mine_planter.svh"
 import game_pkg::*;
 
 module mine_planter (
@@ -40,13 +41,7 @@ logic game_write_en;
 logic game_write_ready;
 logic game_burst_active;
 
-enum logic [2:0] {
-  IDLE,
-  READ_SETTINGS,
-  PLANT,
-  WRITE_BOARD,
-  DONE
-} planter_state;
+planter_state_t planter_state;
 
 
 // ----- Signal assignments -----
@@ -62,7 +57,7 @@ always_ff @(posedge clk) begin
       for (int j = 0; j < 16; j++)  
         mine_map[i][j] <= 1'b0;
 
-    planter_state     <= IDLE;
+    planter_state     <= PLANTER_IDLE;
     planting_complete <= 1'b0;
 
     settings_burst_active <= 1'b0;
@@ -76,10 +71,10 @@ always_ff @(posedge clk) begin
   end
   else begin
     case (planter_state)
-      IDLE: begin
+      PLANTER_IDLE: begin
         if (main_state == PLAY) begin
 
-          planter_state         <= READ_SETTINGS;
+          planter_state         <= PLANTER_READ_SETTINGS;
           settings_read_en      <= 1'b1;
           settings_burst_active <= 1'b1;
         end
@@ -93,7 +88,7 @@ always_ff @(posedge clk) begin
         row_col_num        <= 16'b1;
         planting_complete  <= 1'b0;
       end
-      READ_SETTINGS: begin
+      PLANTER_READ_SETTINGS: begin
         settings_read_en <= 1'b0;
 
         if (settings_read_ready && settings_read_addr < 8'd4) begin
@@ -107,12 +102,12 @@ always_ff @(posedge clk) begin
           settings_read_en <= 1'b1;
 
           if (settings_read_addr == 8'd2) begin
-            planter_state <= PLANT;
+            planter_state <= PLANTER_PLANT;
             settings_burst_active <= 1'b0;
           end
         end
       end
-      PLANT: begin
+      PLANTER_PLANT: begin
         if (mines_left > 0) begin
           if (!mine_map[ind_x][ind_y]) begin
             mine_map[ind_x][ind_y] <= 1'b1;
@@ -120,13 +115,13 @@ always_ff @(posedge clk) begin
           end
         end
         else begin
-          planter_state     <= WRITE_BOARD;
+          planter_state     <= PLANTER_WRITE_BOARD;
           game_burst_active <= 1'b1;
           game_write_en     <= 1'b1;
           game_write_addr   <= 9'h0;
         end
       end
-      WRITE_BOARD: begin
+      PLANTER_WRITE_BOARD: begin
         game_write_en   <= 1'b0;
 
         if (game_write_ready) begin
@@ -137,14 +132,14 @@ always_ff @(posedge clk) begin
         if (game_write_addr == 9'h100) begin
           game_write_en     <= 1'b0;
           game_burst_active <= 1'b0;
-          planter_state     <= DONE;
+          planter_state     <= PLANTER_DONE;
         end
       end
-      DONE: begin
-        planter_state <= main_state == GAME_OVER ? IDLE : DONE;
+      PLANTER_DONE: begin
+        planter_state <= main_state == GAME_OVER ? PLANTER_IDLE : PLANTER_DONE;
         planting_complete <= 1'b1;
       end
-      default: planter_state <= IDLE;
+      default: planter_state <= PLANTER_IDLE;
     endcase
   end
 end
