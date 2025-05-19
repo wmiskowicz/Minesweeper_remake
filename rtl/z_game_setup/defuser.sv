@@ -78,6 +78,11 @@ logic [3:0] row_ctr;
 logic count_en;
 
 
+auto_write_state_t auto_write_state;
+auto_read_state_t auto_read_state;
+defuser_state_t defuser_state;
+
+
 // ----- Signal assignments -----
 assign mouse_ypos_valid = mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] && mouse_ypos < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 assign mouse_xpos_valid = mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] && mouse_xpos < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
@@ -96,7 +101,7 @@ assign game_write_data = {8'b0, game_board_mem[game_write_addr[7:4]][game_write_
 // Auto read logic
 always_ff @(posedge clk) begin
   if(rst)begin
-    auto_read_state <= IDLE;
+    auto_read_state <= AR_IDLE;
 
     burst_active <= 1'b0;
     read_addr    <= 8'b0;
@@ -111,9 +116,9 @@ always_ff @(posedge clk) begin
   end
   else begin
     case(auto_read_state)
-      IDLE: begin
+      AR_IDLE: begin
         burst_active    <= 1'b0;
-        auto_read_state <= planting_complete ? READ_SETTINGS : IDLE;
+        auto_read_state <= planting_complete ? AR_READ_SETTINGS : AR_IDLE;
         read_en         <= planting_complete;
         read_addr       <= 8'h0;
 
@@ -123,12 +128,12 @@ always_ff @(posedge clk) begin
 
         board_ready     <= 1'b0;
       end
-      READ_SETTINGS: begin
+      AR_READ_SETTINGS: begin
         burst_active <= 1'b1;
         read_en <= 1'b0;
 
         if (settings_read_ctr == SETTINGS_REG_NUM && !game_burst_write) begin
-          auto_read_state <= READ_BOARD;
+          auto_read_state <= AR_READ_BOARD;
           game_burst_read <= 1'b1;
           game_read_en    <= 1'b1;
           game_read_addr  <= 9'h00;
@@ -143,7 +148,7 @@ always_ff @(posedge clk) begin
           read_en   <= 1'b1;
         end
       end
-      READ_BOARD: begin
+      AR_READ_BOARD: begin
         game_read_en <= 1'b0;
 
         if (game_read_ready) begin
@@ -154,12 +159,12 @@ always_ff @(posedge clk) begin
         if (game_read_addr == 9'h100) begin
           game_read_en    <= 1'b0;
           game_burst_read <= 1'b0;
-          auto_read_state <= DONE;
+          auto_read_state <= AR_DONE;
           board_ready     <= 1'b1;
         end
       end
-      DONE: auto_read_state <= main_state != PLAY ? IDLE : DONE;
-      default: auto_read_state <= IDLE;
+      AR_DONE: auto_read_state <= main_state != PLAY ? AR_IDLE : AR_DONE;
+      default: auto_read_state <= AR_IDLE;
     endcase
   end
 end
@@ -168,7 +173,7 @@ end
 always_ff @(posedge clk) begin
   if (rst) begin
     timing_ctr <= 20'b0;
-    auto_write_state <= WAIT;
+    auto_write_state <= AW_WAIT;
 
     game_write_en    <= 1'b0;
     game_burst_write <= 1'b0;
@@ -176,10 +181,10 @@ always_ff @(posedge clk) begin
   end
   else begin
     case (auto_write_state)
-      WAIT: begin
+      AW_WAIT: begin
         if (timing_ctr == HALF_FRAME_CYCLES) begin
           if (!game_burst_read) begin
-            auto_write_state <= AUTO_WRITE;
+            auto_write_state <= AW_WRITE;
             timing_ctr       <= 20'b0;
 
             game_burst_write <= 1'b1;
@@ -190,7 +195,7 @@ always_ff @(posedge clk) begin
         end
         else timing_ctr <= timing_ctr + 20'd1;
       end
-      AUTO_WRITE: begin
+      AW_WRITE: begin
         game_write_en   <= 1'b0;
 
         if (game_write_ready) begin
@@ -201,10 +206,10 @@ always_ff @(posedge clk) begin
         if (game_write_addr == 9'h100) begin
           game_write_en     <= 1'b0;
           game_burst_write  <= 1'b0;
-          auto_write_state  <= WAIT;
+          auto_write_state  <= AW_WAIT;
         end
       end
-      default: auto_write_state <= WAIT;
+      default: auto_write_state <= AW_WAIT;
     endcase
   end
 end
