@@ -58,7 +58,7 @@ wire planting_complete;
 wire start, timer_stop;
 wire retry;
 wire  [7:0] sec_to_count;
-logic [7:0] seconds_out;
+logic [7:0] seconds_left;
 logic       time_elapsed;
 
 (* KEEP = "TRUE" *)
@@ -107,8 +107,8 @@ sseg_disp u_disp(
   .reset  (rst),
   .dp_in  (4'b1111), // active low
 
-  .hex3   (seconds_out[7:4]),
-  .hex2   (seconds_out[3:0]),
+  .hex3   (seconds_left[7:4]),
+  .hex2   (seconds_left[3:0]),
   .hex1   (0),
   .hex0   (0),
 
@@ -137,8 +137,8 @@ top_vga u_top_vga (
 );
 
 top_mouse u_top_mouse (
-  .clk100MHz  (clk100MHz),
-  .clk74MHz   (clk74MHz),
+  .clk100MHz (clk100MHz),
+  .clk74MHz  (clk74MHz),
   .rst       (rst),
   .ps2_clk   (PS2Clk),
   .ps2_data  (PS2Data),
@@ -183,10 +183,10 @@ mine_planter u_mine_planter (
   .clk          (clk74MHz),
   .rst          (rst),
 
-  .main_state   (main_state),
-  .planting_complete(planting_complete),
-  .game_board_wb(planter_board_wb_if.master),
-  .game_set_wb  (planter_set_wb_if.master)
+  .main_state        (main_state),
+  .planting_complete (planting_complete),
+  .game_board_wb     (planter_board_wb_if.master),
+  .game_set_wb       (planter_set_wb_if.master)
 );
 
 
@@ -201,7 +201,7 @@ main_fsm u_main_fsm (
   .retry     (retry),
 
   .timer_stop   (timer_stop),
-  .seconds_left (seconds_out),
+  .seconds_left (seconds_left),
   .time_elapsed (time_elapsed),
 
   .state_out    (main_state),

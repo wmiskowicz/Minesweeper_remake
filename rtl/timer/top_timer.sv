@@ -12,7 +12,6 @@ module top_timer (
   input   wire  clk,
   input   wire  rst,
 
-  input   wire  left, right,
   input   wire  start, stop,
   input   wire  retry,
 
@@ -20,27 +19,24 @@ module top_timer (
   input   wire  [7:0] sec_to_count,
   output  logic [7:0] seconds_left,
 
-  output  logic left_st, right_st,
   output  logic time_elapsed
 );
 
-assign left_st = stop ? '0 : left;
-assign right_st = stop ? '0 : right;
-
+// ----- Local variables -----
 wire [7:0] second_ctr;
 
 
 time_controller u_time_controller(
-  .clk,
-  .rst,
+  .clk   (clk),
+  .rst   (rst),
 
-  .start,
-  .stop,
-  .retry,
+  .start (start),
+  .stop  (stop),
+  .retry (retry),
   
-  .time_elapsed,
-  .sec_to_count,
-  .second_ctr
+  .time_elapsed (time_elapsed),
+  .sec_to_count (sec_to_count),
+  .second_ctr   (second_ctr)
 );
 
 bin2bcd u_bin2bcd(
