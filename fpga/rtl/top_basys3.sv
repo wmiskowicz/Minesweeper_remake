@@ -11,9 +11,11 @@
 module top_basys3 (
   input  wire       clk,
   input  wire       btnD,
+  input  wire       btnU,
   input  wire       btnL,
   input  wire       btnC,
   input  wire       btnR,
+  input  wire       sw,
 
   inout  wire       PS2Clk,
   inout  wire       PS2Data,
@@ -26,8 +28,9 @@ module top_basys3 (
   output wire [3:0] vgaGreen,
   output wire [3:0] vgaBlue,
 
-  output wire [6:0] seg,
-  output wire [3:0] an
+  output logic [6:0] seg,
+  output logic [3:0] an,
+  output logic       dp
 );
 
 
@@ -52,6 +55,12 @@ wire game_won;
 
 wire planting_complete;
 
+wire start, timer_stop;
+wire retry;
+wire  [7:0] sec_to_count;
+logic [7:0] seconds_out;
+logic       time_elapsed;
+
 (* KEEP = "TRUE" *)
 (* ASYNC_REG = "TRUE" *)
 
@@ -60,9 +69,12 @@ wire planting_complete;
 assign rst = btnD;
 assign level = {btnR || btnC, btnL || btnR};
 
+assign timer_stop = sw;
+assign retry = btnU;
+
 assign led[0] = locked;
-assign led[1] = 0;
-assign led[2] = 1;
+assign led[1] = time_elapsed;
+assign led[2] = 0;
 assign led[3] = 0;
 
 
@@ -82,25 +94,27 @@ wishbone_if vga_set_wb_if();
  * FPGA submodules placement
  */
 
-clk_wiz_1 clk0_wiz(
-  .clk      (clk),
-  .reset    (1'b0),
-  .locked   (locked),
-  .clk100MHz(clk100MHz),
-  .clk74MHz (clk74MHz),
-  .clk40MHz ()
+clk_wiz_0 clk0_wiz(
+  .clk_in    (clk),
+  .locked    (locked),
+  .clk_100MHz(clk100MHz),
+  .clk_74MHz (clk74MHz)
 );
 
 
 sseg_disp u_disp(
   .clk    (clk74MHz),
   .reset  (rst),
-  .hex3   (0),
-  .hex2   (0),
+  .dp_in  (4'b1111), // active low
+
+  .hex3   (seconds_out[7:4]),
+  .hex2   (seconds_out[3:0]),
   .hex1   (0),
   .hex0   (0),
+
   .an     (an),
-  .sseg   (seg)
+  .sseg   (seg),
+  .dp     (dp)
 );
 
 
@@ -184,14 +198,17 @@ main_fsm u_main_fsm (
 
   .game_lost (game_lost),
   .game_won  (game_won),
-  .retry     (1'b0),
-  .timer_stop(1'b0),
+  .retry     (retry),
 
-  .state_out(main_state),
+  .timer_stop   (timer_stop),
+  .seconds_left (seconds_out),
+  .time_elapsed (time_elapsed),
 
-  .game_set_wb1(planter_set_wb_if.slave),
-  .game_set_wb2(defuser_set_wb_if.slave),
-  .game_set_wb3(vga_set_wb_if.slave)
+  .state_out    (main_state),
+
+  .game_set_wb1 (planter_set_wb_if.slave),
+  .game_set_wb2 (defuser_set_wb_if.slave),
+  .game_set_wb3 (vga_set_wb_if.slave)
 );
 
 

@@ -2,9 +2,10 @@ module sseg_disp
 (
   input wire clk, reset,
   input wire [3:0] hex3, hex2, hex1, hex0,  // hex digits
-  //input wire [3:0] dp_in,             // 4 decimal points
+  input wire [3:0] dp_in,             // 4 decimal points
   output reg [3:0] an,  // enable 1-out-of-4 asserted low
-  output reg [6:0] sseg // led segments
+  output reg [6:0] sseg, // led segments
+  output reg       dp
 );
 
 // constant declaration
@@ -14,7 +15,6 @@ localparam N = 18;
 reg [N-1:0] q_reg;
 wire [N-1:0] q_next;
 reg [3:0] hex_in;
-//reg dp;
 
 // N-bit counter
 // register
@@ -34,22 +34,22 @@ always @*
     2'b00: begin
       an =  4'b1110;
       hex_in = hex0;
-      //dp = dp_in[0];
+      dp = dp_in[0];
     end
     2'b01: begin
       an =  4'b1101;
       hex_in = hex1;
-      //dp = dp_in[1];
+      dp = dp_in[1];
     end
     2'b10: begin
       an =  4'b1011;
       hex_in = hex2;
-      //dp = dp_in[2];
+      dp = dp_in[2];
     end
     default: begin
       an =  4'b0111;
       hex_in = hex3;
-      //dp = dp_in[3];
+      dp = dp_in[3];
     end
   endcase
 
@@ -74,7 +74,6 @@ always @* begin
     4'hf: sseg[6:0] = 7'b0001110;
     default: sseg[6:0] = 7'b1111110;
   endcase
-  //sseg[7] = dp;
 end
 
 endmodule

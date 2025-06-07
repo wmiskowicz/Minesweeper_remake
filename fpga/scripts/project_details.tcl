@@ -68,7 +68,6 @@ set sv_files {
     ../rtl/z_game_setup/main_fsm.sv
     ../rtl/z_game_setup/mine_planter.sv
     rtl/top_basys3.sv
-    rtl/top_memory_logic.sv
 }
 
 # Specify Verilog design files location
@@ -76,8 +75,8 @@ set verilog_files {
     ../rtl/common/delay.v
     ../rtl/sseg_disp.v
     ../rtl/top_vga/font_rom.v
-    rtl/clk_wiz_0.v
-    rtl/clk_wiz_0_clk_wiz.v
+    rtl/clk_wiz_0/clk_wiz_0.v
+    rtl/clk_wiz_0/clk_wiz_0_clk_wiz.v
 }
 
 # Specify VHDL design files location

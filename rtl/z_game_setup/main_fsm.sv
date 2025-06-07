@@ -17,6 +17,8 @@ module main_fsm(
   input  wire  retry,
 
   output logic [2:0] state_out,
+  output logic [7:0] seconds_left,
+  output logic       time_elapsed,
 
   wishbone_if.slave game_set_wb1,
   wishbone_if.slave game_set_wb2,
@@ -36,16 +38,6 @@ localparam BOARD_XPOS_ADDR        = 8'h0A;
 localparam BOARD_YPOS_ADDR        = 8'h0C;
 localparam GAMES_WON_ADDR         = 8'h0E;
 localparam GAMES_LOST_ADDR        = 8'h10;
-
-localparam ROW_COLUMN_NUMBER_REG_NUM = 0;
-localparam MINE_NUM_REG_NUM          = 1;
-localparam TIMER_SECONDS_REG_NUM     = 2;
-localparam FIELD_SIZE_REG_NUM        = 3;
-localparam BOARD_SIZE_REG_NUM        = 4;
-localparam BOARD_XPOS_REG_NUM        = 5;
-localparam BOARD_YPOS_REG_NUM        = 6;
-localparam GAMES_WON_REG_NUM         = 7;
-localparam GAMES_LOST_REG_NUM        = 8;
 
 
 // ----- Local variables -----
@@ -98,7 +90,7 @@ always_ff @(posedge clk) begin : fsm_blk
               game_setup_mem[5] <= H_BOARD_XPOS;
               game_setup_mem[6] <= H_BOARD_YPOS;
             end
-            default: for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'b0;
+            default: for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'hDEAD;
 
           endcase
         end
@@ -129,6 +121,19 @@ always_ff @(posedge clk) begin : fsm_blk
     endcase
   end
 end
+
+
+top_timer u_top_timer(
+  .clk   (clk),
+  .rst   (rst),
+  .start (fsm_state == PLAY), 
+  .stop  (timer_stop),
+  .retry (retry),   
+
+  .sec_to_count (game_setup_mem[TIMER_SECONDS_REG_NUM]),
+  .seconds_left (seconds_left),
+  .time_elapsed (time_elapsed)
+);
 
 
 

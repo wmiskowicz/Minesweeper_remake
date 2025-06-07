@@ -47,5 +47,8 @@ package game_pkg;
   localparam BOARD_SIZE_REG_NUM        = 4; 
   localparam BOARD_XPOS_REG_NUM        = 5; 
   localparam BOARD_YPOS_REG_NUM        = 6;
+  localparam GAMES_WON_REG_NUM         = 7;
+  localparam GAMES_LOST_REG_NUM        = 8;
+
 
 endpackage

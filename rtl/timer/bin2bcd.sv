@@ -11,16 +11,23 @@ module bin2bcd(
   output reg [7:0] bcd
 );
 
-reg [3:0] i;
+reg [15:0] shift_reg;
+integer i;
 
 always_comb begin
-  bcd = '0;
-
-  for(i=0; i<8; i++) begin
-    bcd = {bcd[6:0], bin[7-i]};
-    if(i < 7 && bcd[3:0] > 4) bcd[3:0] = bcd[3:0] + 3;
-    if(i < 7 && bcd[7:4] > 4) bcd[7:4] = bcd[7:4] + 3;
+  shift_reg = {8'b0, bin};
+  
+  for(i = 0; i < 8; i = i + 1) begin
+    if(shift_reg[11:8] >= 5)
+      shift_reg[11:8] = shift_reg[11:8] + 3;
+    
+    if(shift_reg[15:12] >= 5)
+      shift_reg[15:12] = shift_reg[15:12] + 3;
+    
+    shift_reg = shift_reg << 1;
   end
+  
+  bcd = shift_reg[15:8];
 end
 
 endmodule

@@ -1,5 +1,4 @@
 
-// file: clk_wiz_1.v
 // 
 // (c) Copyright 2008 - 2013 Xilinx, Inc. All rights reserved.
 // 
@@ -56,43 +55,29 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// clk100MHz__100.00000______0.000______50.0______122.532_____91.877
-// clk74MHz__74.16667______0.000______50.0______130.215_____91.877
-// clk40MHz__39.73214______0.000______50.0______148.685_____91.877
+// clk_100MHz__100.00000______0.000______50.0______116.394_____87.466
+// clk_74MHz__74.21875______0.000______50.0______123.264_____87.466
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
 //----------------------------------------------------------------------------
 // __primary_________100.000____________0.010
 
-`timescale 1ps/1ps
+// The following must be inserted into your Verilog file for this
+// core to be instantiated. Change the instance name and port connections
+// (in parentheses) to your own signal names.
 
-(* CORE_GENERATION_INFO = "clk_wiz_1,clk_wiz_v6_0_12_0_0,{component_name=clk_wiz_1,use_phase_alignment=true,use_min_o_jitter=false,use_max_i_jitter=false,use_dyn_phase_shift=false,use_inclk_switchover=false,use_dyn_reconfig=false,enable_axi=0,feedback_source=FDBK_AUTO,PRIMITIVE=MMCM,num_out_clk=3,clkin1_period=10.000,clkin2_period=10.000,use_power_down=false,use_reset=true,use_locked=true,use_inclk_stopped=false,feedback_type=SINGLE,CLOCK_MGR_TYPE=NA,manual_override=false}" *)
+//----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
 
-module clk_wiz_1 
- (
-  // Clock out ports
-  output        clk100MHz,
-  output        clk74MHz,
-  output        clk40MHz,
-  // Status and control signals
-  input         reset,
-  output        locked,
- // Clock in ports
-  input         clk
- );
+  clk_wiz_0 instance_name
+   (
+    // Clock out ports
+    .clk_100MHz(clk_100MHz),     // output clk_100MHz
+    .clk_74MHz(clk_74MHz),     // output clk_74MHz
+    // Status and control signals
+    .locked(locked),       // output locked
+   // Clock in ports
+    .clk_in(clk_in)      // input clk_in
+);
 
-  clk_wiz_1_clk_wiz inst
-  (
-  // Clock out ports  
-  .clk100MHz(clk100MHz),
-  .clk74MHz(clk74MHz),
-  .clk40MHz(clk40MHz),
-  // Status and control signals               
-  .reset(reset), 
-  .locked(locked),
- // Clock in ports
-  .clk(clk)
-  );
-
-endmodule
+// INST_TAG_END ------ End INSTANTIATION Template ---------
