@@ -74,8 +74,8 @@ assign retry = btnU;
 
 assign led[0] = locked;
 assign led[1] = time_elapsed;
-assign led[2] = 0;
-assign led[3] = 0;
+assign led[2] = game_lost;
+assign led[3] = game_won;
 
 
 // ----- Signal intefaces -----
