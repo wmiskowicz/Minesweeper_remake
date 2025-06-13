@@ -66,6 +66,9 @@ logic [3:0] board_ind_y;
 logic [11:0] char_code;
 logic [11:0] num_color;
 
+logic [11:0] symbol_xpos, symbol_xpos_q, symbol_xpos_2q;
+logic [11:0] symbol_ypos, symbol_ypos_q, symbol_ypos_2q;
+
 enum logic [STATE_BITS-1 :0] {
   IDLE,
   READ_SETTINGS,
@@ -86,7 +89,16 @@ assign field_vcount = board_vcount[5:0];
 assign board_ind_x = board_hcount[9:6];
 assign board_ind_y = board_vcount[9:6];
 
+assign symbol_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM];
+assign symbol_ypos = game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM];
 
+always_ff @(posedge clk) begin
+  symbol_xpos_q <= symbol_xpos;
+  symbol_ypos_q <= symbol_ypos;
+
+  symbol_xpos_2q <= symbol_xpos_q;
+  symbol_ypos_2q <= symbol_ypos_q;
+end
 
 
 always_comb begin
@@ -324,8 +336,8 @@ u_draw_bomb1 (
   .clk       (clk),
   .in        (in),
   .out       (bomb_vga.out),
-  .rect_x_pos(game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM]),
-  .rect_y_pos(game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM]),
+  .rect_x_pos(symbol_xpos), //symbol_xpos_2q
+  .rect_y_pos(symbol_ypos), //symbol_ypos_2q
   .rst       (rst)
 );
 
@@ -338,23 +350,23 @@ u_draw_flag1 (
   .clk       (clk),
   .in        (in),
   .out       (flag_vga.out),
-  .rect_x_pos(game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM]),
-  .rect_y_pos(game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM]),
+  .rect_x_pos(symbol_xpos), //symbol_xpos_2q
+  .rect_y_pos(symbol_ypos), //symbol_ypos_2q
   .rst       (rst)
 );
 
 
 draw_char #(
   .PRESCALER (4),
-  .OFFSET_X  (16),
+  .OFFSET_X  (14),
   .OFFSET_Y  (3)
 ) u_draw_char (
   .clk      (clk),
   .rst      (rst),
 
   .char_code(char_code),
-  .char_xpos(game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM]),
-  .char_ypos(game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM]),
+  .char_xpos(symbol_xpos_2q),
+  .char_ypos(symbol_ypos_2q),
   .num_color(num_color),
 
   .in       (in),

@@ -130,7 +130,7 @@ top_timer u_top_timer(
   .stop  (timer_stop),
   .retry (retry),   
 
-  .sec_to_count (game_setup_mem[TIMER_SECONDS_REG_NUM]),
+  .sec_to_count (game_setup_mem[TIMER_SECONDS_REG_NUM][7:0]),
   .seconds_left (seconds_left),
   .time_elapsed (time_elapsed)
 );
