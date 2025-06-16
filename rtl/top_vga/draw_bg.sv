@@ -17,24 +17,41 @@ module draw_bg (
 );
 
 import vga_pkg::*;
+import color_pkg::*;
 
+// ----- Local parameters -----
+localparam int SQUARE_SIZE = 8;
+localparam int INTERVAL_X  = 45;
+localparam int INTERVAL_Y  = 55;
+localparam int MODULO      = 7;
 
-/**
- * Local variables and signals
- */
+// ----- Local variables -----
+logic [10:0] rect_hcount, rect_vcount;
+logic [7:0]  x_rect_ctr, y_rect_ctr;
 
-logic signed [10:0] x_c = 220;
-logic signed [10:0] y_c = 240;
-
-logic [3:0] circle_wave;
-logic [16:0] dist_sq;
-logic signed [10:0] dx_sq, dy_sq;
-
-
+// ----- Signal assignments -----
 always_ff @(posedge clk) begin
-  dx_sq   <= in.hcount - x_c;
-  dy_sq   <= in.vcount - y_c;
-  dist_sq <= dx_sq + dy_sq;
+  if (rst) begin
+    rect_hcount <= 11'd0;
+    rect_vcount <= 11'd0;
+    x_rect_ctr  <= 8'd0;
+    y_rect_ctr  <= 8'd0;
+  end
+  else begin
+    rect_hcount <= (in.hcount % INTERVAL_X);
+    rect_vcount <= (in.vcount % INTERVAL_Y);
+
+    if (rect_hcount == SQUARE_SIZE)
+      x_rect_ctr <= (x_rect_ctr + 8'd1) % MODULO;
+    else if (in.hcount == 0)
+      x_rect_ctr <= 8'd0;
+
+    if (rect_vcount == SQUARE_SIZE && rect_hcount == SQUARE_SIZE)
+      y_rect_ctr <= (y_rect_ctr + 8'd1) % MODULO;
+    else if (in.vcount == 0)
+      y_rect_ctr <= 8'd0;
+
+  end
 end
 
 
@@ -47,7 +64,6 @@ always_ff @(posedge clk) begin : background_ff_blk
     out.hsync   <= '0;
     out.hblnk   <= '0;
     out.rgb     <= '0;
-    circle_wave <= '0;
   end
   else begin
     out.vcount <= in.vcount;
@@ -56,18 +72,31 @@ always_ff @(posedge clk) begin : background_ff_blk
     out.hcount <= in.hcount;
     out.hsync  <= in.hsync;
     out.hblnk  <= in.hblnk;
+    
     if (in.vblnk || in.hblnk) begin
-      out.rgb <= in.rgb;
+      out.rgb <= 12'h0;
     end
     else begin
-      circle_wave <= (dist_sq[16:13]);
-
-      out.rgb[11:8] <= 4'h7 + (circle_wave >> 2);
-      out.rgb[7:4]  <= 4'h9 + (circle_wave >> 2);
-      out.rgb[3:0]  <= 4'hA + (circle_wave >> 3);
+      if ((rect_hcount < SQUARE_SIZE) &&
+          (rect_vcount < SQUARE_SIZE) &&
+          (
+          (x_rect_ctr == 8'd1 && y_rect_ctr == 8'd3) ||
+          (x_rect_ctr == 8'd5 && y_rect_ctr == 8'd2) ||
+          (x_rect_ctr == 8'd2 && y_rect_ctr == 8'd6) ||
+          (x_rect_ctr == 8'd4 && y_rect_ctr == 8'd1) ||
+          (x_rect_ctr == 8'd0 && y_rect_ctr == 8'd5) ||
+          (x_rect_ctr == 8'd6 && y_rect_ctr == 8'd4) ||
+          (x_rect_ctr == 8'd3 && y_rect_ctr == 8'd7)
+          )
+          )
+      begin
+        out.rgb <= BACKGROUND_SQUARE;
+      end
+      else begin
+        out.rgb <= BACKGROUND;
+      end
     end
   end
 end
-
 
 endmodule
