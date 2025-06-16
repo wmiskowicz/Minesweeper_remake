@@ -20,8 +20,8 @@ module defuser (
   input logic [11:0] mouse_xpos,
   input logic [11:0] mouse_ypos,
 
-  input logic left,
-  input logic right,
+  input wire left,
+  input wire right,
 
   output logic game_lost,
   output logic game_won,
@@ -292,20 +292,21 @@ always_ff @(posedge clk) begin
 
       DEF_WAIT_FOR_MOUSE: begin
         count_en <= 1'b0;
-        if (mouse_xpos_valid && mouse_ypos_valid) begin
+        if (mouse_xpos_valid && mouse_ypos_valid && left) begin
 
-          if (left) begin
-            game_board_mem[mouse_board_ind_y][mouse_board_ind_x].defused <= 1'b1;
+          game_board_mem[mouse_board_ind_y][mouse_board_ind_x].defused <= 1'b1;
+
+          if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine) begin
+            game_lost     <= 1'b1;
+            defuser_state <= DEF_GAME_OVER;
+          end
+          else begin
             defuser_state <= DEFUSE;
+          end
 
-            if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine) begin
-              game_lost     <= 1'b1;
-              defuser_state <= DEF_IDLE;
-            end
-          end
-          if (right) begin
-            game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag <= !game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag;
-          end
+        end
+        else if (mouse_xpos_valid && mouse_ypos_valid && right) begin
+          game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag <= !game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag;
         end
       end
 
@@ -350,7 +351,8 @@ always_ff @(posedge clk) begin
           game_won) ? DEF_WIN_CHECK : DEFUSE;
       end
 
-      DEF_WIN_CHECK: defuser_state <= game_won ? DEF_IDLE : DEF_WAIT_FOR_MOUSE;
+      DEF_WIN_CHECK: defuser_state <= game_won ? DEF_GAME_OVER : DEF_WAIT_FOR_MOUSE;
+      DEF_GAME_OVER: defuser_state <= main_state == MENU ? DEF_IDLE : DEF_GAME_OVER;
 
 
       default: defuser_state <= DEF_IDLE;

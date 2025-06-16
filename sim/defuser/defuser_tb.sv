@@ -29,6 +29,8 @@ logic [11:0] mouse_ypos;
 logic left;
 logic right;
 
+wire game_lost;
+
 logic [2:0] main_state;
 
 
@@ -55,7 +57,7 @@ defuser dut (
   .mouse_xpos       (mouse_xpos),
   .mouse_ypos       (mouse_ypos),
 
-  .game_lost        (),
+  .game_lost        (game_lost),
   .game_won         (),
 
   .left             (left),
@@ -87,7 +89,7 @@ main_fsm u_main_fsm (
 
 
   .game_won    (1'b0),
-  .game_lost   (1'b0),
+  .game_lost   (game_lost),
 
   .game_set_wb1(defuser_game_set_wb.slave),
   .game_set_wb2(game_set_wb2.slave),
@@ -119,10 +121,7 @@ initial begin
   `check_eq(dut.board_ready, 1'b0, "Board should not be ready after reset");
   
   // Initialize test mines
-  u_wishbone_board_mem.board_mem[1][1].mine = 1'b1;
-  u_wishbone_board_mem.board_mem[1][2].mine = 1'b1;
-  u_wishbone_board_mem.board_mem[1][3].mine = 1'b1;
-  u_wishbone_board_mem.board_mem[5][5].mine = 1'b1;
+  u_wishbone_board_mem.board_mem[0][0].mine = 1'b1;
   
   // Test 2: Settings cache loading
   planting_complete = 1'b1;
@@ -130,98 +129,22 @@ initial begin
   planting_complete = 1'b0;
   
   `check_eq(dut.auto_read_state, AR_READ_SETTINGS, "Should be reading settings");
-  // // wait(dut.game_read_en == 1'b1);
 
-  // // `check_eq(dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM], M_ROW_COLUMN_NUMBER, 
-  // //          "Row/column number not cached correctly");
-  // // `check_eq(dut.game_setup_cashe[MINE_NUM_REG_NUM], M_MINE_NUM,
-  // //          "Mine number not cached correctly");
-  
-  // // Test 3: Board reading state
-  // // `check_eq(dut.game_burst_read, 1'b1, "Board read burst should be active");
-  
-  // // Test 4: Board ready state
-  // WaitUntilState(dut.auto_read_state, AR_DONE);
-  // `check_eq(dut.board_ready, 1'b1, "Board should be ready after reading");
-  
-  // // Test 5: Mine indication calculation
-  // WaitUntilState(dut.defuser_state, DEF_WRITE_MINE_IND);
-  // WaitClocks(50); // Allow time for mine indication calculation
-  
-  // // Verify mine indications
-  // `check_eq(u_wishbone_board_mem.board_mem[0][0].mine_ind, 0, "Empty corner should have 0 mines");
-  // `check_eq(u_wishbone_board_mem.board_mem[0][1].mine_ind, 1, "Adjacent to one mine");
-  // `check_eq(u_wishbone_board_mem.board_mem[0][2].mine_ind, 2, "Adjacent to two mines");
-  // `check_eq(u_wishbone_board_mem.board_mem[0][3].mine_ind, 1, "Adjacent to one mine");
-  // `check_eq(u_wishbone_board_mem.board_mem[2][2].mine_ind, 3, "Adjacent to three mines");
-  
-  // // Test 6: Left click on safe field
-  // WaitUntilState(dut.defuser_state, DEF_WAIT_FOR_MOUSE);
-  // mouse_xpos = M_BOARD_XPOS + M_FIELD_SIZE/2;
-  // mouse_ypos = M_BOARD_YPOS + M_FIELD_SIZE/2;
-  // left = 1'b1;
-  // WaitClocks(2);
-  // left = 1'b0;
-  
-  // `check_eq(u_wishbone_board_mem.board_mem[0][0].defused, 1'b1, "Field should be defused");
-  // `check_eq(dut.game_lost, 1'b0, "Game should not be lost on safe field");
-  
-  // // Test 7: Left click on mine
-  // mouse_xpos = M_BOARD_XPOS + M_FIELD_SIZE + M_FIELD_SIZE/2; // Position over [1][1] mine
-  // left = 1'b1;
-  // WaitClocks(2);
-  // left = 1'b0;
-  
-  // `check_eq(dut.game_lost, 1'b1, "Game should be lost when clicking mine");
-  // `check_eq(dut.defuser_state, DEF_IDLE, "Should return to IDLE after loss");
-  
-  // // Reset and test right click (flagging)
-  // rst = 1'b1;
-  // WaitClocks(1);
-  // rst = 1'b0;
-  // planting_complete = 1'b1;
-  // WaitUntilState(dut.defuser_state, DEF_WAIT_FOR_MOUSE);
-  
-  // // Test 8: Right click flagging
-  // mouse_xpos = M_BOARD_XPOS + M_FIELD_SIZE + M_FIELD_SIZE/2; // Position over [1][1] mine
-  // right = 1'b1;
-  // WaitClocks(2);
-  // right = 1'b0;
-  
-  // `check_eq(u_wishbone_board_mem.board_mem[1][1].flag, 1'b1, "Field should be flagged");
-  
-  // // Test 9: Win condition
-  // // Defuse all non-mine fields
-  // for (int i = 0; i < M_ROW_COLUMN_NUMBER; i++) begin
-  //   for (int j = 0; j < M_ROW_COLUMN_NUMBER; j++) begin
-  //     if (!u_wishbone_board_mem.board_mem[i][j].mine) begin
-  //       mouse_xpos = M_BOARD_XPOS + j*M_FIELD_SIZE + M_FIELD_SIZE/2;
-  //       mouse_ypos = M_BOARD_YPOS + i*M_FIELD_SIZE + M_FIELD_SIZE/2;
-  //       left = 1'b1;
-  //       WaitClocks(1);
-  //       left = 1'b0;
-  //       WaitClocks(1);
-  //     end
-  //   end
-  // end
-  
-  // // Flag all mines
-  // for (int i = 0; i < M_ROW_COLUMN_NUMBER; i++) begin
-  //   for (int j = 0; j < M_ROW_COLUMN_NUMBER; j++) begin
-  //     if (u_wishbone_board_mem.board_mem[i][j].mine) begin
-  //       mouse_xpos = M_BOARD_XPOS + j*M_FIELD_SIZE + M_FIELD_SIZE/2;
-  //       mouse_ypos = M_BOARD_YPOS + i*M_FIELD_SIZE + M_FIELD_SIZE/2;
-  //       right = 1'b1;
-  //       WaitClocks(1);
-  //       right = 1'b0;
-  //       WaitClocks(1);
-  //     end
-  //   end
-  // end
-  
-  // `check_eq(dut.game_won, 1'b1, "Game should be won when all safe fields defused and mines flagged");
-  
-  // `log_info("All defuser tests completed successfully");
+
+  wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
+  WaitClocks(50);
+  mouse_xpos = M_BOARD_XPOS + 1;
+  mouse_ypos = M_BOARD_YPOS + 1;
+  WaitClocks(20);
+  left = 1'b1;
+  WaitClocks(1);
+  left = 1'b0;
+
+  WaitClocks(100);
+  `check_eq(game_lost, 1'b1);
+  `check_eq(main_state, GAME_OVER);
+
+
   $finish();
 end
 

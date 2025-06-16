@@ -19,7 +19,8 @@ typedef enum logic [2:0] {
   DEF_WAIT_FOR_MOUSE,
   DEF_WRITE_MINE_IND,
   DEFUSE,
-  DEF_WIN_CHECK
+  DEF_WIN_CHECK,
+  DEF_GAME_OVER
 } defuser_state_t;
 
 `endif
