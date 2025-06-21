@@ -29,7 +29,7 @@ localparam int MODULO      = 7;
 logic [10:0] rect_hcount, rect_vcount;
 logic [7:0]  x_rect_ctr, y_rect_ctr;
 
-// ----- Signal assignments -----
+
 always_ff @(posedge clk) begin
   if (rst) begin
     rect_hcount <= 11'd0;

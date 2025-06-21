@@ -12,6 +12,8 @@ package color_pkg;
   localparam [11:0] BACKGROUND = 12'hF_D_9;
   localparam [11:0] BACKGROUND_SQUARE = 12'hE_B_6;
 
+  localparam [11:0] BLUE_SCREEN = 12'h0_0_f;
+
   
   localparam [11:0] RED = 12'hf_0_0;
   localparam [11:0] BLACK = 12'h1_1_1;

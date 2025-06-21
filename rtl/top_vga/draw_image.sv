@@ -22,6 +22,7 @@ module draw_image #(
 );
 
 import vga_pkg::*;
+import color_pkg::*;
 
 vga_if delayed_if();
 
@@ -79,7 +80,7 @@ always_ff @(posedge clk) begin
     if (delayed_if.hblnk || delayed_if.vblnk)
       out.rgb <= '0;
     else if (in_image_region)
-      out.rgb <= rom_rgb;
+      out.rgb <= rom_rgb == BLUE_SCREEN ? in.rgb : rom_rgb;
     else
       out.rgb <= delayed_if.rgb;
   end
