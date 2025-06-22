@@ -21,12 +21,12 @@ module top_vga (
   input logic  [11:0] mouse_ypos,
 
   input logic  [2:0]  main_state,
+  input wire game_lost,
+  input wire game_won,
 
   wishbone_if.master game_settings_wb,
   wishbone_if.master game_board_wb
 );
-
-
 
 // ----- Signal intefaces -----
 vga_if tim_bg_vga();
@@ -99,10 +99,15 @@ draw_mouse u_draw_mouse(
 );
 
 writings u_writings (
-  .clk(clk),
-  .rst(rst),
-  .in (mouse_vga.in),
-  .out(writings_vga.out)
+  .clk      (clk),
+  .rst      (rst),
+
+  .main_state(main_state),
+  .game_lost(game_lost),
+  .game_won (game_won),
+
+  .in       (mouse_vga.in),
+  .out      (writings_vga.out)
 );
 
 vga_out u_vga_out (

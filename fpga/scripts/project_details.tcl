@@ -62,6 +62,7 @@ set sv_files {
     ../rtl/top_vga/vga_out.sv
     ../rtl/top_vga/vga_pkg.sv
     ../rtl/top_vga/vga_timing.sv
+    ../rtl/top_vga/writings.sv
     ../rtl/z_game_setup/defuser.sv
     ../rtl/z_game_setup/game_pkg.sv
     ../rtl/z_game_setup/lfsr.sv
@@ -90,11 +91,16 @@ set vhdl_files {
 # Specify files for a memory initialization
 set mem_files {
     ../rtl/top_vga/data/agh.data
+    ../rtl/top_vga/data/author.data
+    ../rtl/top_vga/data/banner_128.data
     ../rtl/top_vga/data/bg_anim1_64.data
     ../rtl/top_vga/data/bg_anim2_64.data
     ../rtl/top_vga/data/bg_anim3_64.data
     ../rtl/top_vga/data/bomb.data
     ../rtl/top_vga/data/flag.data
+    ../rtl/top_vga/data/game_over.data
+    ../rtl/top_vga/data/game_won.data
+    ../rtl/top_vga/data/menu.data
     ../rtl/top_vga/data/red_bomb.data
 }
 

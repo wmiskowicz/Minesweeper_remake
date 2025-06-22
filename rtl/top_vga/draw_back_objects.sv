@@ -15,6 +15,7 @@ module draw_back_objects (
 
 import vga_pkg::*;
 
+// ----- Signal interfaces -----
 vga_if image1_vga();
 vga_if image2_vga();
 vga_if image3_vga();
@@ -55,9 +56,24 @@ draw_image #(
 u_draw_image3 (
   .clk       (clk),
   .in        (image2_vga.in),
-  .out       (out),
+  .out       (image3_vga.out),
   .rect_x_pos(12'd350),
   .rect_y_pos(12'd550),
+  .rst       (rst)
+);
+
+draw_image #(
+  .RECT_WIDTH (64),
+  .RECT_HEIGHT(64),
+  .PATH       ("../../rtl/top_vga/data/author.data"),
+  .PRESCALER  (4)
+)
+u_draw_image4 (
+  .clk       (clk),
+  .in        (image3_vga.in),
+  .out       (out),
+  .rect_x_pos(12'(HOR_PIXELS - 4 * 64)),
+  .rect_y_pos(12'd0),
   .rst       (rst)
 );
 

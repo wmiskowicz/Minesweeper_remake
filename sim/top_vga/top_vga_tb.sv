@@ -51,7 +51,10 @@ top_vga dut (
   .mouse_xpos('0),
   .mouse_ypos('0),
 
-  .main_state       (PLAY),
+  .game_lost    (1),
+  .game_won     (0),
+
+  .main_state       (BANNER),
   .game_settings_wb (game_set_if),
   .game_board_wb    (game_board_if)
 );

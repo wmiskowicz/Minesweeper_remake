@@ -2,16 +2,17 @@
 /*
  Module name:   Draw image
  Author:        Wojciech Miskowicz
- Description:   Draws an image at specific coordinates.
+ Description:   Draws an image at specific coordinates with optional scaling.
  */
 //////////////////////////////////////////////////////////////////////////////
 
 `timescale 1 ns / 1 ps
 
 module draw_image #(
-  parameter RECT_WIDTH   = 64,
-  parameter RECT_HEIGHT  = 64,
-  parameter PATH         = "../../rtl/top_vga/data/bomb.data"
+  parameter RECT_WIDTH    = 64,
+  parameter RECT_HEIGHT   = 64,
+  parameter PATH          = "../../rtl/top_vga/data/bomb.data",
+  parameter PRESCALER     = 1
 )(
   input  logic clk,
   input  logic rst,
@@ -29,17 +30,22 @@ localparam X_ADDR_WIDTH = $clog2(RECT_WIDTH);
 localparam Y_ADDR_WIDTH = $clog2(RECT_HEIGHT);
 localparam ADDR_WIDTH = X_ADDR_WIDTH + Y_ADDR_WIDTH;
 
+localparam SCALED_WIDTH = RECT_WIDTH * PRESCALER;
+localparam SCALED_HEIGHT = RECT_HEIGHT * PRESCALER;
+
 
 // ----- Signal intefaces -----
 vga_if delayed_if();
 
-
 // ----- Local variables -----
 logic [11:0] rel_x, rel_y;
+logic [11:0] scaled_rel_x, scaled_rel_y;
 logic in_image_region;
 
 logic [ADDR_WIDTH-1:0] address;
 logic [11:0] rom_rgb;
+
+
 
 delay_vga u_delay(
   .clk(clk),
@@ -49,22 +55,26 @@ delay_vga u_delay(
 );
 
 image_rom #(
-  .PATH      (PATH),
-  .MEM_SIZE  (RECT_HEIGHT * RECT_WIDTH),
+  .PATH(PATH),
+  .MEM_SIZE(RECT_HEIGHT * RECT_WIDTH),
   .ADDR_WIDTH(ADDR_WIDTH)
 ) u_image_rom (
   .address(address),
-  .clk    (clk),
-  .rgb    (rom_rgb)
+  .clk(clk),
+  .rgb(rom_rgb)
 );
 
 always_comb begin
   rel_x = in.hcount - rect_x_pos;
   rel_y = in.vcount - rect_y_pos;
+  
+  scaled_rel_x = rel_x / PRESCALER;
+  scaled_rel_y = rel_y / PRESCALER;
+  
   in_image_region = (in.hcount >= rect_x_pos) &&
-    (in.hcount < rect_x_pos + RECT_WIDTH) &&
-    (in.vcount >= rect_y_pos) &&
-    (in.vcount < rect_y_pos + RECT_HEIGHT);
+                   (in.hcount < rect_x_pos + SCALED_WIDTH) &&
+                   (in.vcount >= rect_y_pos) &&
+                   (in.vcount < rect_y_pos + SCALED_HEIGHT);
 end
 
 always_ff @(posedge clk) begin
@@ -85,7 +95,7 @@ always_ff @(posedge clk) begin
     out.hsync  <= delayed_if.hsync;
     out.hblnk  <= delayed_if.hblnk;
     
-    address <= {rel_y[Y_ADDR_WIDTH-1:0], rel_x[X_ADDR_WIDTH-1:0]};
+    address <= {scaled_rel_y[Y_ADDR_WIDTH-1:0], scaled_rel_x[X_ADDR_WIDTH-1:0]};
 
     if (delayed_if.hblnk || delayed_if.vblnk)
       out.rgb <= '0;
