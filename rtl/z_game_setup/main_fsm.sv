@@ -16,6 +16,9 @@ module main_fsm(
   input  wire  game_lost,
   input  wire  retry,
 
+  input wire   left,
+  input wire   right,
+
   output logic [2:0] state_out,
   output logic [7:0] seconds_left,
   output logic       time_elapsed,
@@ -39,23 +42,40 @@ localparam BOARD_YPOS_ADDR        = 8'h0C;
 localparam GAMES_WON_ADDR         = 8'h0E;
 localparam GAMES_LOST_ADDR        = 8'h10;
 
+localparam int CLK_FREQ           = 100_000_000;
+localparam int BANNER_DISP_SEC    = 4;
+localparam int BANNER_DISP_CYC    = BANNER_DISP_SEC * CLK_FREQ;
+
+
 
 // ----- Local variables -----
 logic [15:0] game_setup_mem [NUMBER_OF_REGISTERS-1:0];
+logic [31:0] banner_cyc_ctr;
 
 
 always_ff @(posedge clk) begin : fsm_blk
   if(rst)begin
-    fsm_state <= MENU;
-    state_out <= MENU;
+    fsm_state <= BANNER;
+    state_out <= BANNER;
+
     game_set_wb1.stall_i <= 1'b0;
     game_set_wb2.stall_i <= 1'b0;
     game_set_wb3.stall_i <= 1'b0;
-    for(int i=0; i < NUMBER_OF_REGISTERS; i++) game_setup_mem[i] <= 16'b0;
+
+    banner_cyc_ctr <= 32'b0;
+
+    for(int i=0; i < NUMBER_OF_REGISTERS; i++) 
+      game_setup_mem[i] <= 16'b0;
   end
   else begin
     state_out <= fsm_state;
     case(fsm_state)
+      BANNER: begin
+        if (banner_cyc_ctr >= BANNER_DISP_CYC || left || right)
+          fsm_state <= MENU;
+        else 
+          banner_cyc_ctr <= banner_cyc_ctr + 32'd1;
+      end
       MENU: begin
         if(level > 0) begin
           fsm_state <= PLAY;

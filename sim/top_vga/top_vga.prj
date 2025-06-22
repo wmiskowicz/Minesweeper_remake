@@ -38,6 +38,7 @@ sv work ../../rtl/memory/wishbone_if.sv \
         ../../rtl/top_vga/top_vga.sv \
         ../../rtl/top_vga/vga_out.sv \
         ../../rtl/top_vga/vga_timing.sv \
+        ../../rtl/top_vga/writings.sv \
         ../../rtl/z_game_setup/defuser.sv \
         ../../rtl/z_game_setup/lfsr.sv \
         ../../rtl/z_game_setup/main_fsm.sv \

@@ -26,24 +26,25 @@ module top_vga (
   wishbone_if.master game_board_wb
 );
 
-/**
- * Local variables and signals
- */
 
+
+// ----- Signal intefaces -----
 vga_if tim_bg_vga();
 vga_if del1_vga();
 vga_if background_vga();
 vga_if back_obj_vga();
 vga_if board_vga();
+vga_if writings_vga();
 vga_if mouse_vga();
 vga_if output_vga();
 
-/**
- * Signals assignments
- */
+
+// ----- Signal assignments -----
 assign vs      = output_vga.vsync;
 assign hs      = output_vga.hsync;
 assign {r,g,b} = output_vga.rgb;
+
+
 
 /**
  * Submodules instances
@@ -97,10 +98,17 @@ draw_mouse u_draw_mouse(
   .mouse_ypos(mouse_ypos)
 );
 
-vga_out u_vga_out (
+writings u_writings (
   .clk(clk),
   .rst(rst),
   .in (mouse_vga.in),
+  .out(writings_vga.out)
+);
+
+vga_out u_vga_out (
+  .clk(clk),
+  .rst(rst),
+  .in (writings_vga.in),
   .out(output_vga.out)
 );
 

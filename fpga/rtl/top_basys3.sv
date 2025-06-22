@@ -196,6 +196,9 @@ main_fsm u_main_fsm (
   .rst       (rst),
   .level     (level),
 
+  .left      (left),
+  .right     (right),
+
   .game_lost (game_lost),
   .game_won  (game_won),
   .retry     (retry),

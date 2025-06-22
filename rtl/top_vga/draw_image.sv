@@ -24,12 +24,21 @@ module draw_image #(
 import vga_pkg::*;
 import color_pkg::*;
 
+// ----- Local parameters -----
+localparam X_ADDR_WIDTH = $clog2(RECT_WIDTH);
+localparam Y_ADDR_WIDTH = $clog2(RECT_HEIGHT);
+localparam ADDR_WIDTH = X_ADDR_WIDTH + Y_ADDR_WIDTH;
+
+
+// ----- Signal intefaces -----
 vga_if delayed_if();
 
+
+// ----- Local variables -----
 logic [11:0] rel_x, rel_y;
 logic in_image_region;
 
-logic [11:0] address;
+logic [ADDR_WIDTH-1:0] address;
 logic [11:0] rom_rgb;
 
 delay_vga u_delay(
@@ -40,8 +49,9 @@ delay_vga u_delay(
 );
 
 image_rom #(
-  .PATH    (PATH),
-  .MEM_SIZE(RECT_HEIGHT * RECT_WIDTH)
+  .PATH      (PATH),
+  .MEM_SIZE  (RECT_HEIGHT * RECT_WIDTH),
+  .ADDR_WIDTH(ADDR_WIDTH)
 ) u_image_rom (
   .address(address),
   .clk    (clk),
@@ -74,8 +84,8 @@ always_ff @(posedge clk) begin
     out.hcount <= delayed_if.hcount;
     out.hsync  <= delayed_if.hsync;
     out.hblnk  <= delayed_if.hblnk;
-    address    <= {rel_y[5:0], rel_x[5:0]};
-
+    
+    address <= {rel_y[Y_ADDR_WIDTH-1:0], rel_x[X_ADDR_WIDTH-1:0]};
 
     if (delayed_if.hblnk || delayed_if.vblnk)
       out.rgb <= '0;

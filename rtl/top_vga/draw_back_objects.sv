@@ -42,8 +42,8 @@ u_draw_image2 (
   .clk       (clk),
   .in        (image1_vga.in),
   .out       (image2_vga.out),
-  .rect_x_pos(12'd850),
-  .rect_y_pos(12'd450),
+  .rect_x_pos(12'd1050),
+  .rect_y_pos(12'd250),
   .rst       (rst)
 );
 

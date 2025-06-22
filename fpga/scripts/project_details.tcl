@@ -90,6 +90,9 @@ set vhdl_files {
 # Specify files for a memory initialization
 set mem_files {
     ../rtl/top_vga/data/agh.data
+    ../rtl/top_vga/data/bg_anim1_64.data
+    ../rtl/top_vga/data/bg_anim2_64.data
+    ../rtl/top_vga/data/bg_anim3_64.data
     ../rtl/top_vga/data/bomb.data
     ../rtl/top_vga/data/flag.data
     ../rtl/top_vga/data/red_bomb.data
