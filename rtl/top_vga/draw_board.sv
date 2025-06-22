@@ -154,6 +154,8 @@ always_ff @(posedge clk) begin
         read_en      <= main_state == PLAY;
         read_addr    <= 8'h0;
         out.rgb      <= in.rgb;
+
+        settings_read_ctr <= 4'b0;
       end
       READ_SETTINGS: begin
         out.rgb      <= in.rgb;
@@ -330,14 +332,14 @@ endfunction
 draw_image #(
   .RECT_WIDTH (64),
   .RECT_HEIGHT(64),
-  .PATH       ("../../rtl/top_vga/data/red_bomb.data")
+  .PATH       ("../../rtl/top_vga/data/bomb.data")
 )
 u_draw_bomb1 (
   .clk       (clk),
   .in        (in),
   .out       (bomb_vga.out),
-  .rect_x_pos(symbol_xpos), //symbol_xpos_2q
-  .rect_y_pos(symbol_ypos), //symbol_ypos_2q
+  .rect_x_pos(symbol_xpos_2q - 12'd2),
+  .rect_y_pos(symbol_ypos_2q - 12'd2),
   .rst       (rst)
 );
 
@@ -350,8 +352,8 @@ u_draw_flag1 (
   .clk       (clk),
   .in        (in),
   .out       (flag_vga.out),
-  .rect_x_pos(symbol_xpos), //symbol_xpos_2q
-  .rect_y_pos(symbol_ypos), //symbol_ypos_2q
+  .rect_x_pos(symbol_xpos_2q - 12'd2),
+  .rect_y_pos(symbol_ypos_2q - 12'd2),
   .rst       (rst)
 );
 

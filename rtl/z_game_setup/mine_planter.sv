@@ -72,6 +72,21 @@ always_ff @(posedge clk) begin
   else begin
     case (planter_state)
       PLANTER_IDLE: begin
+        for (int i = 0; i < 16; i++)
+          for (int j = 0; j < 16; j++)  
+            mine_map[i][j] <= 1'b0;
+
+        planting_complete <= 1'b0;
+
+        settings_burst_active <= 1'b0;
+        settings_read_en      <= 1'b0;
+        settings_read_addr    <= 8'b0;
+        row_col_num           <= 16'b1;
+        mines_left            <= 16'b0;
+
+        game_burst_active <= 1'b0;
+        game_write_addr   <= 9'h0;
+
         if (main_state == PLAY) begin
 
           planter_state         <= PLANTER_READ_SETTINGS;

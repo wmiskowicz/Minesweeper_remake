@@ -245,7 +245,8 @@ end
 always_ff @(posedge clk) begin
   if (rst) begin
     for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++)  game_board_mem[i][j] <= 8'b0;
+      for (int j = 0; j < 16; j++)  
+        game_board_mem[i][j] <= 8'b0;
 
     defuser_state <= DEF_IDLE;
     count_en      <= 1'b0;
@@ -253,6 +254,11 @@ always_ff @(posedge clk) begin
   else begin
     case (defuser_state)
       DEF_IDLE: begin
+        
+      for (int i = 0; i < 16; i++)
+        for (int j = 0; j < 16; j++)  
+          game_board_mem[i][j] <= 8'b0;
+
         defuser_state <= main_state == PLAY ? DEF_READ_BOARD : DEF_IDLE;
         count_en  <= 1'b0;
 

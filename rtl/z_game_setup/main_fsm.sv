@@ -54,7 +54,7 @@ logic [31:0] banner_cyc_ctr;
 
 
 always_ff @(posedge clk) begin : fsm_blk
-  if(rst)begin
+  if(rst) begin
     fsm_state <= BANNER;
     state_out <= BANNER;
 
@@ -123,7 +123,7 @@ always_ff @(posedge clk) begin : fsm_blk
         if(timer_stop)     fsm_state <= PAUSE;
         else if(retry)     fsm_state <= MENU;
         else if(game_won)  fsm_state <= WIN;
-        else if(game_lost) fsm_state <= LOST;
+        else if(game_lost || time_elapsed) fsm_state <= LOST;
       end
       PAUSE: if(~timer_stop) fsm_state <= PLAY;
       WIN: begin

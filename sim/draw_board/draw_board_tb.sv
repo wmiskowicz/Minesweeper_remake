@@ -110,7 +110,7 @@ initial begin
   void'(logger::init());
   InitReset();
 
-
+  WaitClocks(500);
   dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] = M_ROW_COLUMN_NUMBER;
   dut.game_setup_cashe[MINE_NUM_REG_NUM] = M_MINE_NUM;
   dut.game_setup_cashe[TIMER_SECONDS_REG_NUM] = M_TIMER_SECONDS;
@@ -118,10 +118,15 @@ initial begin
   dut.game_setup_cashe[BOARD_SIZE_REG_NUM] = M_BOARD_SIZE;
   dut.game_setup_cashe[BOARD_XPOS_REG_NUM] = M_BOARD_XPOS;
   dut.game_setup_cashe[BOARD_YPOS_REG_NUM] = M_BOARD_YPOS;
-  dut.game_board_mem[0][1].mine = 1'b1;
+  dut.game_board_mem[0][1].flag = 1'b1;
   dut.game_board_mem[1][0].mine = 1'b1;
   dut.game_board_mem[2][2].mine = 1'b1;
+  dut.game_board_mem[1][2].mine = 1'b1;
   dut.game_board_mem[1][1].defused = 1'b1;
+  dut.game_board_mem[1][1].mine_ind = 3;
+  dut.game_board_mem[1][3].defused = 1'b1;
+  dut.game_board_mem[1][3].mine = 1'b1;
+
 
 
   wait (vs == 1'b0);
