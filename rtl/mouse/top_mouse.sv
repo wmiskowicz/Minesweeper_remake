@@ -28,6 +28,9 @@ module top_mouse (
 wire [11:0] xpos_in;
 wire [11:0] ypos_in;
 
+wire new_event;
+wire xpos_empty, ypos_empty;
+
 logic wr_en;
 logic rd_en;
 logic full;
@@ -85,29 +88,13 @@ MouseCtl u_MouseCtl(
   .middle   (),
   .right    (right_in),
 
-  .new_event(),
+  .new_event(new_event),
   .value    (12'd100),
 
   .setx     ('0),
   .sety     ('0),
   .setmax_x ('0),
   .setmax_y ('0)
-);
-
-cross_buffer u_cross_buffer (
-  .slow_clk  (clk74MHz),
-  .clk100MHz (clk100MHz),
-  .rst       (rst),
-
-  .xpos_in   (xpos_in),
-  .ypos_in   (ypos_in),
-  .left_in   (0),
-  .right_in  (0),
-
-  .left_out  (),
-  .right_out (),
-  .xpos_out  (mouse_xpos),
-  .ypos_out  (mouse_ypos)
 );
 
 delay #(
@@ -134,6 +121,42 @@ fifo_generator_1 fifo_0 (
 
   .full   (full),
   .empty  (empty),
+
+  .wr_rst_busy(),
+  .rd_rst_busy()
+);
+
+fifo_generator_1 fifo_1 (
+  .wr_clk (clk100MHz),
+  .rd_clk (clk74MHz),
+  .rst    (rst),
+
+  .wr_en  (new_event),
+  .rd_en  (!xpos_empty),
+
+  .din    ({6'b0, xpos_in}),
+  .dout   (mouse_xpos),
+
+  .full   (),
+  .empty  (xpos_empty),
+
+  .wr_rst_busy(),
+  .rd_rst_busy()
+);
+
+fifo_generator_1 fifo_2 (
+  .wr_clk (clk100MHz),
+  .rd_clk (clk74MHz),
+  .rst    (rst),
+
+  .wr_en  (new_event),
+  .rd_en  (!ypos_empty),
+
+  .din    ({6'b0, ypos_in}),
+  .dout   (mouse_ypos),
+
+  .full   (),
+  .empty  (ypos_empty),
 
   .wr_rst_busy(),
   .rd_rst_busy()

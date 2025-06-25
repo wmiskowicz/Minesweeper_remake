@@ -133,6 +133,7 @@ top_vga u_top_vga (
 
   .game_lost    (game_lost),
   .game_won     (game_won),
+  .retry        (retry),
 
   .game_settings_wb(vga_set_wb_if.master),
   .game_board_wb   (vga_board_wb_if.master)

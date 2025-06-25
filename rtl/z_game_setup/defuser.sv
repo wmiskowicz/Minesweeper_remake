@@ -13,6 +13,7 @@ import game_pkg::*;
 module defuser (
   input wire clk,
   input wire rst,
+  input wire retry,
 
   input wire planting_complete,
   input wire [2:0] main_state,
@@ -100,7 +101,7 @@ assign game_write_data = {8'b0, game_board_mem[game_write_addr[7:4]][game_write_
 
 // Auto read logic
 always_ff @(posedge clk) begin
-  if(rst)begin
+  if (rst) begin
     auto_read_state <= AR_IDLE;
 
     burst_active <= 1'b0;
@@ -171,7 +172,7 @@ end
 
 // Auto write logic
 always_ff @(posedge clk) begin
-  if (rst) begin
+  if (rst || retry) begin
     timing_ctr <= 20'b0;
     auto_write_state <= AW_WAIT;
 
@@ -217,7 +218,7 @@ end
 
 // Defuse logic
 always_ff @(posedge clk) begin
-  if (rst) begin
+  if (rst || retry) begin
     col_ctr <= 4'b0;
     row_ctr <= 4'b0;
   end
@@ -243,7 +244,7 @@ always_ff @(posedge clk) begin
 end
 
 always_ff @(posedge clk) begin
-  if (rst) begin
+  if (rst || retry) begin
     for (int i = 0; i < 16; i++)
       for (int j = 0; j < 16; j++)  
         game_board_mem[i][j] <= 8'b0;

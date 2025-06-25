@@ -10,6 +10,7 @@
 module draw_board (
   input  wire  clk,
   input  wire  rst,
+  input  wire  retry, 
 
   input  logic [2:0] main_state,
   vga_if.in in,
@@ -197,7 +198,7 @@ end
 
 // Auto read logic
 always_ff @(posedge clk) begin
-  if (rst) begin
+  if (rst || retry) begin
     auto_read_state <= WAIT;
 
     game_burst_active <= 1'b0;
@@ -205,7 +206,8 @@ always_ff @(posedge clk) begin
     game_read_addr  <= 9'h00;
 
     for (int i = 0; i < 16; i++)
-      for (int j = 0; j < 16; j++)  game_board_mem[i][j] <= 8'b0;
+      for (int j = 0; j < 16; j++)  
+        game_board_mem[i][j] <= 8'b0;
   end
   else begin
     case (auto_read_state)
@@ -309,7 +311,7 @@ function logic [11:0] draw_bomb;
 endfunction
 
 function logic [11:0] draw_flag;
-  if (flag_vga.rgb != 12'hCCC)
+  if (flag_vga.rgb != 12'h00F)
     return flag_vga.rgb;
   else
     return draw_button();
@@ -361,7 +363,7 @@ u_draw_flag1 (
 draw_char #(
   .PRESCALER (4),
   .OFFSET_X  (14),
-  .OFFSET_Y  (3)
+  .OFFSET_Y  (11)//3
 ) u_draw_char (
   .clk      (clk),
   .rst      (rst),

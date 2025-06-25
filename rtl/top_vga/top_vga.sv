@@ -21,8 +21,10 @@ module top_vga (
   input logic  [11:0] mouse_ypos,
 
   input logic  [2:0]  main_state,
+
   input wire game_lost,
   input wire game_won,
+  input wire retry,
 
   wishbone_if.master game_settings_wb,
   wishbone_if.master game_board_wb
@@ -80,6 +82,7 @@ draw_back_objects u_draw_back_objects (
 draw_board u_draw_board (
   .clk       (clk),
   .rst       (rst),
+  .retry     (retry),
 
   .main_state(main_state),
   .in        (back_obj_vga.in),
@@ -87,15 +90,6 @@ draw_board u_draw_board (
 
   .game_settings_wb(game_settings_wb),
   .game_board_wb(game_board_wb)
-);
-
-draw_mouse u_draw_mouse(
-  .clk,
-  .rst,
-  .in(board_vga.in),
-  .out(mouse_vga.out),
-  .mouse_xpos(mouse_xpos),
-  .mouse_ypos(mouse_ypos)
 );
 
 writings u_writings (
@@ -106,14 +100,23 @@ writings u_writings (
   .game_lost(game_lost),
   .game_won (game_won),
 
-  .in       (mouse_vga.in),
+  .in       (board_vga.in),
   .out      (writings_vga.out)
+);
+
+draw_mouse u_draw_mouse(
+  .clk,
+  .rst,
+  .in(writings_vga.in),
+  .out(mouse_vga.out),
+  .mouse_xpos(mouse_xpos),
+  .mouse_ypos(mouse_ypos)
 );
 
 vga_out u_vga_out (
   .clk(clk),
   .rst(rst),
-  .in (writings_vga.in),
+  .in (mouse_vga.in),
   .out(output_vga.out)
 );
 
