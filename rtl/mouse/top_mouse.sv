@@ -113,10 +113,11 @@ fifo_generator_1 fifo_0 (
   .rd_clk (clk74MHz),
   .rst    (rst),
 
-  .wr_en  (wr_en_pulse),
+  .wr_en  (new_event),
   .rd_en  (rd_en),
 
-  .din    ({16'b0, left_del, right_del}),
+  // .din    ({16'b0, left_del, right_del}),
+  .din    ({16'b0, left_in, right_in}),
   .dout   (data_out),
 
   .full   (full),

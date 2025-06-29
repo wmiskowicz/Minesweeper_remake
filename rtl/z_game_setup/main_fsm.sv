@@ -7,7 +7,9 @@
 //////////////////////////////////////////////////////////////////////////////
 import game_pkg::*;
 
-module main_fsm(
+module main_fsm#(
+  parameter int BANNER_DISP_CYC = 400_000_000
+)(
   input  wire  clk,
   input  wire  rst,
   input  wire  [1:0] level,
@@ -32,19 +34,15 @@ module main_fsm(
 // ----- Local parameters -----
 localparam NUMBER_OF_REGISTERS = 9;
 
-localparam ROW_COLUMN_NUMBER_ADDR = 8'h00;
-localparam MINE_NUM_ADDR          = 8'h02;
-localparam TIMER_SECONDS_ADDR     = 8'h04;
-localparam FIELD_SIZE_ADDR        = 8'h06;
-localparam BOARD_SIZE_ADDR        = 8'h08;
-localparam BOARD_XPOS_ADDR        = 8'h0A;
-localparam BOARD_YPOS_ADDR        = 8'h0C;
-localparam GAMES_WON_ADDR         = 8'h0E;
-localparam GAMES_LOST_ADDR        = 8'h10;
-
-localparam int CLK_FREQ           = 100_000_000;
-localparam int BANNER_DISP_SEC    = 4;
-localparam int BANNER_DISP_CYC    = BANNER_DISP_SEC * CLK_FREQ;
+localparam [7:0] ROW_COLUMN_NUMBER_ADDR = 8'h00;
+localparam [7:0] MINE_NUM_ADDR          = 8'h02;
+localparam [7:0] TIMER_SECONDS_ADDR     = 8'h04;
+localparam [7:0] FIELD_SIZE_ADDR        = 8'h06;
+localparam [7:0] BOARD_SIZE_ADDR        = 8'h08;
+localparam [7:0] BOARD_XPOS_ADDR        = 8'h0A;
+localparam [7:0] BOARD_YPOS_ADDR        = 8'h0C;
+localparam [7:0] GAMES_WON_ADDR         = 8'h0E;
+localparam [7:0] GAMES_LOST_ADDR        = 8'h10;
 
 
 
@@ -71,8 +69,10 @@ always_ff @(posedge clk) begin : fsm_blk
     state_out <= fsm_state;
     case(fsm_state)
       BANNER: begin
-        if (banner_cyc_ctr >= BANNER_DISP_CYC || left || right)
+        if (banner_cyc_ctr >= BANNER_DISP_CYC || left || right) begin
           fsm_state <= MENU;
+          banner_cyc_ctr <= 32'b0;
+        end
         else 
           banner_cyc_ctr <= banner_cyc_ctr + 32'd1;
       end
@@ -125,7 +125,12 @@ always_ff @(posedge clk) begin : fsm_blk
         else if(game_won)  fsm_state <= WIN;
         else if(game_lost || time_elapsed) fsm_state <= LOST;
       end
-      PAUSE: if(~timer_stop) fsm_state <= PLAY;
+      PAUSE: begin 
+        if(~timer_stop) 
+          fsm_state <= PLAY;
+        else if(retry)
+          fsm_state <= MENU;
+      end
       WIN: begin
         game_setup_mem[GAMES_WON_REG_NUM]++;
         fsm_state <= GAME_OVER;

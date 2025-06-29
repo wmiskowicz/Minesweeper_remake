@@ -20,7 +20,7 @@ module top_basys3 (
   inout  wire       PS2Clk,
   inout  wire       PS2Data,
 
-  output logic [3:0] led,
+  output logic [4:0] led,
 
   output wire       Vsync,
   output wire       Hsync,
@@ -74,8 +74,7 @@ assign retry = btnU;
 
 assign led[0] = locked;
 assign led[1] = time_elapsed;
-assign led[2] = game_lost;
-assign led[3] = game_won;
+assign led[4:2] = main_state;
 
 
 // ----- Signal intefaces -----
@@ -131,7 +130,7 @@ top_vga u_top_vga (
   .mouse_ypos   (mouse_ypos),
   .main_state   (main_state),
 
-  .game_lost    (game_lost),
+  .game_lost    (game_lost || time_elapsed),
   .game_won     (game_won),
   .retry        (retry),
 
@@ -165,6 +164,7 @@ top_memory u_top_memory (
 defuser u_defuser (
   .clk              (clk74MHz),
   .rst              (rst),
+  .retry            (retry),
 
   .planting_complete(planting_complete),
   .main_state       (main_state),

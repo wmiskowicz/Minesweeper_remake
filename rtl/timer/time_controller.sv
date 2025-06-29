@@ -52,6 +52,9 @@ always_ff @(posedge clk) begin
         if(stop)begin
           state <= STOP;
         end
+        else if(retry) begin
+          state <= IDLE;
+        end
         else if (tick_ctr == 32'd0) begin
           state    <= SEC_DONE;
           tick_ctr <= 32'd0;

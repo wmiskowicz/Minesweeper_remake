@@ -107,7 +107,7 @@ always_ff @(posedge clk) begin
     burst_active <= 1'b0;
     read_addr    <= 8'b0;
     settings_read_ctr <= 4'b0;
-    read_en <= 1'b0;
+    read_en         <= 1'b0;
 
     game_burst_read <= 1'b0;
     game_read_addr  <= 9'h00;
@@ -251,6 +251,10 @@ always_ff @(posedge clk) begin
 
     defuser_state <= DEF_IDLE;
     count_en      <= 1'b0;
+
+    game_lost <= 1'b0;
+    game_won  <= 1'b0;
+    mine_ind  <= 4'h0;
   end
   else begin
     case (defuser_state)

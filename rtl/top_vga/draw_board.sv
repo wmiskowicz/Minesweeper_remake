@@ -348,7 +348,7 @@ u_draw_bomb1 (
 draw_image #(
   .RECT_WIDTH (64),
   .RECT_HEIGHT(64),
-  .PATH       ("../../rtl/top_vga/data/flag.data")
+  .PATH       ("../../rtl/top_vga/data/flag_grey.data")
 )
 u_draw_flag1 (
   .clk       (clk),
@@ -363,7 +363,7 @@ u_draw_flag1 (
 draw_char #(
   .PRESCALER (4),
   .OFFSET_X  (14),
-  .OFFSET_Y  (11)//3
+  .OFFSET_Y  (3)//11
 ) u_draw_char (
   .clk      (clk),
   .rst      (rst),

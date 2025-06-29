@@ -93,15 +93,6 @@ always_ff @(posedge clk) begin
           settings_read_en      <= 1'b1;
           settings_burst_active <= 1'b1;
         end
-
-        for (int i = 0; i < 16; i++)
-          for (int j = 0; j < 16; j++)  
-            mine_map[i][j] <= 1'b0;
-
-        settings_read_addr <= 8'b0;
-        game_write_addr    <= 9'h0;
-        row_col_num        <= 16'b1;
-        planting_complete  <= 1'b0;
       end
       PLANTER_READ_SETTINGS: begin
         settings_read_en <= 1'b0;
@@ -151,7 +142,7 @@ always_ff @(posedge clk) begin
         end
       end
       PLANTER_DONE: begin
-        planter_state <= main_state == GAME_OVER ? PLANTER_IDLE : PLANTER_DONE;
+        planter_state <= main_state == MENU ? PLANTER_IDLE : PLANTER_DONE;
         planting_complete <= 1'b1;
       end
       default: planter_state <= PLANTER_IDLE;

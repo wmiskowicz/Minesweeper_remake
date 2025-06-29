@@ -97,6 +97,7 @@ set mem_files {
     ../rtl/top_vga/data/bg_anim3_64.data
     ../rtl/top_vga/data/bomb.data
     ../rtl/top_vga/data/flag.data
+    ../rtl/top_vga/data/flag_grey.data
     ../rtl/top_vga/data/game_over.data
     ../rtl/top_vga/data/game_won.data
     ../rtl/top_vga/data/menu.data
