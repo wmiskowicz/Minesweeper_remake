@@ -153,7 +153,7 @@ top_timer u_top_timer(
   .rst   (rst),
   .start (fsm_state == PLAY), 
   .stop  (timer_stop),
-  .retry (retry),   
+  .retry (fsm_state == GAME_OVER),   
 
   .sec_to_count (game_setup_mem[TIMER_SECONDS_REG_NUM][7:0]),
   .seconds_left (seconds_left),

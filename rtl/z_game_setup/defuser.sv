@@ -164,7 +164,7 @@ always_ff @(posedge clk) begin
           board_ready     <= 1'b1;
         end
       end
-      AR_DONE: auto_read_state <= main_state != PLAY ? AR_IDLE : AR_DONE;
+      AR_DONE: auto_read_state <= main_state == MENU ? AR_IDLE : AR_DONE;
       default: auto_read_state <= AR_IDLE;
     endcase
   end
