@@ -115,10 +115,10 @@ always_ff @(posedge clk) begin
   end
   else if (main_state == GAME_OVER) begin
 
-    if (game_lost) 
-      out.rgb <= game_over_vga.rgb;
-    else if (game_won)
+    if (game_won)
       out.rgb <= game_won_vga.rgb;
+    else 
+      out.rgb <= game_over_vga.rgb;
 
   end
   else begin

@@ -65,6 +65,7 @@ set sv_files {
     ../rtl/top_vga/writings.sv
     ../rtl/z_game_setup/defuser.sv
     ../rtl/z_game_setup/game_pkg.sv
+    ../rtl/z_game_setup/level_select.sv
     ../rtl/z_game_setup/lfsr.sv
     ../rtl/z_game_setup/main_fsm.sv
     ../rtl/z_game_setup/mine_planter.sv

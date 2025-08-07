@@ -12,9 +12,6 @@ module top_basys3 (
   input  wire       clk,
   input  wire       btnD,
   input  wire       btnU,
-  input  wire       btnL,
-  input  wire       btnC,
-  input  wire       btnR,
   input  wire       sw,
 
   inout  wire       PS2Clk,
@@ -67,7 +64,6 @@ logic       time_elapsed;
 
 // ----- Signal assignments -----
 assign rst = btnD;
-assign level = {btnR || btnC, btnL || btnR};
 
 assign timer_stop = sw;
 assign retry = btnU;
@@ -98,6 +94,16 @@ clk_wiz_0 clk0_wiz(
   .locked    (locked),
   .clk_100MHz(clk100MHz),
   .clk_74MHz (clk74MHz)
+);
+
+level_select u_level_select(
+  .clk    (clk74MHz),
+  .rst    (rst),
+
+  .left       (left),
+  .mouse_xpos (mouse_xpos),
+  .mouse_ypos (mouse_ypos),
+  .level      (level)
 );
 
 

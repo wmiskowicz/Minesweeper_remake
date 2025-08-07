@@ -19,6 +19,7 @@ package color_pkg;
   localparam [11:0] BLACK = 12'h1_1_1;
 
   // Button colors
+  localparam [11:0] BUTTON_FRAME = 12'h8_8_8;
   localparam [11:0] BUTTON_BACK = 12'hd_d_d;
   localparam [11:0] BUTTON_WHITE = 12'hf_f_f;
   localparam [11:0] BUTTON_GRAY = 12'h5_5_5;

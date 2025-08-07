@@ -32,6 +32,8 @@ enum logic [1:0] {
 vga_if bomb_vga();
 vga_if flag_vga();
 vga_if num_vga();
+vga_if stage1_vga();
+vga_if stage2_vga();
 
 // ----- Local parameters -----
 localparam STATE_BITS = 3;
@@ -99,6 +101,22 @@ always_ff @(posedge clk) begin
 
   symbol_xpos_2q <= symbol_xpos_q;
   symbol_ypos_2q <= symbol_ypos_q;
+
+  stage1_vga.rgb     <= in.rgb;
+  stage1_vga.vcount  <= in.vcount;
+  stage1_vga.vsync   <= in.vsync;
+  stage1_vga.vblnk   <= in.vblnk;
+  stage1_vga.hcount  <= in.hcount;
+  stage1_vga.hsync   <= in.hsync;
+  stage1_vga.hblnk   <= in.hblnk;
+
+  stage2_vga.rgb     <= stage1_vga.rgb;
+  stage2_vga.vcount  <= stage1_vga.vcount;
+  stage2_vga.vsync   <= stage1_vga.vsync;
+  stage2_vga.vblnk   <= stage1_vga.vblnk;
+  stage2_vga.hcount  <= stage1_vga.hcount;
+  stage2_vga.hsync   <= stage1_vga.hsync;
+  stage2_vga.hblnk   <= stage1_vga.hblnk;
 end
 
 
@@ -141,12 +159,12 @@ always_ff @(posedge clk) begin
     read_en           <= 1'b0;
   end
   else begin
-    out.vcount  <= in.vcount;
-    out.vsync   <= in.vsync;
-    out.vblnk   <= in.vblnk;
-    out.hcount  <= in.hcount;
-    out.hsync   <= in.hsync;
-    out.hblnk   <= in.hblnk;
+    out.vcount  <= stage2_vga.vcount;
+    out.vsync   <= stage2_vga.vsync;
+    out.vblnk   <= stage2_vga.vblnk;
+    out.hcount  <= stage2_vga.hcount;
+    out.hsync   <= stage2_vga.hsync;
+    out.hblnk   <= stage2_vga.hblnk;
 
     case(board_state)
       IDLE: begin
@@ -154,12 +172,12 @@ always_ff @(posedge clk) begin
         board_state  <= main_state == PLAY ? READ_SETTINGS : IDLE;
         read_en      <= main_state == PLAY;
         read_addr    <= 8'h0;
-        out.rgb      <= in.rgb;
+        out.rgb      <= stage2_vga.rgb;
 
         settings_read_ctr <= 4'b0;
       end
       READ_SETTINGS: begin
-        out.rgb      <= in.rgb;
+        out.rgb      <= stage2_vga.rgb;
         burst_active <= 1'b1;
         read_en      <= 1'b0;
         board_state  <= settings_read_ctr == SETTINGS_REG_NUM ? DRAW : READ_SETTINGS;
@@ -301,7 +319,7 @@ function logic [11:0] draw_uncovered;
     return BUTTON_BACK;
   end
   else if (vcount_valid && hcount_valid)
-    return BUTTON_GRAY;
+    return BUTTON_FRAME;
   else
     return in.rgb;
 endfunction
@@ -338,10 +356,10 @@ draw_image #(
 )
 u_draw_bomb1 (
   .clk       (clk),
-  .in        (in),
+  .in        (stage2_vga),
   .out       (bomb_vga.out),
-  .rect_x_pos(symbol_xpos_2q - 12'd2),
-  .rect_y_pos(symbol_ypos_2q - 12'd2),
+  .rect_x_pos(symbol_xpos_2q),
+  .rect_y_pos(symbol_ypos_2q),
   .rst       (rst)
 );
 
@@ -352,10 +370,10 @@ draw_image #(
 )
 u_draw_flag1 (
   .clk       (clk),
-  .in        (in),
+  .in        (stage2_vga),
   .out       (flag_vga.out),
-  .rect_x_pos(symbol_xpos_2q - 12'd2),
-  .rect_y_pos(symbol_ypos_2q - 12'd2),
+  .rect_x_pos(symbol_xpos_2q),
+  .rect_y_pos(symbol_ypos_2q),
   .rst       (rst)
 );
 
