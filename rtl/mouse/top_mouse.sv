@@ -39,9 +39,7 @@ logic empty;
 logic [17:0] data_out;
 
 logic left_in, right_in;
-logic left_del, right_del;
 logic left_sync, right_sync;
-logic wr_en_pulse;
 
 // ----- Signal assignments -----
 assign right_sync = rd_en ? 1'b0 : data_out[0];
@@ -64,13 +62,6 @@ posedge_detector posedge_detector_3 (
   .rst        (rst),
   .in_signal  (right_sync),
   .out_pulse  (right)
-);
-
-posedge_detector posedge_detector_4 (
-  .clk        (clk100MHz),
-  .rst        (rst),
-  .in_signal  (wr_en),
-  .out_pulse  (wr_en_pulse)
 );
 
 MouseCtl u_MouseCtl(
@@ -97,16 +88,6 @@ MouseCtl u_MouseCtl(
   .setmax_y ('0)
 );
 
-delay #(
-  .WIDTH  (2),
-  .CLK_DEL(1)
-)
-u_delay (
-  .clk (clk100MHz),
-  .rst (rst),
-  .din ({left_in, right_in}),      
-  .dout({left_del, right_del})         
-);
 
 fifo_generator_1 fifo_0 (
   .wr_clk (clk100MHz),
@@ -116,7 +97,6 @@ fifo_generator_1 fifo_0 (
   .wr_en  (new_event),
   .rd_en  (rd_en),
 
-  // .din    ({16'b0, left_del, right_del}),
   .din    ({16'b0, left_in, right_in}),
   .dout   (data_out),
 
