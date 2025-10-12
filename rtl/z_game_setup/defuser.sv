@@ -127,7 +127,8 @@ always_ff @(posedge clk) begin
         game_read_addr  <= 9'h00;
         game_read_en    <= 1'b0;
 
-        board_ready     <= 1'b0;
+        board_ready       <= 1'b0;
+        settings_read_ctr <= 4'b0;
       end
       AR_READ_SETTINGS: begin
         burst_active <= 1'b1;

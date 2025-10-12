@@ -107,3 +107,6 @@ images
 *.jpg
 *vunit_out*
 *.cxl*
+.settings/
+.project
+.library_*

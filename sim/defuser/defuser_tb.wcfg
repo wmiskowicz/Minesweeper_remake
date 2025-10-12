@@ -15,15 +15,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="11,215.342 ns"></ZoomStartTime>
-      <ZoomEndTime time="14,646.332 ns"></ZoomEndTime>
-      <Cursor1Time time="14,074.500 ns"></Cursor1Time>
+      <ZoomStartTime time="13,964.500 ns"></ZoomStartTime>
+      <ZoomEndTime time="16,736.501 ns"></ZoomEndTime>
+      <Cursor1Time time="14,426.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="94"></ValueColumnWidth>
+      <NameColumnWidth column_width="396"></NameColumnWidth>
+      <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="16" />
    <wvobject fp_name="/defuser_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -67,6 +67,25 @@
    <wvobject fp_name="/defuser_tb/dut/game_board_mem[0][0]" type="array">
       <obj_property name="ElementShortName">[0]</obj_property>
       <obj_property name="ObjectShortName">[0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/main_state" type="array">
+      <obj_property name="ElementShortName">main_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">main_state[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/game_setup_cashe" type="array">
+      <obj_property name="ElementShortName">game_setup_cashe[8:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_setup_cashe[8:0][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/level" type="array">
+      <obj_property name="ElementShortName">level[1:0]</obj_property>
+      <obj_property name="ObjectShortName">level[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/u_main_fsm/game_setup_mem" type="array">
+      <obj_property name="ElementShortName">game_setup_mem[8:0][15:0]</obj_property>
+      <obj_property name="ObjectShortName">game_setup_mem[8:0][15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/auto_read_state" type="array">
+      <obj_property name="ElementShortName">auto_read_state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">auto_read_state[2:0]</obj_property>
    </wvobject>
 </wave_config>

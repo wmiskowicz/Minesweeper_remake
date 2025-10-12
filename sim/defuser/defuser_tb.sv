@@ -30,6 +30,8 @@ logic left;
 logic right;
 
 wire game_lost;
+logic retry;
+logic [1:0] level;
 
 logic [2:0] main_state;
 
@@ -50,6 +52,7 @@ end
 defuser dut (
   .clk              (clk),
   .rst              (rst),
+  .retry            (retry),
 
   .planting_complete(planting_complete),
   .main_state       (main_state),
@@ -82,14 +85,18 @@ main_fsm u_main_fsm (
   .clk         (clk),
   .rst         (rst),
 
-  .level       (2),
-  .retry       ('0),
+  .level       (level),
+  .left        (left),
+  .right       (right),
+  .retry       (retry),
   .state_out   (main_state),
   .timer_stop  ('0),
 
 
   .game_won    (1'b0),
   .game_lost   (game_lost),
+  .seconds_left(),
+  .time_elapsed(),
 
   .game_set_wb1(defuser_game_set_wb.slave),
   .game_set_wb2(game_set_wb2.slave),
@@ -105,6 +112,8 @@ initial begin
   mouse_ypos = 12'd0;
   left = 1'b0;
   right = 1'b0;
+  retry = 1'b0;
+  level = 2'd2; // Medium level
   
   // Initialize wishbone interfaces
   defuser_game_set_wb.stall_i = 1'b0;
@@ -130,19 +139,31 @@ initial begin
   
   `check_eq(dut.auto_read_state, AR_READ_SETTINGS, "Should be reading settings");
 
+  click_left_mouse();
+
 
   wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
   WaitClocks(50);
   mouse_xpos = M_BOARD_XPOS + 1;
   mouse_ypos = M_BOARD_YPOS + 1;
-  WaitClocks(20);
-  left = 1'b1;
-  WaitClocks(1);
-  left = 1'b0;
+  click_left_mouse();
 
   WaitClocks(100);
   `check_eq(game_lost, 1'b1);
   `check_eq(main_state, GAME_OVER);
+
+  retry = 1'b1;
+  level = 2'd1;
+  mouse_xpos = E_BOARD_XPOS + 1;
+  mouse_ypos = E_BOARD_YPOS + 1;
+  WaitClocks(1);
+  retry = 1'b0;
+  WaitClocks(200); 
+  planting_complete = 1'b1;
+  WaitClocks(1);
+  planting_complete = 1'b0;
+
+  WaitClocks(500);
 
 
   $finish();
@@ -162,6 +183,15 @@ task automatic InitReset();
   rst = 1;
   WaitClocks(10);
   rst = 0;
+endtask
+
+task automatic click_left_mouse();
+  begin
+    left = 1'b1;
+    WaitClocks(10);
+    left = 1'b0;
+    WaitClocks(10);
+  end
 endtask
 
 endmodule
