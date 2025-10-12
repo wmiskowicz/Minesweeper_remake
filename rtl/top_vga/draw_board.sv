@@ -80,11 +80,11 @@ enum logic [STATE_BITS-1 :0] {
 
 
 // ----- Signal assignments -----
-assign vcount_valid = in.vcount >= game_setup_cashe[BOARD_YPOS_REG_NUM] && in.vcount < game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
-assign hcount_valid = in.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] && in.hcount < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
+assign vcount_valid = stage2_vga.vcount >= game_setup_cashe[BOARD_YPOS_REG_NUM] && stage2_vga.vcount < game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
+assign hcount_valid = stage2_vga.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] && stage2_vga.hcount < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
 
-assign board_vcount = vcount_valid && hcount_valid ? in.vcount - game_setup_cashe[BOARD_YPOS_REG_NUM] : 11'h7_f_f;
-assign board_hcount = vcount_valid && hcount_valid ? in.hcount - game_setup_cashe[BOARD_XPOS_REG_NUM] : 11'h7_f_f;
+assign board_vcount = vcount_valid && hcount_valid ? stage2_vga.vcount - game_setup_cashe[BOARD_YPOS_REG_NUM] : 11'h7_f_f;
+assign board_hcount = vcount_valid && hcount_valid ? stage2_vga.hcount - game_setup_cashe[BOARD_XPOS_REG_NUM] : 11'h7_f_f;
 
 assign field_hcount = board_hcount[5:0];
 assign field_vcount = board_vcount[5:0];
@@ -230,7 +230,7 @@ always_ff @(posedge clk) begin
   else begin
     case (auto_read_state)
       WAIT: begin
-        if (in.vcount == 3 && in.hcount < 10) begin
+        if (stage2_vga.vcount == 3 && stage2_vga.hcount < 10) begin
           auto_read_state <= AUTO_READ;
 
           game_burst_active <= 1'b1;
@@ -307,7 +307,7 @@ function logic [11:0] draw_button;
       return BUTTON_GRAY;
     end
   end
-  return in.rgb;
+  return stage2_vga.rgb;
 endfunction
 
 function logic [11:0] draw_uncovered;
@@ -321,7 +321,7 @@ function logic [11:0] draw_uncovered;
   else if (vcount_valid && hcount_valid)
     return BUTTON_FRAME;
   else
-    return in.rgb;
+    return stage2_vga.rgb;
 endfunction
 
 function logic [11:0] draw_bomb;
@@ -352,6 +352,7 @@ endfunction
 draw_image #(
   .RECT_WIDTH (64),
   .RECT_HEIGHT(64),
+  .OFFSET_X   (0),
   .PATH       ("../../rtl/top_vga/data/bomb.data")
 )
 u_draw_bomb1 (
@@ -366,6 +367,7 @@ u_draw_bomb1 (
 draw_image #(
   .RECT_WIDTH (64),
   .RECT_HEIGHT(64),
+  .OFFSET_X   (0),
   .PATH       ("../../rtl/top_vga/data/flag_grey.data")
 )
 u_draw_flag1 (
@@ -391,7 +393,7 @@ draw_char #(
   .char_ypos(symbol_ypos_2q),
   .num_color(num_color),
 
-  .in       (in),
+  .in       (stage2_vga),
   .out      (num_vga.out)
 );
 

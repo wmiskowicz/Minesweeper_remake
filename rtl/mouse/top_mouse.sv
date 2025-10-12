@@ -28,9 +28,6 @@ module top_mouse (
 wire [11:0] xpos_in;
 wire [11:0] ypos_in;
 
-wire new_event;
-wire xpos_empty, ypos_empty;
-
 logic wr_en;
 logic rd_en;
 logic full;
@@ -39,7 +36,9 @@ logic empty;
 logic [17:0] data_out;
 
 logic left_in, right_in;
+logic left_del, right_del;
 logic left_sync, right_sync;
+logic wr_en_pulse;
 
 // ----- Signal assignments -----
 assign right_sync = rd_en ? 1'b0 : data_out[0];
@@ -64,6 +63,13 @@ posedge_detector posedge_detector_3 (
   .out_pulse  (right)
 );
 
+posedge_detector posedge_detector_4 (
+  .clk        (clk100MHz),
+  .rst        (rst),
+  .in_signal  (wr_en),
+  .out_pulse  (wr_en_pulse)
+);
+
 MouseCtl u_MouseCtl(
   .clk    (clk100MHz),
   .rst    (rst),
@@ -79,7 +85,7 @@ MouseCtl u_MouseCtl(
   .middle   (),
   .right    (right_in),
 
-  .new_event(new_event),
+  .new_event(),
   .value    (12'd100),
 
   .setx     ('0),
@@ -88,56 +94,46 @@ MouseCtl u_MouseCtl(
   .setmax_y ('0)
 );
 
+cross_buffer u_cross_buffer (
+  .slow_clk  (clk74MHz),
+  .clk100MHz (clk100MHz),
+  .rst       (rst),
+
+  .xpos_in   (xpos_in),
+  .ypos_in   (ypos_in),
+  .left_in   (0),
+  .right_in  (0),
+
+  .left_out  (),
+  .right_out (),
+  .xpos_out  (mouse_xpos),
+  .ypos_out  (mouse_ypos)
+);
+
+delay #(
+  .WIDTH  (2),
+  .CLK_DEL(1)
+)
+u_delay (
+  .clk (clk100MHz),
+  .rst (rst),
+  .din ({left_in, right_in}),      
+  .dout({left_del, right_del})         
+);
 
 fifo_generator_1 fifo_0 (
   .wr_clk (clk100MHz),
   .rd_clk (clk74MHz),
   .rst    (rst),
 
-  .wr_en  (new_event),
+  .wr_en  (wr_en_pulse),
   .rd_en  (rd_en),
 
-  .din    ({16'b0, left_in, right_in}),
+  .din    ({16'b0, left_del, right_del}),
   .dout   (data_out),
 
   .full   (full),
   .empty  (empty),
-
-  .wr_rst_busy(),
-  .rd_rst_busy()
-);
-
-fifo_generator_1 fifo_1 (
-  .wr_clk (clk100MHz),
-  .rd_clk (clk74MHz),
-  .rst    (rst),
-
-  .wr_en  (new_event),
-  .rd_en  (!xpos_empty),
-
-  .din    ({6'b0, xpos_in}),
-  .dout   (mouse_xpos),
-
-  .full   (),
-  .empty  (xpos_empty),
-
-  .wr_rst_busy(),
-  .rd_rst_busy()
-);
-
-fifo_generator_1 fifo_2 (
-  .wr_clk (clk100MHz),
-  .rd_clk (clk74MHz),
-  .rst    (rst),
-
-  .wr_en  (new_event),
-  .rd_en  (!ypos_empty),
-
-  .din    ({6'b0, ypos_in}),
-  .dout   (mouse_ypos),
-
-  .full   (),
-  .empty  (ypos_empty),
 
   .wr_rst_busy(),
   .rd_rst_busy()

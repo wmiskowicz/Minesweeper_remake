@@ -12,7 +12,8 @@ module draw_image #(
   parameter RECT_WIDTH    = 64,
   parameter RECT_HEIGHT   = 64,
   parameter PATH          = "../../rtl/top_vga/data/bomb.data",
-  parameter PRESCALER     = 1
+  parameter PRESCALER     = 1,
+  parameter OFFSET_X      = 0
 )(
   input  logic clk,
   input  logic rst,
@@ -44,7 +45,7 @@ logic in_image_region;
 
 logic [ADDR_WIDTH-1:0] address;
 logic [11:0] rom_rgb;
-
+logic [11:0] adjusted_rect_x_pos;
 
 
 delay_vga u_delay(
@@ -64,15 +65,18 @@ image_rom #(
   .rgb(rom_rgb)
 );
 
+// Apply the offset to the X position
+assign adjusted_rect_x_pos = rect_x_pos + OFFSET_X;
+
 always_comb begin
-  rel_x = in.hcount - rect_x_pos;
+  rel_x = in.hcount - adjusted_rect_x_pos;
   rel_y = in.vcount - rect_y_pos;
   
   scaled_rel_x = rel_x / PRESCALER;
   scaled_rel_y = rel_y / PRESCALER;
   
-  in_image_region = (in.hcount >= rect_x_pos) &&
-                   (in.hcount < rect_x_pos + SCALED_WIDTH) &&
+  in_image_region = (in.hcount >= adjusted_rect_x_pos) &&
+                   (in.hcount < adjusted_rect_x_pos + SCALED_WIDTH) &&
                    (in.vcount >= rect_y_pos) &&
                    (in.vcount < rect_y_pos + SCALED_HEIGHT);
 end
