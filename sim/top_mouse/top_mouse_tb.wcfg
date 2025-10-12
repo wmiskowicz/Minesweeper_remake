@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_mouse_tb.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="logger_pkg" />
+            <top_module name="top_mouse_tb" />
+            <top_module name="vga_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,362.001 ns"></ZoomEndTime>
+      <Cursor1Time time="465.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="404"></NameColumnWidth>
+      <ValueColumnWidth column_width="106"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="10" />
+   <wvobject fp_name="/top_mouse_tb/dut/clk100MHz" type="logic">
+      <obj_property name="ElementShortName">clk100MHz</obj_property>
+      <obj_property name="ObjectShortName">clk100MHz</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/dut/clk74MHz" type="logic">
+      <obj_property name="ElementShortName">clk74MHz</obj_property>
+      <obj_property name="ObjectShortName">clk74MHz</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/dut/left_in" type="logic">
+      <obj_property name="ElementShortName">left_in</obj_property>
+      <obj_property name="ObjectShortName">left_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/dut/right_in" type="logic">
+      <obj_property name="ElementShortName">right_in</obj_property>
+      <obj_property name="ObjectShortName">right_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/left" type="logic">
+      <obj_property name="ElementShortName">left</obj_property>
+      <obj_property name="ObjectShortName">left</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/right" type="logic">
+      <obj_property name="ElementShortName">right</obj_property>
+      <obj_property name="ObjectShortName">right</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/dut/xpos_in" type="array">
+      <obj_property name="ElementShortName">xpos_in[11:0]</obj_property>
+      <obj_property name="ObjectShortName">xpos_in[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/dut/ypos_in" type="array">
+      <obj_property name="ElementShortName">ypos_in[11:0]</obj_property>
+      <obj_property name="ObjectShortName">ypos_in[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/mouse_xpos" type="array">
+      <obj_property name="ElementShortName">mouse_xpos[11:0]</obj_property>
+      <obj_property name="ObjectShortName">mouse_xpos[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_mouse_tb/mouse_ypos" type="array">
+      <obj_property name="ElementShortName">mouse_ypos[11:0]</obj_property>
+      <obj_property name="ObjectShortName">mouse_ypos[11:0]</obj_property>
+   </wvobject>
+</wave_config>

@@ -25,42 +25,69 @@ module top_mouse (
 );
 
 // ----- Local variables -----
-wire [11:0] xpos_in;
-wire [11:0] ypos_in;
+logic [11:0] xpos_in;
+logic [11:0] ypos_in;
 
 logic wr_en;
 logic rd_en;
 logic full;
 logic empty;
 
+logic [17:0] xpos_out;
+logic [17:0] ypos_out;
 logic [17:0] data_out;
 
 logic left_in, right_in;
-logic left_del, right_del;
+logic left_q, right_q;
 logic left_sync, right_sync;
+logic left_sync_pulse, right_sync_pulse;
 logic wr_en_pulse;
+
+logic wr_en_xpos, wr_en_ypos;
+logic rd_en_xpos, rd_en_ypos;
+logic empty_xpos, empty_ypos;
+logic full_xpos, full_ypos;
 
 // ----- Signal assignments -----
 assign right_sync = rd_en ? 1'b0 : data_out[0];
 assign left_sync  = rd_en ? 1'b0 : data_out[1];
 
+assign left  = left_sync_pulse;
+assign right = right_sync_pulse;
 
+assign mouse_xpos = rd_en_xpos ? xpos_out[11:0] : mouse_xpos;
+assign mouse_ypos = rd_en_ypos ? ypos_out[11:0] : mouse_ypos;
+
+
+// ----- Module logic -----
 always_ff @(posedge clk100MHz) wr_en <= !full && (left_in || right_in);
 always_ff @(posedge clk74MHz)  rd_en <= !empty;
+
+always_ff @(posedge clk100MHz) wr_en_xpos <= !full_xpos;
+always_ff @(posedge clk74MHz)  rd_en_xpos <= !empty_xpos;
+
+always_ff @(posedge clk100MHz) wr_en_ypos <= !full_ypos;
+always_ff @(posedge clk74MHz)  rd_en_ypos <= !empty_ypos;
+
+always_ff @(posedge clk100MHz) begin
+  left_q  <= left_in;
+  right_q <= right_in;
+end
+
 
 
 posedge_detector posedge_detector_0 (
   .clk        (clk74MHz),
   .rst        (rst),
   .in_signal  (left_sync),
-  .out_pulse  (left)
+  .out_pulse  (left_sync_pulse)
 );
 
 posedge_detector posedge_detector_3 (
   .clk        (clk74MHz),
   .rst        (rst),
   .in_signal  (right_sync),
-  .out_pulse  (right)
+  .out_pulse  (right_sync_pulse)
 );
 
 posedge_detector posedge_detector_4 (
@@ -94,34 +121,44 @@ MouseCtl u_MouseCtl(
   .setmax_y ('0)
 );
 
-cross_buffer u_cross_buffer (
-  .slow_clk  (clk74MHz),
-  .clk100MHz (clk100MHz),
-  .rst       (rst),
+fifo_generator_1 fifo_xpos (
+  .wr_clk (clk100MHz),
+  .rd_clk (clk74MHz),
+  .rst    (rst),
 
-  .xpos_in   (xpos_in),
-  .ypos_in   (ypos_in),
-  .left_in   (0),
-  .right_in  (0),
+  .wr_en  (wr_en_xpos),
+  .rd_en  (rd_en_xpos),
 
-  .left_out  (),
-  .right_out (),
-  .xpos_out  (mouse_xpos),
-  .ypos_out  (mouse_ypos)
+  .din    ({6'h0, xpos_in}),
+  .dout   (xpos_out),
+
+  .full   (full_xpos),
+  .empty  (empty_xpos),
+
+  .wr_rst_busy(),
+  .rd_rst_busy()
 );
 
-delay #(
-  .WIDTH  (2),
-  .CLK_DEL(1)
-)
-u_delay (
-  .clk (clk100MHz),
-  .rst (rst),
-  .din ({left_in, right_in}),      
-  .dout({left_del, right_del})         
+fifo_generator_1 fifo_ypos (
+  .wr_clk (clk100MHz),
+  .rd_clk (clk74MHz),
+  .rst    (rst),
+
+  .wr_en  (wr_en_ypos),
+  .rd_en  (rd_en_ypos),
+
+  .din    ({6'h0, ypos_in}),
+  .dout   (ypos_out),
+
+  .full   (full_ypos),
+  .empty  (empty_ypos),
+
+  .wr_rst_busy(),
+  .rd_rst_busy()
 );
 
-fifo_generator_1 fifo_0 (
+
+fifo_generator_1 fifo_buttons (
   .wr_clk (clk100MHz),
   .rd_clk (clk74MHz),
   .rst    (rst),
@@ -129,7 +166,7 @@ fifo_generator_1 fifo_0 (
   .wr_en  (wr_en_pulse),
   .rd_en  (rd_en),
 
-  .din    ({16'b0, left_del, right_del}),
+  .din    ({16'b0, left_q, right_q}),
   .dout   (data_out),
 
   .full   (full),
