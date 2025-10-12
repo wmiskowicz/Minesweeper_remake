@@ -77,6 +77,7 @@ logic [3:0] mine_ind;
 logic [3:0] col_ctr;
 logic [3:0] row_ctr;
 logic count_en;
+logic redo_defuse;
 
 
 auto_write_state_t auto_write_state;
@@ -107,13 +108,14 @@ always_ff @(posedge clk) begin
     burst_active <= 1'b0;
     read_addr    <= 8'b0;
     settings_read_ctr <= 4'b0;
-    read_en         <= 1'b0;
+    read_en           <= 1'b0;
+    
 
-    game_burst_read <= 1'b0;
-    game_read_addr  <= 9'h00;
-    game_read_en    <= 1'b0;
+    game_burst_read   <= 1'b0;
+    game_read_addr    <= 9'h00;
+    game_read_en      <= 1'b0;
 
-    board_ready     <= 1'b0;
+    board_ready       <= 1'b0;
   end
   else begin
     case(auto_read_state)
@@ -252,6 +254,7 @@ always_ff @(posedge clk) begin
 
     defuser_state <= DEF_IDLE;
     count_en      <= 1'b0;
+    redo_defuse   <= 1'b0;
 
     game_lost <= 1'b0;
     game_won  <= 1'b0;
@@ -266,7 +269,8 @@ always_ff @(posedge clk) begin
           game_board_mem[i][j] <= 8'b0;
 
         defuser_state <= main_state == PLAY ? DEF_READ_BOARD : DEF_IDLE;
-        count_en  <= 1'b0;
+        count_en    <= 1'b0;
+        redo_defuse <= 1'b0;
 
         game_lost <= 1'b0;
         game_won  <= 1'b0;
@@ -312,13 +316,16 @@ always_ff @(posedge clk) begin
             game_lost     <= 1'b1;
             defuser_state <= DEF_GAME_OVER;
           end
+          else if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine_ind > 0) begin
+            defuser_state <= DEF_WAIT_FOR_MOUSE;
+          end
           else begin
             defuser_state <= DEFUSE;
           end
-
         end
         else if (mouse_xpos_valid && mouse_ypos_valid && right) begin
           game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag <= !game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag;
+          defuser_state <= DEFUSE;
         end
       end
 
@@ -349,21 +356,66 @@ always_ff @(posedge clk) begin
         end
 
         game_won <= 1'b1;
+        redo_defuse <= 1'b0;
         for (int i = 0; i < 16; i++) begin
           for (int j = 0; j < 16; j++) begin
-            if(i < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] && j < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM])
+
+            
+            if(i < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] && j < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) begin
+
+              // Check if game won
               if(!(game_board_mem[i][j].defused || (game_board_mem[i][j].mine && game_board_mem[i][j].flag))) begin
                 game_won <= 1'b0;
               end
+
+              // Check if everything is defused
+              for (int dy = -1; dy <= 1; dy++) begin
+                for (int dx = -1; dx <= 1; dx++) begin
+
+                  if ((row_ctr+dy >= 0) && (row_ctr+dy < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) &&
+                  (col_ctr+dx >= 0) && (col_ctr+dx < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM])) begin
+
+                    if ((dx == 0) && (dy == 0))
+                      continue;
+
+                    if (game_board_mem[i][j].defused == 1'b1 && 
+                        game_board_mem[i][j].mine_ind == 0 &&
+                        !(game_board_mem[i+dx][j+dy].defused)
+                      ) begin
+                      redo_defuse <= 1'b1;
+                    end
+                  end
+
+                  
+                end
+              end
+            end
           end
         end
 
-        defuser_state <= (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 &&
+
+        if (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 &&
           col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 ||
-          game_won) ? DEF_WIN_CHECK : DEFUSE;
+          game_won) begin
+            defuser_state <= DEF_WIN_CHECK;
+        end
+        else begin
+            defuser_state <= DEFUSE;
+        end
       end
 
-      DEF_WIN_CHECK: defuser_state <= game_won ? DEF_GAME_OVER : DEF_WAIT_FOR_MOUSE;
+      DEF_WIN_CHECK: begin
+        count_en    <= 1'b0;
+        redo_defuse <= 1'b0;
+
+        if (game_won)
+          defuser_state <= DEF_GAME_OVER;
+        else if (redo_defuse)
+          defuser_state <= DEFUSE;
+        else
+          defuser_state <= DEF_WAIT_FOR_MOUSE;
+      end
+
       DEF_GAME_OVER: defuser_state <= main_state == MENU ? DEF_IDLE : DEF_GAME_OVER;
 
 

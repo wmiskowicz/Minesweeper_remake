@@ -15,15 +15,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="13,964.500 ns"></ZoomStartTime>
-      <ZoomEndTime time="16,736.501 ns"></ZoomEndTime>
-      <Cursor1Time time="14,426.500 ns"></Cursor1Time>
+      <ZoomStartTime time="29,022.239 ns"></ZoomStartTime>
+      <ZoomEndTime time="29,156.440 ns"></ZoomEndTime>
+      <Cursor1Time time="29,138.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="396"></NameColumnWidth>
+      <NameColumnWidth column_width="384"></NameColumnWidth>
       <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="16" />
+   <WVObjectSize size="15" />
    <wvobject fp_name="/defuser_tb/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -36,9 +36,9 @@
       <obj_property name="ElementShortName">left</obj_property>
       <obj_property name="ObjectShortName">left</obj_property>
    </wvobject>
-   <wvobject fp_name="/defuser_tb/dut/left" type="logic">
-      <obj_property name="ElementShortName">left</obj_property>
-      <obj_property name="ObjectShortName">left</obj_property>
+   <wvobject fp_name="/defuser_tb/right" type="logic">
+      <obj_property name="ElementShortName">right</obj_property>
+      <obj_property name="ObjectShortName">right</obj_property>
    </wvobject>
    <wvobject fp_name="/defuser_tb/dut/mouse_board_ind_x" type="array">
       <obj_property name="ElementShortName">mouse_board_ind_x[3:0]</obj_property>
@@ -47,14 +47,6 @@
    <wvobject fp_name="/defuser_tb/dut/mouse_board_ind_y" type="array">
       <obj_property name="ElementShortName">mouse_board_ind_y[3:0]</obj_property>
       <obj_property name="ObjectShortName">mouse_board_ind_y[3:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/dut/mouse_xpos" type="array">
-      <obj_property name="ElementShortName">mouse_xpos[11:0]</obj_property>
-      <obj_property name="ObjectShortName">mouse_xpos[11:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/defuser_tb/dut/mouse_ypos" type="array">
-      <obj_property name="ElementShortName">mouse_ypos[11:0]</obj_property>
-      <obj_property name="ObjectShortName">mouse_ypos[11:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/defuser_tb/dut/mouse_xpos_valid" type="logic">
       <obj_property name="ElementShortName">mouse_xpos_valid</obj_property>
@@ -87,5 +79,9 @@
    <wvobject fp_name="/defuser_tb/dut/auto_read_state" type="array">
       <obj_property name="ElementShortName">auto_read_state[2:0]</obj_property>
       <obj_property name="ObjectShortName">auto_read_state[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/defuser_tb/dut/game_won" type="logic">
+      <obj_property name="ElementShortName">game_won</obj_property>
+      <obj_property name="ObjectShortName">game_won</obj_property>
    </wvobject>
 </wave_config>

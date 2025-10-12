@@ -163,7 +163,15 @@ initial begin
   WaitClocks(1);
   planting_complete = 1'b0;
 
+  wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
+  for (int i = 0; i < 16; i++)
+    for (int j = 0; j < 16; j++)
+      if (!(i == 0 && j == 0))
+        dut.game_board_mem[i][j].defused = 1'b1;
+
+  click_right_mouse();
   WaitClocks(500);
+  `check_eq(dut.game_won, 1'b1);
 
 
   $finish();
@@ -190,6 +198,15 @@ task automatic click_left_mouse();
     left = 1'b1;
     WaitClocks(10);
     left = 1'b0;
+    WaitClocks(10);
+  end
+endtask
+
+task automatic click_right_mouse();
+  begin
+    right = 1'b1;
+    WaitClocks(10);
+    right = 1'b0;
     WaitClocks(10);
   end
 endtask
