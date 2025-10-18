@@ -63,6 +63,8 @@ logic game_read_ready;
 logic mouse_xpos_valid;
 logic mouse_ypos_valid;
 
+logic left_q, right_q;
+
 logic [11:0] mouse_board_xpos;
 logic [11:0] mouse_board_ypos;
 
@@ -71,6 +73,7 @@ logic [3:0] mouse_board_ind_y;
 
 logic [19:0] timing_ctr;
 logic board_ready;
+logic game_won_p;
 
 logic [3:0] mine_ind;
 
@@ -255,12 +258,18 @@ always_ff @(posedge clk) begin
     defuser_state <= DEF_IDLE;
     count_en      <= 1'b0;
     redo_defuse   <= 1'b0;
+    game_won_p    <= 1'b0;
 
     game_lost <= 1'b0;
     game_won  <= 1'b0;
     mine_ind  <= 4'h0;
+    left_q    <= 1'b0;
+    right_q   <= 1'b0;
   end
   else begin
+    left_q    <= left;
+    right_q   <= right;
+
     case (defuser_state)
       DEF_IDLE: begin
         
@@ -272,9 +281,10 @@ always_ff @(posedge clk) begin
         count_en    <= 1'b0;
         redo_defuse <= 1'b0;
 
-        game_lost <= 1'b0;
-        game_won  <= 1'b0;
-        mine_ind  <= 4'h0;
+        game_lost  <= 1'b0;
+        game_won   <= 1'b0;
+        game_won_p <= 1'b0;
+        mine_ind   <= 4'h0;
       end
 
       DEF_READ_BOARD: begin
@@ -288,6 +298,9 @@ always_ff @(posedge clk) begin
         count_en <= 1'b1;
         for (int dy = -1; dy <= 1; dy++) begin
           for (int dx = -1; dx <= 1; dx++) begin
+
+            if ((dx == 0) && (dy == 0))
+              continue;
 
             if ((row_ctr+dy >= 0) && (row_ctr+dy < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) &&
                 (col_ctr+dx >= 0) && (col_ctr+dx < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) &&
@@ -308,7 +321,7 @@ always_ff @(posedge clk) begin
 
       DEF_WAIT_FOR_MOUSE: begin
         count_en <= 1'b0;
-        if (mouse_xpos_valid && mouse_ypos_valid && left) begin
+        if (mouse_xpos_valid && mouse_ypos_valid && left_q) begin
 
           game_board_mem[mouse_board_ind_y][mouse_board_ind_x].defused <= 1'b1;
 
@@ -323,7 +336,7 @@ always_ff @(posedge clk) begin
             defuser_state <= DEFUSE;
           end
         end
-        else if (mouse_xpos_valid && mouse_ypos_valid && right) begin
+        else if (mouse_xpos_valid && mouse_ypos_valid && right_q) begin
           game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag <= !game_board_mem[mouse_board_ind_y][mouse_board_ind_x].flag;
           defuser_state <= DEFUSE;
         end
@@ -355,25 +368,40 @@ always_ff @(posedge clk) begin
           end
         end
 
-        game_won <= 1'b1;
-        redo_defuse <= 1'b0;
+        if (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 &&
+          col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1) begin
+            defuser_state <= DEF_INSPECT_BOARD;
+            count_en <= 1'b0;
+
+            // by default presume board defused and game won
+            game_won_p  <= 1'b1;
+            redo_defuse <= 1'b0;
+        end
+        else begin
+            defuser_state <= DEFUSE;
+        end
+
+      end
+
+      DEF_INSPECT_BOARD: begin
+
         for (int i = 0; i < 16; i++) begin
           for (int j = 0; j < 16; j++) begin
-
-            
             if(i < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] && j < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) begin
 
               // Check if game won
               if(!(game_board_mem[i][j].defused || (game_board_mem[i][j].mine && game_board_mem[i][j].flag))) begin
-                game_won <= 1'b0;
+                game_won_p <= 1'b0;
+                $display("Disabled game_won at i = %d, j = %d", i, j);
+                $display("Defused = %b, Flagged on mine = %b \n", game_board_mem[i][j].defused, game_board_mem[i][j].mine && game_board_mem[i][j].flag);
               end
 
               // Check if everything is defused
               for (int dy = -1; dy <= 1; dy++) begin
                 for (int dx = -1; dx <= 1; dx++) begin
 
-                  if ((row_ctr+dy >= 0) && (row_ctr+dy < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) &&
-                  (col_ctr+dx >= 0) && (col_ctr+dx < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM])) begin
+                  if ((i+dx >= 0) && (i+dx < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]) &&
+                  (j+dy >= 0) && (j+dy < game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM])) begin
 
                     if ((dx == 0) && (dy == 0))
                       continue;
@@ -383,33 +411,29 @@ always_ff @(posedge clk) begin
                         !(game_board_mem[i+dx][j+dy].defused)
                       ) begin
                       redo_defuse <= 1'b1;
+                      $display("redo_defuse at i = %d, j = %d", i, j);
+                      $display("redo_defuse at dxi = %d, dy = %d", dx, dy);
+                      $display("Defused & mine_ind == 0 = %b, game_board_mem[i+dx][j+dy].defused = %b \n", game_board_mem[i][j].defused == 1'b1 && game_board_mem[i][j].mine_ind == 0, game_board_mem[i+dx][j+dy].defused);
                     end
                   end
 
-                  
                 end
               end
             end
           end
         end
 
-
-        if (row_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 &&
-          col_ctr == game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]-1 ||
-          game_won) begin
-            defuser_state <= DEF_WIN_CHECK;
-        end
-        else begin
-            defuser_state <= DEFUSE;
-        end
+        defuser_state <= DEF_WIN_CHECK;
       end
 
       DEF_WIN_CHECK: begin
         count_en    <= 1'b0;
         redo_defuse <= 1'b0;
 
-        if (game_won)
+        if (game_won_p) begin
           defuser_state <= DEF_GAME_OVER;
+          game_won <= game_won_p;
+        end
         else if (redo_defuse)
           defuser_state <= DEFUSE;
         else

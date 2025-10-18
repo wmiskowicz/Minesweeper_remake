@@ -131,6 +131,8 @@ initial begin
   
   // Initialize test mines
   u_wishbone_board_mem.board_mem[0][0].mine = 1'b1;
+  u_wishbone_board_mem.board_mem[5][5].mine = 1'b1;
+
   
   // Test 2: Settings cache loading
   planting_complete = 1'b1;
@@ -164,13 +166,27 @@ initial begin
   planting_complete = 1'b0;
 
   wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
-  for (int i = 0; i < 16; i++)
-    for (int j = 0; j < 16; j++)
-      if (!(i == 0 && j == 0))
-        dut.game_board_mem[i][j].defused = 1'b1;
+  mouse_xpos = E_BOARD_XPOS + (E_FIELD_SIZE * 2) + 1;
+  mouse_ypos = E_BOARD_YPOS + (E_FIELD_SIZE * 2) + 1;
+  click_left_mouse();
+  wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
+  // for (int i = 0; i < 16; i++)
+  //   for (int j = 0; j < 16; j++)
+  //     if (!(i == 0 && j == 0 || i == 1 && j == 1))
+  //       dut.game_board_mem[i][j].defused = 1'b1;
 
+  WaitClocks(10);
+  mouse_xpos = E_BOARD_XPOS + 1;
+  mouse_ypos = E_BOARD_YPOS + 1;
   click_right_mouse();
   WaitClocks(500);
+  `check_eq(dut.game_won, 1'b0);
+  mouse_xpos = E_BOARD_XPOS + (E_FIELD_SIZE * 5) + 1;
+  mouse_ypos = E_BOARD_YPOS + (E_FIELD_SIZE * 5) + 1;
+  WaitClocks(10);
+  click_right_mouse();
+  WaitClocks(500);
+
   `check_eq(dut.game_won, 1'b1);
 
 
