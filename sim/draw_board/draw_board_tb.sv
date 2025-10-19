@@ -120,15 +120,20 @@ initial begin
   dut.game_setup_cashe[BOARD_YPOS_REG_NUM] = H_BOARD_YPOS;
 
   dut.game_board_mem[0][1].flag = 1'b1;
-  dut.game_board_mem[1][0].mine = 1'b1;
+  // dut.game_board_mem[1][0].mine = 1'b1;
   dut.game_board_mem[2][2].mine = 1'b1;
   dut.game_board_mem[1][2].mine = 1'b1;
   dut.game_board_mem[1][1].defused = 1'b1;
   dut.game_board_mem[1][1].mine_ind = 3;
   dut.game_board_mem[1][4].mine_ind = 1;
   dut.game_board_mem[1][4].defused = 1;
+  dut.game_board_mem[0][0].defused = 1'b1;
+  dut.game_board_mem[1][0].defused = 1'b1;
+  dut.game_board_mem[2][0].defused = 1'b1;
+  dut.game_board_mem[1][5].defused = 1'b1;
   dut.game_board_mem[1][3].defused = 1'b1;
   dut.game_board_mem[1][3].mine = 1'b1;
+  dut.game_board_mem[1][5].mine = 1'b1;
 
 
 
