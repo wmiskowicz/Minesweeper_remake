@@ -329,9 +329,9 @@ always_ff @(posedge clk) begin
             game_lost     <= 1'b1;
             defuser_state <= DEF_GAME_OVER;
           end
-          else if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine_ind > 0) begin
-            defuser_state <= DEF_WAIT_FOR_MOUSE;
-          end
+          // else if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine_ind > 0) begin
+          //   defuser_state <= DEF_WAIT_FOR_MOUSE;
+          // end
           else begin
             defuser_state <= DEFUSE;
           end
@@ -392,8 +392,6 @@ always_ff @(posedge clk) begin
               // Check if game won
               if(!(game_board_mem[i][j].defused || (game_board_mem[i][j].mine && game_board_mem[i][j].flag))) begin
                 game_won_p <= 1'b0;
-                $display("Disabled game_won at i = %d, j = %d", i, j);
-                $display("Defused = %b, Flagged on mine = %b \n", game_board_mem[i][j].defused, game_board_mem[i][j].mine && game_board_mem[i][j].flag);
               end
 
               // Check if everything is defused
@@ -411,9 +409,6 @@ always_ff @(posedge clk) begin
                         !(game_board_mem[i+dx][j+dy].defused)
                       ) begin
                       redo_defuse <= 1'b1;
-                      $display("redo_defuse at i = %d, j = %d", i, j);
-                      $display("redo_defuse at dxi = %d, dy = %d", dx, dy);
-                      $display("Defused & mine_ind == 0 = %b, game_board_mem[i+dx][j+dy].defused = %b \n", game_board_mem[i][j].defused == 1'b1 && game_board_mem[i][j].mine_ind == 0, game_board_mem[i+dx][j+dy].defused);
                     end
                   end
 
@@ -432,7 +427,7 @@ always_ff @(posedge clk) begin
 
         if (game_won_p) begin
           defuser_state <= DEF_GAME_OVER;
-          game_won <= game_won_p;
+          game_won <= 1'b1;
         end
         else if (redo_defuse)
           defuser_state <= DEFUSE;

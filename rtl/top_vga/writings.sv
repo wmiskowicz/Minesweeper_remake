@@ -30,10 +30,11 @@ vga_if banner_vga();
 vga_if menu_vga();
 vga_if game_over_vga();
 vga_if game_won_vga();
+vga_if vga_q();
+vga_if vga_2q();
 
 
 // ----- Local variables -----
-logic [11:0] rgb_q;
 
 localparam int SIZE = 128;
 localparam int SMALL_SIZE = 64;
@@ -105,7 +106,6 @@ u_draw_image4 (
 );
 
 always_ff @(posedge clk) begin
-  rgb_q <= in.rgb;
 
   if (main_state == BANNER) begin
     out.rgb <= banner_vga.rgb;
@@ -122,15 +122,32 @@ always_ff @(posedge clk) begin
 
   end
   else begin
-    out.rgb <= rgb_q;
+    out.rgb <= vga_2q.rgb;
   end
 
-  out.hcount <= banner_vga.hcount;
-  out.vcount <= banner_vga.vcount;
-  out.hsync  <= banner_vga.hsync;
-  out.vsync  <= banner_vga.vsync;
-  out.hblnk  <= banner_vga.hblnk;
-  out.vblnk  <= banner_vga.vblnk;
+  vga_q.hcount <= in.hcount;
+  vga_q.vcount <= in.vcount;
+  vga_q.hsync  <= in.hsync;
+  vga_q.vsync  <= in.vsync;
+  vga_q.hblnk  <= in.hblnk;
+  vga_q.vblnk  <= in.vblnk;
+  vga_q.rgb    <= in.rgb;
+
+  vga_2q.hcount <= vga_q.hcount;
+  vga_2q.vcount <= vga_q.vcount;
+  vga_2q.hsync  <= vga_q.hsync;
+  vga_2q.vsync  <= vga_q.vsync;
+  vga_2q.hblnk  <= vga_q.hblnk;
+  vga_2q.vblnk  <= vga_q.vblnk;
+  vga_2q.rgb    <= vga_q.rgb;
+
+  out.hcount <= vga_2q.hcount;
+  out.vcount <= vga_2q.vcount;
+  out.hsync  <= vga_2q.hsync;
+  out.vsync  <= vga_2q.vsync;
+  out.hblnk  <= vga_2q.hblnk;
+  out.vblnk  <= vga_2q.vblnk;
+
 end
   
  endmodule

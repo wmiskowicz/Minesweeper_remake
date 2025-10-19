@@ -165,10 +165,7 @@ initial begin
   WaitClocks(1);
   planting_complete = 1'b0;
 
-  wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
-  mouse_xpos = E_BOARD_XPOS + (E_FIELD_SIZE * 2) + 1;
-  mouse_ypos = E_BOARD_YPOS + (E_FIELD_SIZE * 2) + 1;
-  click_left_mouse();
+
   wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
   // for (int i = 0; i < 16; i++)
   //   for (int j = 0; j < 16; j++)
@@ -186,7 +183,13 @@ initial begin
   WaitClocks(10);
   click_right_mouse();
   WaitClocks(500);
+  wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
+  mouse_xpos = E_BOARD_XPOS + (E_FIELD_SIZE * 2) + 1;
+  mouse_ypos = E_BOARD_YPOS + (E_FIELD_SIZE * 2) + 1;
+  click_left_mouse();
+  WaitClocks(500);
 
+  
   `check_eq(dut.game_won, 1'b1);
 
 
