@@ -30,6 +30,7 @@ vga_if banner_vga();
 vga_if menu_vga();
 vga_if game_over_vga();
 vga_if game_won_vga();
+vga_if pause_vga();
 vga_if vga_q();
 vga_if vga_2q();
 
@@ -105,6 +106,21 @@ u_draw_image4 (
   .rst       (rst)
 );
 
+draw_image #(
+  .RECT_WIDTH (SMALL_SIZE),
+  .RECT_HEIGHT(SMALL_SIZE),
+  .PATH       ("../../rtl/top_vga/data/pause_writing.data"),
+  .PRESCALER  (PRESCALER)
+)
+u_draw_image5 (
+  .clk       (clk),
+  .in        (in),
+  .out       (pause_vga.out),
+  .rect_x_pos(12'(X_CENTER - SMALL_SCALED_SIZE/2)),
+  .rect_y_pos(12'(Y_CENTER - SMALL_SCALED_SIZE/2)),
+  .rst       (rst)
+);
+
 always_ff @(posedge clk) begin
 
   if (main_state == BANNER) begin
@@ -112,6 +128,9 @@ always_ff @(posedge clk) begin
   end 
   else if (main_state == MENU) begin
     out.rgb <= menu_vga.rgb;
+  end
+  else if (main_state == PAUSE) begin
+    out.rgb <= pause_vga.rgb;
   end
   else if (main_state == GAME_OVER) begin
 
