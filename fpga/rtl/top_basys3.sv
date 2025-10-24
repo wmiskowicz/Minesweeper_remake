@@ -11,8 +11,6 @@
 module top_basys3 (
   input  wire       clk,
   input  wire       btnD,
-  input  wire       btnU,
-  input  wire       sw,
 
   inout  wire       PS2Clk,
   inout  wire       PS2Data,
@@ -52,7 +50,7 @@ wire game_won;
 
 wire planting_complete;
 
-wire start, timer_stop;
+wire timer_stop;
 wire retry;
 wire  [7:0] sec_to_count;
 logic [7:0] seconds_left;
@@ -64,9 +62,6 @@ logic       time_elapsed;
 
 // ----- Signal assignments -----
 assign rst = btnD;
-
-assign timer_stop = sw;
-assign retry = btnU;
 
 assign led[0] = locked;
 assign led[1] = time_elapsed;
@@ -170,7 +165,6 @@ top_memory u_top_memory (
 defuser u_defuser (
   .clk              (clk74MHz),
   .rst              (rst),
-  .retry            (retry),
 
   .planting_complete(planting_complete),
   .main_state       (main_state),
@@ -183,6 +177,8 @@ defuser u_defuser (
 
   .game_lost        (game_lost),
   .game_won         (game_won),
+  .retry            (retry),
+  .pause            (timer_stop),
 
   .game_board_wb    (defuser_board_wb_if.master),
   .game_set_wb      (defuser_set_wb_if.master)

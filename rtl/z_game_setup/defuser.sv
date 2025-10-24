@@ -13,7 +13,6 @@ import game_pkg::*;
 module defuser (
   input wire clk,
   input wire rst,
-  input wire retry,
 
   input wire planting_complete,
   input wire [2:0] main_state,
@@ -24,6 +23,8 @@ module defuser (
   input wire left,
   input wire right,
 
+  output logic pause,
+  output logic retry,
   output logic game_lost,
   output logic game_won,
 
@@ -99,8 +100,39 @@ assign mouse_board_ind_x = mouse_board_xpos[9:6];
 assign mouse_board_ind_y = mouse_board_ypos[9:6];
 
 assign game_burst_active = game_burst_write || game_burst_read;
-
 assign game_write_data = {8'b0, game_board_mem[game_write_addr[7:4]][game_write_addr[3:0]]};
+
+assign retry = retry_q;
+assign pause = pause_q;
+
+logic pause_q;
+logic retry_q;
+// Pause, resume and retry logic 
+always_ff @(posedge clk) begin
+  if (rst) begin
+    pause_q <= 1'b0;
+    retry_q <= 1'b0;
+  end
+  else begin
+    if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
+        mouse_xpos <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd64 &&
+        mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32 &&
+        mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left) 
+    begin
+      pause_q <= 1'b0;
+      retry_q <= 1'b1;
+    end
+    else if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] &&
+             mouse_xpos <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
+             mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32 &&
+             mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left)
+    begin
+      pause_q <= !pause_q;
+    end   
+    else if (retry_q) 
+      retry_q <= 1'b0;
+  end
+end
 
 
 // Auto read logic
@@ -178,7 +210,7 @@ end
 
 // Auto write logic
 always_ff @(posedge clk) begin
-  if (rst || retry) begin
+  if (rst || retry_q) begin
     timing_ctr <= 20'b0;
     auto_write_state <= AW_WAIT;
 
@@ -224,7 +256,7 @@ end
 
 // Defuse logic
 always_ff @(posedge clk) begin
-  if (rst || retry) begin
+  if (rst || retry_q) begin
     col_ctr <= 4'b0;
     row_ctr <= 4'b0;
   end
@@ -250,7 +282,7 @@ always_ff @(posedge clk) begin
 end
 
 always_ff @(posedge clk) begin
-  if (rst || retry) begin
+  if (rst || retry_q) begin
     for (int i = 0; i < 16; i++)
       for (int j = 0; j < 16; j++)  
         game_board_mem[i][j] <= 8'b0;
