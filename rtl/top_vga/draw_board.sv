@@ -32,6 +32,9 @@ enum logic [1:0] {
 vga_if bomb_vga();
 vga_if flag_vga();
 vga_if num_vga();
+vga_if pause_vga();
+vga_if resume_vga();
+vga_if replay_vga();
 vga_if vga_q();
 vga_if vga_2q();
 vga_if vga_3q();
@@ -225,7 +228,7 @@ always_ff @(posedge clk) begin
         burst_active <= 1'b0;
         read_en      <= 1'b0;
         board_state  <= main_state == MENU ? IDLE : DRAW;
-        out.rgb      <= draw_button();
+        
 
 
         if (game_board_mem[board_ind_y_2q][board_ind_x_2q].mine && game_board_mem[board_ind_y_2q][board_ind_x_2q].defused)
@@ -237,6 +240,18 @@ always_ff @(posedge clk) begin
             out.rgb <= draw_number();
         else if (game_board_mem[board_ind_y_2q][board_ind_x_2q].flag)
           out.rgb <= draw_flag();
+        else if (vcount_valid_2q && hcount_valid_2q)
+          out.rgb <= draw_button();
+        else if (vga_2q.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] - 15'd2 &&
+                 vga_2q.hcount <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd30) 
+        begin
+          if (main_state == PAUSE)
+            out.rgb <= draw_resume();
+          else
+            out.rgb <= draw_pause();
+        end
+        else 
+          out.rgb <= draw_replay();
 
       end
       default: board_state <= IDLE;
@@ -374,6 +389,27 @@ function logic [11:0] draw_flag;
     return flag_vga.rgb;
 endfunction
 
+function logic [11:0] draw_pause;
+  if (pause_vga.rgb != 12'h00F)
+    return pause_vga.rgb;
+  else 
+    return vga_2q.rgb;
+endfunction
+
+function logic [11:0] draw_resume;
+  if (resume_vga.rgb != 12'h00F)
+    return resume_vga.rgb;
+  else 
+    return vga_2q.rgb;
+endfunction
+
+function logic [11:0] draw_replay;
+  if (replay_vga.rgb != 12'h00F)
+    return replay_vga.rgb;
+  else 
+    return vga_2q.rgb;
+endfunction
+
 function logic [11:0] draw_number();
   if (num_vga.rgb == NUM_1 ||
       num_vga.rgb == NUM_2 ||
@@ -418,11 +454,56 @@ u_draw_flag1 (
   .rst       (rst)
 );
 
+// Draw buttons pause, resume, replay
+draw_image #(
+  .RECT_WIDTH (16),
+  .RECT_HEIGHT(16),
+  .PATH       ("../../rtl/top_vga/data/play_16x16.data"),
+  .PRESCALER  (2)
+)
+u_draw_resume (
+  .clk       (clk),
+  .in        (in),
+  .out       (resume_vga.out),
+  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM])),
+  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32)),
+  .rst       (rst)
+);
+
+draw_image #(
+  .RECT_WIDTH (16),
+  .RECT_HEIGHT(16),
+  .PRESCALER  (2),
+  .PATH       ("../../rtl/top_vga/data/pause_16x16.data")
+)
+u_draw_pause (
+  .clk       (clk),
+  .in        (in),
+  .out       (pause_vga.out),
+  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM] - 15'd2)),
+  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32)),
+  .rst       (rst)
+);
+
+draw_image #(
+  .RECT_WIDTH (16),
+  .RECT_HEIGHT(16),
+  .PRESCALER  (2),
+  .PATH       ("../../rtl/top_vga/data/replay_16x16.data")
+)
+u_draw_replay (
+  .clk       (clk),
+  .in        (in),
+  .out       (replay_vga.out),
+  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM][11:0] + 12'd30)),
+  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM][11:0] - 12'd32)),
+  .rst       (rst)
+);
 
 draw_char #(
   .PRESCALER (4),
   .OFFSET_X  (14),
-  .OFFSET_Y  (3)//11
+  .OFFSET_Y  (3)
 ) u_draw_char (
   .clk      (clk),
   .rst      (rst),

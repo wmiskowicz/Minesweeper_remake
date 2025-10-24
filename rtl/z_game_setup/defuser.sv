@@ -267,8 +267,8 @@ always_ff @(posedge clk) begin
     right_q   <= 1'b0;
   end
   else begin
-    left_q    <= left;
-    right_q   <= right;
+    left_q    <= main_state == PAUSE ? 1'b0 : left;
+    right_q   <= main_state == PAUSE ? 1'b0 : right;
 
     case (defuser_state)
       DEF_IDLE: begin

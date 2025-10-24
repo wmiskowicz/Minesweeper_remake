@@ -109,6 +109,7 @@ main_fsm u_main_fsm (
 initial begin
   void'(logger::init());
   InitReset();
+  force in_vga.rgb = 12'h777;
 
   WaitClocks(500);
   dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] = H_ROW_COLUMN_NUMBER;

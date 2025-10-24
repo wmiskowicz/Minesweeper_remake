@@ -53,8 +53,9 @@ top_vga dut (
 
   .game_lost    (0),
   .game_won     (0),
+  .retry        (0),
 
-  .main_state       (PAUSE),
+  .main_state       (PLAY),
   .game_settings_wb (game_set_if),
   .game_board_wb    (game_board_if)
 );

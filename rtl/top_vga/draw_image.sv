@@ -37,6 +37,7 @@ localparam SCALED_HEIGHT = RECT_HEIGHT * PRESCALER;
 
 // ----- Signal intefaces -----
 vga_if vga_q();
+vga_if vga_2q();
 
 // ----- Local variables -----
 logic [11:0] rect_hcount, rect_vcount;
@@ -47,13 +48,6 @@ logic [ADDR_WIDTH-1:0] address;
 logic [11:0] rom_rgb;
 logic [11:0] offset_rect_xpos;
 
-
-delay_vga u_delay(
-  .clk(clk),
-  .rst(rst),
-  .in(in),
-  .out(vga_q.out)
-);
 
 image_rom #(
   .PATH       (PATH),
@@ -76,10 +70,10 @@ always_comb begin
   scaled_rect_hcount = rect_hcount / PRESCALER;
   scaled_rect_vcount = rect_vcount / PRESCALER;
   
-  in_image_region = (vga_q.hcount >= offset_rect_xpos) &&
-                    (vga_q.hcount <  offset_rect_xpos + SCALED_WIDTH) &&
-                    (vga_q.vcount >= rect_y_pos) &&
-                    (vga_q.vcount <  rect_y_pos + SCALED_HEIGHT);
+  in_image_region = (vga_2q.hcount >= offset_rect_xpos) &&
+                    (vga_2q.hcount <  offset_rect_xpos + SCALED_WIDTH) &&
+                    (vga_2q.vcount >= rect_y_pos) &&
+                    (vga_2q.vcount <  rect_y_pos + SCALED_HEIGHT);
 end
 
 always_ff @(posedge clk) begin
@@ -93,19 +87,35 @@ always_ff @(posedge clk) begin
     out.rgb     <= '0;
     address     <= '0;
   end else begin
-    out.vcount <= vga_q.vcount;
-    out.vsync  <= vga_q.vsync;
-    out.vblnk  <= vga_q.vblnk;
-    out.hcount <= vga_q.hcount;
-    out.hsync  <= vga_q.hsync;
-    out.hblnk  <= vga_q.hblnk;
+    vga_q.vcount <= in.vcount;
+    vga_q.vsync  <= in.vsync;
+    vga_q.vblnk  <= in.vblnk;
+    vga_q.hcount <= in.hcount;
+    vga_q.hsync  <= in.hsync;
+    vga_q.hblnk  <= in.hblnk;
+    vga_q.rgb    <= in.rgb;
+
+    vga_2q.vcount <= vga_q.vcount;
+    vga_2q.vsync  <= vga_q.vsync;
+    vga_2q.vblnk  <= vga_q.vblnk;
+    vga_2q.hcount <= vga_q.hcount;
+    vga_2q.hsync  <= vga_q.hsync;
+    vga_2q.hblnk  <= vga_q.hblnk;
+    vga_2q.rgb    <= vga_q.rgb;
+
+    out.vcount <= vga_2q.vcount;
+    out.vsync  <= vga_2q.vsync;
+    out.vblnk  <= vga_2q.vblnk;
+    out.hcount <= vga_2q.hcount;
+    out.hsync  <= vga_2q.hsync;
+    out.hblnk  <= vga_2q.hblnk;
     
     address <= {scaled_rect_vcount[Y_ADDR_WIDTH-1:0], scaled_rect_hcount[X_ADDR_WIDTH-1:0]};
 
-    if (vga_q.hblnk || vga_q.vblnk)
+    if (vga_2q.hblnk || vga_2q.vblnk)
       out.rgb <= '0;
     else if (in_image_region)
-      out.rgb <= rom_rgb == BLUE_SCREEN ? vga_q.rgb : rom_rgb;
+      out.rgb <= rom_rgb == BLUE_SCREEN ? vga_2q.rgb : rom_rgb;
     else
       out.rgb <= vga_q.rgb;
   end
