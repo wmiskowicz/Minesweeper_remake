@@ -35,6 +35,8 @@ module defuser (
 // ----- Local parameters -----
 localparam SETTINGS_REG_NUM = 9;
 localparam HALF_FRAME_CYCLES = 618750;
+localparam int RETRY_HOLD_CYCLES = 100;
+
 
 
 // ----- Local variables -----
@@ -83,6 +85,10 @@ logic [3:0] row_ctr;
 logic count_en;
 logic redo_defuse;
 
+logic pause_q;
+logic retry_q;
+logic [7:0] retry_ctr;
+
 
 auto_write_state_t auto_write_state;
 auto_read_state_t auto_read_state;
@@ -105,13 +111,12 @@ assign game_write_data = {8'b0, game_board_mem[game_write_addr[7:4]][game_write_
 assign retry = retry_q;
 assign pause = pause_q;
 
-logic pause_q;
-logic retry_q;
 // Pause, resume and retry logic 
 always_ff @(posedge clk) begin
   if (rst) begin
     pause_q <= 1'b0;
     retry_q <= 1'b0;
+    retry_ctr <= 8'd0;
   end
   else begin
     if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
@@ -120,6 +125,7 @@ always_ff @(posedge clk) begin
         mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left) 
     begin
       pause_q <= 1'b0;
+      retry_ctr <= 8'd0;
       retry_q <= 1'b1;
     end
     else if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] &&
@@ -129,8 +135,15 @@ always_ff @(posedge clk) begin
     begin
       pause_q <= !pause_q;
     end   
-    else if (retry_q) 
-      retry_q <= 1'b0;
+    else if (retry_q) begin
+      if (retry_ctr >= RETRY_HOLD_CYCLES) begin
+        retry_q <= 1'b0;
+        retry_ctr <= 1'b0;
+      end
+      else begin
+        retry_ctr <= retry_ctr + 8'd1;
+      end
+    end
   end
 end
 
@@ -299,8 +312,8 @@ always_ff @(posedge clk) begin
     right_q   <= 1'b0;
   end
   else begin
-    left_q    <= main_state == PAUSE ? 1'b0 : left;
-    right_q   <= main_state == PAUSE ? 1'b0 : right;
+    left_q    <= main_state == PAUSE  || main_state == GAME_OVER ? 1'b0 : left;
+    right_q   <= main_state == PAUSE  || main_state == GAME_OVER ? 1'b0 : right;
 
     case (defuser_state)
       DEF_IDLE: begin
