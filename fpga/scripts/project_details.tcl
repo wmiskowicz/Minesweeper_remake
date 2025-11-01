@@ -101,6 +101,7 @@ set mem_files {
     ../rtl/top_vga/data/flag_grey.data
     ../rtl/top_vga/data/game_over.data
     ../rtl/top_vga/data/game_won.data
+    ../rtl/top_vga/data/home_16x16.data
     ../rtl/top_vga/data/menu.data
     ../rtl/top_vga/data/pause_16x16.data
     ../rtl/top_vga/data/pause_writing.data

@@ -24,7 +24,7 @@ module defuser (
   input wire right,
 
   output logic pause,
-  output logic retry,
+  output logic back_to_menu,
   output logic game_lost,
   output logic game_won,
 
@@ -35,7 +35,7 @@ module defuser (
 // ----- Local parameters -----
 localparam SETTINGS_REG_NUM = 9;
 localparam HALF_FRAME_CYCLES = 618750;
-localparam int RETRY_HOLD_CYCLES = 100;
+localparam int BTM_HOLD_CYCLES = 100;
 
 
 
@@ -86,8 +86,8 @@ logic count_en;
 logic redo_defuse;
 
 logic pause_q;
-logic retry_q;
-logic [7:0] retry_ctr;
+logic btm_q;
+logic [7:0] btm_ctr;
 
 
 auto_write_state_t auto_write_state;
@@ -108,15 +108,15 @@ assign mouse_board_ind_y = mouse_board_ypos[9:6];
 assign game_burst_active = game_burst_write || game_burst_read;
 assign game_write_data = {8'b0, game_board_mem[game_write_addr[7:4]][game_write_addr[3:0]]};
 
-assign retry = retry_q;
+assign back_to_menu = btm_q;
 assign pause = pause_q;
 
-// Pause, resume and retry logic 
+// Pause, resume and back_to_menu logic 
 always_ff @(posedge clk) begin
   if (rst) begin
     pause_q <= 1'b0;
-    retry_q <= 1'b0;
-    retry_ctr <= 8'd0;
+    btm_q   <= 1'b0;
+    btm_ctr <= 8'd0;
   end
   else begin
     if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
@@ -125,8 +125,8 @@ always_ff @(posedge clk) begin
         mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left) 
     begin
       pause_q <= 1'b0;
-      retry_ctr <= 8'd0;
-      retry_q <= 1'b1;
+      btm_ctr <= 8'd0;
+      btm_q   <= 1'b1;
     end
     else if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] &&
              mouse_xpos <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
@@ -135,13 +135,13 @@ always_ff @(posedge clk) begin
     begin
       pause_q <= !pause_q;
     end   
-    else if (retry_q) begin
-      if (retry_ctr >= RETRY_HOLD_CYCLES) begin
-        retry_q <= 1'b0;
-        retry_ctr <= 1'b0;
+    else if (btm_q) begin
+      if (btm_ctr >= BTM_HOLD_CYCLES) begin
+        btm_q <= 1'b0;
+        btm_ctr <= 1'b0;
       end
       else begin
-        retry_ctr <= retry_ctr + 8'd1;
+        btm_ctr <= btm_ctr + 8'd1;
       end
     end
   end
@@ -223,7 +223,7 @@ end
 
 // Auto write logic
 always_ff @(posedge clk) begin
-  if (rst || retry_q) begin
+  if (rst || btm_q) begin
     timing_ctr <= 20'b0;
     auto_write_state <= AW_WAIT;
 
@@ -269,7 +269,7 @@ end
 
 // Defuse logic
 always_ff @(posedge clk) begin
-  if (rst || retry_q) begin
+  if (rst || btm_q) begin
     col_ctr <= 4'b0;
     row_ctr <= 4'b0;
   end
@@ -295,7 +295,7 @@ always_ff @(posedge clk) begin
 end
 
 always_ff @(posedge clk) begin
-  if (rst || retry_q) begin
+  if (rst || btm_q) begin
     for (int i = 0; i < 16; i++)
       for (int j = 0; j < 16; j++)  
         game_board_mem[i][j] <= 8'b0;

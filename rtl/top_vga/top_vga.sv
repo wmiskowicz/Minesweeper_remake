@@ -24,7 +24,7 @@ module top_vga (
 
   input wire game_lost,
   input wire game_won,
-  input wire retry,
+  input wire back_to_menu,
 
   wishbone_if.master game_settings_wb,
   wishbone_if.master game_board_wb
@@ -80,9 +80,9 @@ draw_back_objects u_draw_back_objects (
 );
 
 draw_board u_draw_board (
-  .clk       (clk),
-  .rst       (rst),
-  .retry     (retry),
+  .clk          (clk),
+  .rst          (rst),
+  .back_to_menu (back_to_menu),
 
   .main_state(main_state),
   .in        (back_obj_vga.in),

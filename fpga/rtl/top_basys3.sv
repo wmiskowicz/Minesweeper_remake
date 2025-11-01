@@ -51,7 +51,7 @@ wire game_won;
 wire planting_complete;
 
 wire timer_stop;
-wire retry;
+wire back_to_menu;
 wire  [7:0] sec_to_count;
 logic [7:0] seconds_left;
 logic       time_elapsed;
@@ -133,7 +133,7 @@ top_vga u_top_vga (
 
   .game_lost    (game_lost || time_elapsed),
   .game_won     (game_won),
-  .retry        (retry),
+  .back_to_menu (back_to_menu),
 
   .game_settings_wb(vga_set_wb_if.master),
   .game_board_wb   (vga_board_wb_if.master)
@@ -177,7 +177,7 @@ defuser u_defuser (
 
   .game_lost        (game_lost),
   .game_won         (game_won),
-  .retry            (retry),
+  .back_to_menu     (back_to_menu),
   .pause            (timer_stop),
 
   .game_board_wb    (defuser_board_wb_if.master),
@@ -207,7 +207,7 @@ main_fsm u_main_fsm (
 
   .game_lost (game_lost),
   .game_won  (game_won),
-  .retry     (retry),
+  .retry     (back_to_menu),
 
   .timer_stop   (timer_stop),
   .seconds_left (seconds_left),
