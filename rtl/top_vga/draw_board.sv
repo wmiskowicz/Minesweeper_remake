@@ -35,6 +35,7 @@ vga_if num_vga();
 vga_if pause_vga();
 vga_if resume_vga();
 vga_if home_vga();
+vga_if retry_vga();
 vga_if vga_q();
 vga_if vga_2q();
 vga_if vga_3q();
@@ -250,7 +251,10 @@ always_ff @(posedge clk) begin
           else
             out.rgb <= draw_pause();
         end
-        else 
+        else if(vga_2q.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd30 &&
+                vga_2q.hcount <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd62)
+          out.rgb <= draw_retry();
+        else
           out.rgb <= draw_home();
 
       end
@@ -410,6 +414,13 @@ function logic [11:0] draw_home;
     return vga_2q.rgb;
 endfunction
 
+function logic [11:0] draw_retry;
+  if (retry_vga.rgb != 12'h00F)
+    return retry_vga.rgb;
+  else 
+    return vga_2q.rgb;
+endfunction
+
 function logic [11:0] draw_number();
   if (num_vga.rgb == NUM_1 ||
       num_vga.rgb == NUM_2 ||
@@ -495,6 +506,21 @@ u_draw_home (
   .clk       (clk),
   .in        (in),
   .out       (home_vga.out),
+  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM][11:0] + 12'd62)),
+  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM][11:0] - 12'd32)),
+  .rst       (rst)
+);
+
+draw_image #(
+  .RECT_WIDTH (16),
+  .RECT_HEIGHT(16),
+  .PRESCALER  (2),
+  .PATH       ("../../rtl/top_vga/data/replay_16x16.data")
+)
+u_draw_retry (
+  .clk       (clk),
+  .in        (in),
+  .out       (retry_vga.out),
   .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM][11:0] + 12'd30)),
   .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM][11:0] - 12'd32)),
   .rst       (rst)
