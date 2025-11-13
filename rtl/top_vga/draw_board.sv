@@ -11,6 +11,7 @@ module draw_board (
   input  wire  clk,
   input  wire  rst,
   input  wire  back_to_menu, 
+  input  wire  retry, 
 
   input  logic [2:0] main_state,
   vga_if.in in,
@@ -84,6 +85,11 @@ logic [11:0] num_color;
 logic [11:0] symbol_xpos, symbol_xpos_q, symbol_xpos_2q;
 logic [11:0] symbol_ypos, symbol_ypos_q, symbol_ypos_2q;
 
+logic [11:0] pause_resume_xpos;
+logic [11:0] retry_xpos;
+logic [11:0] home_xpos;
+logic [11:0] buttons_ypos;
+
 enum logic [STATE_BITS-1 :0] {
   IDLE,
   READ_SETTINGS,
@@ -106,6 +112,12 @@ assign board_ind_y = board_vcount[9:6];
 
 assign symbol_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM];
 assign symbol_ypos = game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM];
+
+assign home_xpos         = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd62;
+assign pause_resume_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM] - 12'd2;
+assign retry_xpos        = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd30;
+assign buttons_ypos      = game_setup_cashe[BOARD_YPOS_REG_NUM] - 12'd32;
+
 
 always_ff @(posedge clk) begin
   symbol_xpos_q <= symbol_xpos;
@@ -243,16 +255,16 @@ always_ff @(posedge clk) begin
           out.rgb <= draw_flag();
         else if (vcount_valid_2q && hcount_valid_2q)
           out.rgb <= draw_button();
-        else if (vga_2q.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] - 15'd2 &&
-                 vga_2q.hcount <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd30) 
+        else if (vga_2q.hcount >= pause_resume_xpos &&
+                 vga_2q.hcount <  pause_resume_xpos + 12'd32) 
         begin
           if (main_state == PAUSE)
             out.rgb <= draw_resume();
           else
             out.rgb <= draw_pause();
         end
-        else if(vga_2q.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd30 &&
-                vga_2q.hcount <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd62)
+        else if(vga_2q.hcount >= retry_xpos &&
+                vga_2q.hcount <  retry_xpos + 12'd32)
           out.rgb <= draw_retry();
         else
           out.rgb <= draw_home();
@@ -265,7 +277,7 @@ end
 
 // Auto read logic
 always_ff @(posedge clk) begin
-  if (rst || back_to_menu) begin
+  if (rst || back_to_menu || retry) begin
     auto_read_state <= WAIT;
 
     game_burst_active <= 1'b0;
@@ -279,7 +291,7 @@ always_ff @(posedge clk) begin
   else begin
     case (auto_read_state)
       WAIT: begin
-        if (vga_2q.vcount == 3 && vga_2q.hcount < 10) begin
+        if (vga_2q.hcount == 500 && (vga_2q.vcount % 4 == 0)) begin
           auto_read_state <= AUTO_READ;
 
           game_burst_active <= 1'b1;
@@ -441,7 +453,7 @@ draw_image #(
   .OFFSET_X   (0),
   .PATH       ("../../rtl/top_vga/data/bomb.data")
 )
-u_draw_bomb1 (
+u_draw_bomb (
   .clk       (clk),
   .in        (vga_q),
   .out       (bomb_vga.out),
@@ -456,7 +468,7 @@ draw_image #(
   .OFFSET_X   (0),
   .PATH       ("../../rtl/top_vga/data/flag_grey.data")
 )
-u_draw_flag1 (
+u_draw_flag (
   .clk       (clk),
   .in        (vga_q),
   .out       (flag_vga.out),
@@ -465,7 +477,7 @@ u_draw_flag1 (
   .rst       (rst)
 );
 
-// Draw buttons pause, resume, replay
+// Draw buttons pause, resume, replay and home
 draw_image #(
   .RECT_WIDTH (16),
   .RECT_HEIGHT(16),
@@ -476,8 +488,8 @@ u_draw_resume (
   .clk       (clk),
   .in        (in),
   .out       (resume_vga.out),
-  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM])),
-  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32)),
+  .rect_x_pos(pause_resume_xpos),
+  .rect_y_pos(buttons_ypos),
   .rst       (rst)
 );
 
@@ -491,8 +503,8 @@ u_draw_pause (
   .clk       (clk),
   .in        (in),
   .out       (pause_vga.out),
-  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM] - 15'd2)),
-  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32)),
+  .rect_x_pos(pause_resume_xpos),
+  .rect_y_pos(buttons_ypos),
   .rst       (rst)
 );
 
@@ -506,8 +518,8 @@ u_draw_home (
   .clk       (clk),
   .in        (in),
   .out       (home_vga.out),
-  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM][11:0] + 12'd62)),
-  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM][11:0] - 12'd32)),
+  .rect_x_pos(home_xpos),
+  .rect_y_pos(buttons_ypos),
   .rst       (rst)
 );
 
@@ -521,8 +533,8 @@ u_draw_retry (
   .clk       (clk),
   .in        (in),
   .out       (retry_vga.out),
-  .rect_x_pos(12'(game_setup_cashe[BOARD_XPOS_REG_NUM][11:0] + 12'd30)),
-  .rect_y_pos(12'(game_setup_cashe[BOARD_YPOS_REG_NUM][11:0] - 12'd32)),
+  .rect_x_pos(retry_xpos),
+  .rect_y_pos(buttons_ypos),
   .rst       (rst)
 );
 

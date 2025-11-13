@@ -16,6 +16,7 @@ module main_fsm#(
   input  wire  timer_stop,
   input  wire  game_won,
   input  wire  game_lost,
+  input  wire  back_to_menu,
   input  wire  retry,
 
   input wire   left,
@@ -120,15 +121,15 @@ always_ff @(posedge clk) begin : fsm_blk
         game_set_wb1.stall_i <= 1'b0;
         game_set_wb2.stall_i <= 1'b0;
         game_set_wb3.stall_i <= 1'b0;
-        if(timer_stop)     fsm_state <= PAUSE;
-        else if(retry)     fsm_state <= MENU;
-        else if(game_won)  fsm_state <= WIN;
+        if(timer_stop)        fsm_state <= PAUSE;
+        else if(back_to_menu) fsm_state <= MENU;
+        else if(game_won)     fsm_state <= WIN;
         else if(game_lost || time_elapsed) fsm_state <= LOST;
       end
       PAUSE: begin 
         if(~timer_stop) 
           fsm_state <= PLAY;
-        else if(retry)
+        else if(back_to_menu)
           fsm_state <= MENU;
       end
       WIN: begin
@@ -140,7 +141,8 @@ always_ff @(posedge clk) begin : fsm_blk
         fsm_state <= GAME_OVER;
       end
       GAME_OVER: begin
-        if(retry) fsm_state <= MENU;
+        if(back_to_menu) fsm_state <= MENU;
+        else if (retry)  fsm_state <= PLAY;
       end
       default: fsm_state <= MENU;
     endcase
@@ -150,10 +152,10 @@ end
 
 top_timer u_top_timer(
   .clk   (clk),
-  .rst   (rst),
+  .rst   (rst || (fsm_state == MENU)),
   .start (fsm_state == PLAY), 
   .stop  (timer_stop),
-  .retry (fsm_state == GAME_OVER),   
+  .retry (retry || (fsm_state == GAME_OVER)),   
 
   .sec_to_count (game_setup_mem[TIMER_SECONDS_REG_NUM][7:0]),
   .seconds_left (seconds_left),

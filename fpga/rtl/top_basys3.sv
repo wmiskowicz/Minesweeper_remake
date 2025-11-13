@@ -39,8 +39,8 @@ logic [1:0] level;
 
 wire [2:0]  main_state;
 
-wire [11:0] mouse_xpos;
-wire [11:0] mouse_ypos;
+logic [11:0] mouse_xpos;
+logic [11:0] mouse_ypos;
 
 wire left;
 wire right;
@@ -52,7 +52,7 @@ wire planting_complete;
 
 wire timer_stop;
 wire back_to_menu;
-wire  [7:0] sec_to_count;
+wire retry;
 logic [7:0] seconds_left;
 logic       time_elapsed;
 
@@ -134,6 +134,7 @@ top_vga u_top_vga (
   .game_lost    (game_lost || time_elapsed),
   .game_won     (game_won),
   .back_to_menu (back_to_menu),
+  .retry        (retry),
 
   .game_settings_wb(vga_set_wb_if.master),
   .game_board_wb   (vga_board_wb_if.master)
@@ -178,6 +179,7 @@ defuser u_defuser (
   .game_lost        (game_lost),
   .game_won         (game_won),
   .back_to_menu     (back_to_menu),
+  .retry            (retry),
   .pause            (timer_stop),
 
   .game_board_wb    (defuser_board_wb_if.master),
@@ -188,6 +190,7 @@ defuser u_defuser (
 mine_planter u_mine_planter (
   .clk          (clk74MHz),
   .rst          (rst),
+  .retry        (retry),
 
   .main_state        (main_state),
   .planting_complete (planting_complete),
@@ -205,9 +208,10 @@ main_fsm u_main_fsm (
   .left      (left),
   .right     (right),
 
-  .game_lost (game_lost),
-  .game_won  (game_won),
-  .retry     (back_to_menu),
+  .game_lost   (game_lost),
+  .game_won    (game_won),
+  .back_to_menu(back_to_menu),
+  .retry       (retry),
 
   .timer_stop   (timer_stop),
   .seconds_left (seconds_left),

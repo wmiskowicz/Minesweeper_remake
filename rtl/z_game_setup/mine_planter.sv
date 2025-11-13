@@ -11,6 +11,8 @@ import game_pkg::*;
 module mine_planter (
   input wire clk,
   input wire rst,
+  input wire retry, 
+
 
   input logic [2:0] main_state,
   output logic      planting_complete,
@@ -71,6 +73,7 @@ always_ff @(posedge clk) begin
   end
   else begin
     case (planter_state)
+
       PLANTER_IDLE: begin
         for (int i = 0; i < 16; i++)
           for (int j = 0; j < 16; j++)  
@@ -94,6 +97,7 @@ always_ff @(posedge clk) begin
           settings_burst_active <= 1'b1;
         end
       end
+
       PLANTER_READ_SETTINGS: begin
         settings_read_en <= 1'b0;
 
@@ -110,9 +114,11 @@ always_ff @(posedge clk) begin
           if (settings_read_addr == 8'd2) begin
             planter_state <= PLANTER_PLANT;
             settings_burst_active <= 1'b0;
+            settings_read_en <= 1'b0;
           end
         end
       end
+
       PLANTER_PLANT: begin
         if (mines_left > 0) begin
           if (!mine_map[ind_x][ind_y]) begin
@@ -127,6 +133,7 @@ always_ff @(posedge clk) begin
           game_write_addr   <= 9'h0;
         end
       end
+
       PLANTER_WRITE_BOARD: begin
         game_write_en   <= 1'b0;
 
@@ -141,9 +148,16 @@ always_ff @(posedge clk) begin
           planter_state     <= PLANTER_DONE;
         end
       end
+
       PLANTER_DONE: begin
-        planter_state <= main_state == MENU ? PLANTER_IDLE : PLANTER_DONE;
-        planting_complete <= 1'b1;
+        if (retry || (main_state == MENU)) begin
+          planter_state <= PLANTER_IDLE;
+          planting_complete <= 1'b0;
+        end
+        else begin
+          planting_complete <= 1'b1;
+          planter_state <= PLANTER_DONE;
+        end
       end
       default: planter_state <= PLANTER_IDLE;
     endcase

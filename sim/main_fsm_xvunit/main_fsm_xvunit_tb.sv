@@ -157,8 +157,8 @@ end
       level = 0;
 
       `CHECK_EQUAL(main_state, PLAY);
-      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], E_MINE_NUM, "Medium level mine count not set");
-      `CHECK_EQUAL(dut.game_setup_mem[TIMER_SECONDS_REG_NUM], E_TIMER_SECONDS, "Medium level timer not set");
+      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], E_MINE_NUM);
+      `CHECK_EQUAL(dut.game_setup_mem[TIMER_SECONDS_REG_NUM], E_TIMER_SECONDS);
       Reset();
 
       MouseLeftClick();
@@ -167,8 +167,8 @@ end
       level = 0;
 
       `CHECK_EQUAL(main_state, PLAY);
-      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], M_MINE_NUM, "Medium level mine count not set");
-      `CHECK_EQUAL(dut.game_setup_mem[TIMER_SECONDS_REG_NUM], M_TIMER_SECONDS, "Medium level timer not set");
+      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], M_MINE_NUM);
+      `CHECK_EQUAL(dut.game_setup_mem[TIMER_SECONDS_REG_NUM], M_TIMER_SECONDS);
       Reset();
 
       MouseLeftClick();
@@ -177,8 +177,8 @@ end
       level = 0;
 
       `CHECK_EQUAL(main_state, PLAY);
-      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], H_MINE_NUM, "Medium level mine count not set");
-      `CHECK_EQUAL(dut.game_setup_mem[TIMER_SECONDS_REG_NUM], H_TIMER_SECONDS, "Medium level timer not set");
+      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], H_MINE_NUM);
+      `CHECK_EQUAL(dut.game_setup_mem[TIMER_SECONDS_REG_NUM], H_TIMER_SECONDS);
     end
 
     `TEST_CASE("TC003") begin
@@ -233,87 +233,32 @@ end
       WaitClocks(5);
       `CHECK_EQUAL(main_state, GAME_OVER);
       `CHECK_EQUAL(dut.game_setup_mem[GAMES_LOST_REG_NUM], 1);
+      `CHECK_EQUAL(dut.game_setup_mem[MINE_NUM_REG_NUM], H_MINE_NUM);
+    end
 
+    `TEST_CASE("TC005") begin
+      $display("Verify that main_fsm transitions from MENU to PAUSE when pause input is asserted.");
+      
+      MouseLeftClick();
+      level = 2'd3;
+      WaitClocks(2);
+      level = 0;
+      WaitClocks(10);
+
+      game_lost = 1'b1;
+      WaitClocks(1);
+      game_lost = 1'b0;
+      WaitClocks(10);
+
+      `CHECK_EQUAL(main_state, GAME_OVER);
+      retry = 1'b1;
+      WaitClocks(2);
+      retry = 1'b0;
+      WaitClocks(2);
+      `CHECK_EQUAL(main_state, PLAY);
     end
     
 `TEST_SUITE_END_X
-
-  
-//   // Test 3: Wishbone read operations
-//   game_set1_if.cyc_o = 1'b1;
-//   game_set1_if.stb_o = 1'b1;
-//   game_set1_if.adr_o = TIMER_SECONDS_ADDR;
-//   game_set1_if.we_o = 1'b0;
-//   WaitClocks(2);
-  
-//   `check_eq(game_set1_if.dat_i, M_TIMER_SECONDS, 
-//            "Incorrect timer value read via Wishbone");
-  
-  
-//   // Test 5: Game win scenario
-//   game_won = 1'b1;
-//   WaitClocks(4);
-//   game_won = 1'b0;
-  
-//   `check_eq(state, GAME_OVER, "Should transition to GAME_OVER on win");
-//   `check_eq(dut.game_setup_mem[GAMES_WON_REG_NUM], 1, 
-//            "Games won counter not incremented");
-  
-//   // Test 6: Retry functionality
-//   retry = 1'b1;
-//   WaitClocks(2);
-//   retry = 1'b0;
-  
-//   `check_eq(state, MENU);
-//   `check_eq(dut.game_setup_mem[MINE_NUM_REG_NUM], 0,
-//            "Game setup should be cleared on return to menu");
-  
-//   // Test 7: Game loss scenario
-//   level = 2; // Medium level again
-//   WaitClocks(2);
-//   level = 0;
-//   game_lost = 1'b1;
-//   WaitClocks(4);
-//   game_lost = 1'b0;
-  
-//   `check_eq(state, GAME_OVER, "Should transition to GAME_OVER on loss");
-//   `check_eq(dut.game_setup_mem[GAMES_LOST_REG_NUM], 1);
-  
-//   // Test 8: All level configurations
-//   retry = 1'b1;
-//   WaitClocks(2);
-  
-//   level = 1; 
-//   WaitClocks(2);
-//   level = 0;
-//   `check_eq(dut.game_setup_mem[MINE_NUM_REG_NUM], E_MINE_NUM, 
-//            "Easy level mine count not set");
-  
-//   retry = 1'b1;
-//   WaitClocks(2);
-  
-//   level = 3;
-//   WaitClocks(2);
-//   level = 0;
-//   `check_eq(dut.game_setup_mem[MINE_NUM_REG_NUM], H_MINE_NUM);
-  
-//   // Test 9: Reset during game
-//   retry = 1'b1;
-//   WaitClocks(2);
-//   level = 2;
-//   WaitClocks(2);
-//   rst = 1'b1;
-//   WaitClocks(1);
-//   rst = 1'b0;
-  
-//   `check_eq(state, MENU, "Reset should return to MENU");
-//   `check_eq(dut.game_setup_mem[GAMES_WON_REG_NUM], 0,
-//            "Reset should clear game stats");
-  
-//   `log_info("All main_fsm tests completed successfully");
-//   $finish();
-// end
-
 
 
 task automatic WaitClocks(input int num_of_clock_cycles);

@@ -10,6 +10,7 @@ sv work C:\Users\wojte\Documents\Saper_new\XVUnit\internals\verilog\xvunit_pkg.s
         C:\Users\wojte\Documents\Saper_new\rtl\top_vga\vga_pkg.sv \
         C:\Users\wojte\Documents\Saper_new\rtl\z_game_setup\game_pkg.sv \
         C:\Users\wojte\Documents\Saper_new\sim\common\logger_pkg.sv \
+        C:\Users\wojte\Documents\Saper_new\fpga\rtl\top_basys3.sv \
         C:\Users\wojte\Documents\Saper_new\rtl\common\cross_buffer.sv \
         C:\Users\wojte\Documents\Saper_new\rtl\common\delay_vga.sv \
         C:\Users\wojte\Documents\Saper_new\rtl\common\posedge_detector.sv \
@@ -41,7 +42,9 @@ sv work C:\Users\wojte\Documents\Saper_new\XVUnit\internals\verilog\xvunit_pkg.s
         C:\Users\wojte\Documents\Saper_new\sim\common\tiff_writer.sv \
         C:\Users\wojte\Documents\Saper_new\sim\main_fsm_xvunit\main_fsm_xvunit_tb.sv \
 
-verilog work C:\Users\wojte\Documents\Saper_new\rtl\common\delay.v \
+verilog work C:\Users\wojte\Documents\Saper_new\fpga\rtl\clk_wiz_0\clk_wiz_0.v \
+            C:\Users\wojte\Documents\Saper_new\fpga\rtl\clk_wiz_0\clk_wiz_0_clk_wiz.v \
+            C:\Users\wojte\Documents\Saper_new\rtl\common\delay.v \
             C:\Users\wojte\Documents\Saper_new\rtl\sseg_disp.v \
             C:\Users\wojte\Documents\Saper_new\rtl\top_vga\font_rom.v \
             C:\Users\wojte\Documents\Saper_new\sim\common\glbl.v \

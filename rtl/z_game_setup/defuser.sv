@@ -25,6 +25,7 @@ module defuser (
 
   output logic pause,
   output logic back_to_menu,
+  output logic retry,
   output logic game_lost,
   output logic game_won,
 
@@ -35,7 +36,7 @@ module defuser (
 // ----- Local parameters -----
 localparam SETTINGS_REG_NUM = 9;
 localparam HALF_FRAME_CYCLES = 618750;
-localparam int BTM_HOLD_CYCLES = 100;
+localparam int BTM_RETRY_HOLD_CYCLES = 100;
 
 
 
@@ -86,8 +87,10 @@ logic count_en;
 logic redo_defuse;
 
 logic pause_q;
+logic retry_q;
 logic btm_q;
 logic [7:0] btm_ctr;
+logic [7:0] retry_ctr;
 
 
 auto_write_state_t auto_write_state;
@@ -110,6 +113,7 @@ assign game_write_data = {8'b0, game_board_mem[game_write_addr[7:4]][game_write_
 
 assign back_to_menu = btm_q;
 assign pause = pause_q;
+assign retry = retry_q;
 
 // Pause, resume and back_to_menu logic 
 always_ff @(posedge clk) begin
@@ -119,8 +123,8 @@ always_ff @(posedge clk) begin
     btm_ctr <= 8'd0;
   end
   else begin
-    if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
-        mouse_xpos <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd64 &&
+    if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd64 &&
+        mouse_xpos <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd96 &&
         mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32 &&
         mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left) 
     begin
@@ -136,12 +140,39 @@ always_ff @(posedge clk) begin
       pause_q <= !pause_q;
     end   
     else if (btm_q) begin
-      if (btm_ctr >= BTM_HOLD_CYCLES) begin
+      if (btm_ctr >= BTM_RETRY_HOLD_CYCLES) begin
         btm_q <= 1'b0;
         btm_ctr <= 1'b0;
       end
       else begin
         btm_ctr <= btm_ctr + 8'd1;
+      end
+    end
+  end
+end
+
+// retry logic
+always_ff @(posedge clk) begin
+  if (rst) begin
+    retry_q <= 1'b0;
+    retry_ctr <= 8'd0;
+  end
+  else begin
+    if (mouse_xpos >= game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd32 &&
+        mouse_xpos <  game_setup_cashe[BOARD_XPOS_REG_NUM] + 15'd64 &&
+        mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32 &&
+        mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left) 
+    begin
+      retry_ctr <= 8'd0;
+      retry_q   <= 1'b1;
+    end 
+    else if (retry_q) begin
+      if (retry_ctr >= BTM_RETRY_HOLD_CYCLES) begin
+        retry_q <= 1'b0;
+        retry_ctr <= 1'b0;
+      end
+      else begin
+        retry_ctr <= retry_ctr + 8'd1;
       end
     end
   end
@@ -215,7 +246,7 @@ always_ff @(posedge clk) begin
           board_ready     <= 1'b1;
         end
       end
-      AR_DONE: auto_read_state <= main_state == MENU ? AR_IDLE : AR_DONE;
+      AR_DONE: auto_read_state <= (retry_q || (main_state == MENU)) ? AR_IDLE : AR_DONE;
       default: auto_read_state <= AR_IDLE;
     endcase
   end
@@ -295,7 +326,7 @@ always_ff @(posedge clk) begin
 end
 
 always_ff @(posedge clk) begin
-  if (rst || btm_q) begin
+  if (rst || btm_q || retry) begin
     for (int i = 0; i < 16; i++)
       for (int j = 0; j < 16; j++)  
         game_board_mem[i][j] <= 8'b0;
@@ -322,7 +353,8 @@ always_ff @(posedge clk) begin
         for (int j = 0; j < 16; j++)  
           game_board_mem[i][j] <= 8'b0;
 
-        defuser_state <= main_state == PLAY ? DEF_READ_BOARD : DEF_IDLE;
+        // defuser_state <= main_state == PLAY ? DEF_READ_BOARD : DEF_IDLE;
+        defuser_state <= main_state == PLAY && planting_complete ? DEF_READ_BOARD : DEF_IDLE;
         count_en    <= 1'b0;
         redo_defuse <= 1'b0;
 
@@ -374,9 +406,6 @@ always_ff @(posedge clk) begin
             game_lost     <= 1'b1;
             defuser_state <= DEF_GAME_OVER;
           end
-          // else if (game_board_mem[mouse_board_ind_y][mouse_board_ind_x].mine_ind > 0) begin
-          //   defuser_state <= DEF_WAIT_FOR_MOUSE;
-          // end
           else begin
             defuser_state <= DEFUSE;
           end

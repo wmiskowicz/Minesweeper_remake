@@ -40,7 +40,7 @@ sv work C:\Users\wojte\Documents\Saper_new\XVUnit\internals\verilog\xvunit_pkg.s
         C:\Users\wojte\Documents\Saper_new\rtl\z_game_setup\main_fsm.sv \
         C:\Users\wojte\Documents\Saper_new\rtl\z_game_setup\mine_planter.sv \
         C:\Users\wojte\Documents\Saper_new\sim\common\tiff_writer.sv \
-        C:\Users\wojte\Documents\Saper_new\sim\mine_planter_xvunit\mine_planter_xvunit_tb.sv \
+        C:\Users\wojte\Documents\Saper_new\sim\defuser_xvunit\defuser_xvunit_tb.sv \
 
 verilog work C:\Users\wojte\Documents\Saper_new\fpga\rtl\clk_wiz_0\clk_wiz_0.v \
             C:\Users\wojte\Documents\Saper_new\fpga\rtl\clk_wiz_0\clk_wiz_0_clk_wiz.v \
