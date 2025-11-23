@@ -37,6 +37,8 @@ wishbone_if game_board_if();
 vga_if in_vga();
 vga_if out_vga();
 
+logic [2:0] main_state;
+
 
 // ----- Signal assignments -----
 assign {r,g,b} = out_vga.rgb;
@@ -81,7 +83,7 @@ draw_board dut (
   .clk             (clk),
   .rst             (rst),
 
-  .main_state      (PLAY),
+  .main_state      (main_state),
 
   .game_board_wb   (game_board_if.master),
   .game_settings_wb(game_set_if.master),
@@ -109,7 +111,9 @@ main_fsm u_main_fsm (
 initial begin
   void'(logger::init());
   InitReset();
-  force in_vga.rgb = 12'h777;
+  force in_vga.rgb = 12'h333;
+
+  main_state = PLAY;
 
   WaitClocks(500);
   dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] = H_ROW_COLUMN_NUMBER;
@@ -119,17 +123,18 @@ initial begin
   dut.game_setup_cashe[BOARD_SIZE_REG_NUM] = H_BOARD_SIZE;
   dut.game_setup_cashe[BOARD_XPOS_REG_NUM] = H_BOARD_XPOS;
   dut.game_setup_cashe[BOARD_YPOS_REG_NUM] = H_BOARD_YPOS;
+  main_state = PAUSE;
 
+  dut.game_board_mem[0][0].flag = 1'b1;
+  dut.game_board_mem[1][0].flag = 1'b1;
   dut.game_board_mem[0][1].flag = 1'b1;
-  // dut.game_board_mem[1][0].mine = 1'b1;
+
   dut.game_board_mem[2][2].mine = 1'b1;
   dut.game_board_mem[1][2].mine = 1'b1;
   dut.game_board_mem[1][1].defused = 1'b1;
   dut.game_board_mem[1][1].mine_ind = 3;
   dut.game_board_mem[1][4].mine_ind = 1;
   dut.game_board_mem[1][4].defused = 1;
-  dut.game_board_mem[0][0].defused = 1'b1;
-  dut.game_board_mem[1][0].defused = 1'b1;
   dut.game_board_mem[2][0].defused = 1'b1;
   dut.game_board_mem[1][5].defused = 1'b1;
   dut.game_board_mem[1][3].defused = 1'b1;

@@ -33,6 +33,7 @@ vga_if game_won_vga();
 vga_if pause_vga();
 vga_if vga_q();
 vga_if vga_2q();
+vga_if vga_3q();
 
 
 // ----- Local variables -----
@@ -141,7 +142,7 @@ always_ff @(posedge clk) begin
 
   end
   else begin
-    out.rgb <= vga_2q.rgb;
+    out.rgb <= vga_3q.rgb;
   end
 
   vga_q.hcount <= in.hcount;
@@ -160,13 +161,21 @@ always_ff @(posedge clk) begin
   vga_2q.vblnk  <= vga_q.vblnk;
   vga_2q.rgb    <= vga_q.rgb;
 
-  out.hcount <= vga_2q.hcount;
-  out.vcount <= vga_2q.vcount;
-  out.hsync  <= vga_2q.hsync;
-  out.vsync  <= vga_2q.vsync;
-  out.hblnk  <= vga_2q.hblnk;
-  out.vblnk  <= vga_2q.vblnk;
+  vga_3q.hcount <= vga_2q.hcount;
+  vga_3q.vcount <= vga_2q.vcount;
+  vga_3q.hsync  <= vga_2q.hsync;
+  vga_3q.vsync  <= vga_2q.vsync;
+  vga_3q.hblnk  <= vga_2q.hblnk;
+  vga_3q.vblnk  <= vga_2q.vblnk;
+  vga_3q.rgb    <= vga_2q.rgb;
+
+  out.hcount <= vga_3q.hcount;
+  out.vcount <= vga_3q.vcount;
+  out.hsync  <= vga_3q.hsync;
+  out.vsync  <= vga_3q.vsync;
+  out.hblnk  <= vga_3q.hblnk;
+  out.vblnk  <= vga_3q.vblnk;
 
 end
   
- endmodule
+endmodule

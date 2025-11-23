@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="809,218.900 ns"></ZoomStartTime>
-      <ZoomEndTime time="809,492.501 ns"></ZoomEndTime>
-      <Cursor1Time time="809,264.500 ns"></Cursor1Time>
+      <ZoomStartTime time="730,316.200 ns"></ZoomStartTime>
+      <ZoomEndTime time="730,456.001 ns"></ZoomEndTime>
+      <Cursor1Time time="730,339.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="404"></NameColumnWidth>
-      <ValueColumnWidth column_width="100"></ValueColumnWidth>
+      <NameColumnWidth column_width="384"></NameColumnWidth>
+      <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="8" />
+   <WVObjectSize size="20" />
    <wvobject fp_name="/draw_board_tb/dut/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -33,39 +33,159 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/in/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">in_hcount[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/vga_q/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">q_hcount[10:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/vga_2q/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">2q_hcount[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#00FF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/vga_3q/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">3q_hcount[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/symbol_xpos" type="array">
+      <obj_property name="ElementShortName">symbol_xpos[11:0]</obj_property>
+      <obj_property name="ObjectShortName">symbol_xpos[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/symbol_xpos_q" type="array">
+      <obj_property name="ElementShortName">symbol_xpos_q[11:0]</obj_property>
+      <obj_property name="ObjectShortName">symbol_xpos_q[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/symbol_xpos_2q" type="array">
+      <obj_property name="ElementShortName">symbol_xpos_2q[11:0]</obj_property>
+      <obj_property name="ObjectShortName">symbol_xpos_2q[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/num_vga/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">num_hcount[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
    <wvobject fp_name="/draw_board_tb/dut/flag_vga/hcount" type="array">
-      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
-      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
-      <obj_property name="CustomSignalColor">#F0E68C</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/flag_vga/rgb" type="array">
-      <obj_property name="ElementShortName">rgb[11:0]</obj_property>
-      <obj_property name="ObjectShortName">rgb[11:0]</obj_property>
-      <obj_property name="CustomSignalColor">#F0E68C</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/bomb_vga/hcount" type="array">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">hcount[10:0]</obj_property>
       <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
-      <obj_property name="label">hcount_bomb[10:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="label">flag_hcount[10:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/bomb_vga/rgb" type="array">
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/rect_hcount" type="array">
+      <obj_property name="ElementShortName">rect_hcount[11:0]</obj_property>
+      <obj_property name="ObjectShortName">rect_hcount[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/rect_vcount" type="array">
+      <obj_property name="ElementShortName">rect_vcount[11:0]</obj_property>
+      <obj_property name="ObjectShortName">rect_vcount[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/rom_rgb" type="array">
+      <obj_property name="ElementShortName">rom_rgb[11:0]</obj_property>
+      <obj_property name="ObjectShortName">rom_rgb[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address" type="array">
+      <obj_property name="ElementShortName">address[11:0]</obj_property>
+      <obj_property name="ObjectShortName">address[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="vbus45" type="vbus">
+      <obj_property name="label">addr12:6</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">rgb[11:0]</obj_property>
-      <obj_property name="ObjectShortName">rgb[11:0]</obj_property>
-      <obj_property name="label">rgb_bomb[11:0]</obj_property>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[11]" type="logic">
+         <obj_property name="ElementShortName">[11]</obj_property>
+         <obj_property name="ObjectShortName">[11]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[10]" type="logic">
+         <obj_property name="ElementShortName">[10]</obj_property>
+         <obj_property name="ObjectShortName">[10]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[9]" type="logic">
+         <obj_property name="ElementShortName">[9]</obj_property>
+         <obj_property name="ObjectShortName">[9]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[8]" type="logic">
+         <obj_property name="ElementShortName">[8]</obj_property>
+         <obj_property name="ObjectShortName">[8]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[7]" type="logic">
+         <obj_property name="ElementShortName">[7]</obj_property>
+         <obj_property name="ObjectShortName">[7]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[6]" type="logic">
+         <obj_property name="ElementShortName">[6]</obj_property>
+         <obj_property name="ObjectShortName">[6]</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/out/hcount" type="array">
+   <wvobject fp_name="vbus44" type="vbus">
+      <obj_property name="label">addr[5:0]</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[5]" type="logic">
+         <obj_property name="ElementShortName">[5]</obj_property>
+         <obj_property name="ObjectShortName">[5]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[4]" type="logic">
+         <obj_property name="ElementShortName">[4]</obj_property>
+         <obj_property name="ObjectShortName">[4]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[3]" type="logic">
+         <obj_property name="ElementShortName">[3]</obj_property>
+         <obj_property name="ObjectShortName">[3]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[2]" type="logic">
+         <obj_property name="ElementShortName">[2]</obj_property>
+         <obj_property name="ObjectShortName">[2]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[1]" type="logic">
+         <obj_property name="ElementShortName">[1]</obj_property>
+         <obj_property name="ObjectShortName">[1]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/address[0]" type="logic">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">[0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/u_draw_flag/in_image_region" type="logic">
+      <obj_property name="ElementShortName">in_image_region</obj_property>
+      <obj_property name="ObjectShortName">in_image_region</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/vga_5q/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">hcount[10:0]</obj_property>
       <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">5q_hcount[10:0](320)</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/draw_board_tb/dut/out/rgb" type="array">
-      <obj_property name="ElementShortName">rgb[11:0]</obj_property>
-      <obj_property name="ObjectShortName">rgb[11:0]</obj_property>
+   <wvobject fp_name="/draw_board_tb/dut/vga_5q/vcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">vcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">vcount[10:0]</obj_property>
+      <obj_property name="label">5q_vcount[10:0](40)</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>

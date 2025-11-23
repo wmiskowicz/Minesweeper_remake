@@ -180,11 +180,6 @@ main_fsm u_main_fsm (
     end
 
 
-
-
-
-
-    
 `TEST_SUITE_END_X
 
 initial begin

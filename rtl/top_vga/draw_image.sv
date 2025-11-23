@@ -48,6 +48,8 @@ logic [ADDR_WIDTH-1:0] address;
 logic [11:0] rom_rgb;
 logic [11:0] offset_rect_xpos;
 
+logic in_image_region_q, in_image_region_2q;
+
 
 image_rom #(
   .PATH       (PATH),
@@ -70,10 +72,10 @@ always_comb begin
   scaled_rect_hcount = rect_hcount / PRESCALER;
   scaled_rect_vcount = rect_vcount / PRESCALER;
   
-  in_image_region = (vga_2q.hcount >= offset_rect_xpos) &&
-                    (vga_2q.hcount <  offset_rect_xpos + SCALED_WIDTH) &&
-                    (vga_2q.vcount >= rect_y_pos) &&
-                    (vga_2q.vcount <  rect_y_pos + SCALED_HEIGHT);
+  in_image_region = (in.hcount >= offset_rect_xpos) &&
+                    (in.hcount <  offset_rect_xpos + SCALED_WIDTH) &&
+                    (in.vcount >= rect_y_pos) &&
+                    (in.vcount <  rect_y_pos + SCALED_HEIGHT);
 end
 
 always_ff @(posedge clk) begin
@@ -86,6 +88,9 @@ always_ff @(posedge clk) begin
     out.hblnk   <= '0;
     out.rgb     <= '0;
     address     <= '0;
+    
+    in_image_region_q <= 1'b0; 
+    in_image_region_2q <= 1'b0; 
   end else begin
     vga_q.vcount <= in.vcount;
     vga_q.vsync  <= in.vsync;
@@ -109,15 +114,18 @@ always_ff @(posedge clk) begin
     out.hcount <= vga_2q.hcount;
     out.hsync  <= vga_2q.hsync;
     out.hblnk  <= vga_2q.hblnk;
+
+    in_image_region_q <= in_image_region; 
+    in_image_region_2q <= in_image_region_q; 
     
     address <= {scaled_rect_vcount[Y_ADDR_WIDTH-1:0], scaled_rect_hcount[X_ADDR_WIDTH-1:0]};
 
     if (vga_2q.hblnk || vga_2q.vblnk)
       out.rgb <= '0;
-    else if (in_image_region)
+    else if (in_image_region_2q)
       out.rgb <= rom_rgb == BLUE_SCREEN ? vga_2q.rgb : rom_rgb;
     else
-      out.rgb <= vga_q.rgb;
+      out.rgb <= vga_2q.rgb;
   end
 end
 

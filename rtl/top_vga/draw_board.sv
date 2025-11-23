@@ -40,6 +40,8 @@ vga_if retry_vga();
 vga_if vga_q();
 vga_if vga_2q();
 vga_if vga_3q();
+vga_if vga_4q();
+vga_if vga_5q();
 
 // ----- Local parameters -----
 localparam STATE_BITS = 3;
@@ -56,10 +58,16 @@ logic [10:0] board_hcount, board_vcount;
 logic [5:0] field_hcount, field_vcount;
 logic [5:0] field_hcount_q, field_vcount_q;
 logic [5:0] field_hcount_2q, field_vcount_2q;
+logic [5:0] field_hcount_3q, field_vcount_3q;
+logic [5:0] field_hcount_4q, field_vcount_4q;
+logic [5:0] field_hcount_5q, field_vcount_5q;
 
 logic hcount_valid, vcount_valid;
 logic hcount_valid_q, vcount_valid_q;
 logic hcount_valid_2q, vcount_valid_2q;
+logic hcount_valid_3q, vcount_valid_3q;
+logic hcount_valid_4q, vcount_valid_4q;
+logic hcount_valid_5q, vcount_valid_5q;
 
 logic burst_active;
 logic [15:0] read_data;
@@ -77,6 +85,10 @@ logic game_read_ready;
 logic [3:0] board_ind_x, board_ind_y;
 logic [3:0] board_ind_x_q, board_ind_y_q;
 logic [3:0] board_ind_x_2q, board_ind_y_2q;
+logic [3:0] board_ind_x_3q, board_ind_y_3q;
+logic [3:0] board_ind_x_4q, board_ind_y_4q;
+logic [3:0] board_ind_x_5q, board_ind_y_5q;
+logic [11:0] num_rgb_q, num_rgb_2q;
 
 
 logic [11:0] char_code;
@@ -98,8 +110,8 @@ enum logic [STATE_BITS-1 :0] {
 
 
 // ----- Signal assignments -----
-assign vcount_valid = in.vcount >= game_setup_cashe[BOARD_YPOS_REG_NUM] && in.vcount < game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
-assign hcount_valid = in.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] && in.hcount < game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM];
+assign vcount_valid = in.vcount >= game_setup_cashe[BOARD_YPOS_REG_NUM] && in.vcount < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
+assign hcount_valid = in.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] && in.hcount < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
 
 assign board_vcount = vcount_valid && hcount_valid ? in.vcount - game_setup_cashe[BOARD_YPOS_REG_NUM] : 11'h7_f_f;
 assign board_hcount = vcount_valid && hcount_valid ? in.hcount - game_setup_cashe[BOARD_XPOS_REG_NUM] : 11'h7_f_f;
@@ -113,10 +125,10 @@ assign board_ind_y = board_vcount[9:6];
 assign symbol_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM] + board_ind_x * game_setup_cashe[FIELD_SIZE_REG_NUM];
 assign symbol_ypos = game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_setup_cashe[FIELD_SIZE_REG_NUM];
 
-assign home_xpos         = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd62;
-assign pause_resume_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM] - 12'd2;
-assign retry_xpos        = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd30;
-assign buttons_ypos      = game_setup_cashe[BOARD_YPOS_REG_NUM] - 12'd32;
+assign home_xpos         = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd64;
+assign pause_resume_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM];
+assign retry_xpos        = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd32;
+assign buttons_ypos      = game_setup_cashe[BOARD_YPOS_REG_NUM] - 12'd34;
 
 
 always_ff @(posedge clk) begin
@@ -129,16 +141,34 @@ always_ff @(posedge clk) begin
   field_vcount_q <= field_vcount;
   field_hcount_2q <= field_hcount_q;
   field_vcount_2q <= field_vcount_q;
+  field_hcount_3q <= field_hcount_2q;
+  field_vcount_3q <= field_vcount_2q;
+  field_hcount_4q <= field_hcount_3q;
+  field_vcount_4q <= field_vcount_3q;
+  field_hcount_5q <= field_hcount_4q;
+  field_vcount_5q <= field_vcount_4q;
 
   hcount_valid_q <= hcount_valid;
   vcount_valid_q <= vcount_valid;
   hcount_valid_2q <= hcount_valid_q;
   vcount_valid_2q <= vcount_valid_q;
+  hcount_valid_3q <= hcount_valid_2q;
+  vcount_valid_3q <= vcount_valid_2q;
+  hcount_valid_4q <= hcount_valid_3q;
+  vcount_valid_4q <= vcount_valid_3q;
+  hcount_valid_5q <= hcount_valid_4q;
+  vcount_valid_5q <= vcount_valid_4q;
 
   board_ind_x_q <= board_ind_x;
   board_ind_y_q <= board_ind_y;
   board_ind_x_2q <= board_ind_x_q;
   board_ind_y_2q <= board_ind_y_q; 
+  board_ind_x_3q <= board_ind_x_2q;
+  board_ind_y_3q <= board_ind_y_2q; 
+  board_ind_x_4q <= board_ind_x_3q;
+  board_ind_y_4q <= board_ind_y_3q; 
+  board_ind_x_5q <= board_ind_x_4q;
+  board_ind_y_5q <= board_ind_y_4q; 
 
   vga_q.rgb     <= in.rgb;
   vga_q.vcount  <= in.vcount;
@@ -163,17 +193,33 @@ always_ff @(posedge clk) begin
   vga_3q.hcount  <= vga_2q.hcount;
   vga_3q.hsync   <= vga_2q.hsync;
   vga_3q.hblnk   <= vga_2q.hblnk;
+
+  vga_4q.rgb     <= vga_3q.rgb;
+  vga_4q.vcount  <= vga_3q.vcount;
+  vga_4q.vsync   <= vga_3q.vsync;
+  vga_4q.vblnk   <= vga_3q.vblnk;
+  vga_4q.hcount  <= vga_3q.hcount;
+  vga_4q.hsync   <= vga_3q.hsync;
+  vga_4q.hblnk   <= vga_3q.hblnk;
+
+  vga_5q.rgb     <= vga_4q.rgb;
+  vga_5q.vcount  <= vga_4q.vcount;
+  vga_5q.vsync   <= vga_4q.vsync;
+  vga_5q.vblnk   <= vga_4q.vblnk;
+  vga_5q.hcount  <= vga_4q.hcount;
+  vga_5q.hsync   <= vga_4q.hsync;
+  vga_5q.hblnk   <= vga_4q.hblnk;
 end
 
 
 always_comb begin
-  if (game_board_mem[board_ind_y_2q][board_ind_x_2q].mine_ind == 0) begin
+  if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine_ind == 0) begin
     char_code = 0;
     num_color = 0;
   end
   else begin
-    char_code = game_board_mem[board_ind_y_2q][board_ind_x_2q].mine_ind + 12'h30;
-    case (game_board_mem[board_ind_y_2q][board_ind_x_2q].mine_ind)
+    char_code = game_board_mem[board_ind_y_5q][board_ind_x_5q].mine_ind + 12'h30;
+    case (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine_ind)
       4'h1: num_color    = NUM_1;
       4'h2: num_color    = NUM_2;
       4'h3: num_color    = NUM_3;
@@ -205,12 +251,12 @@ always_ff @(posedge clk) begin
     read_en           <= 1'b0;
   end
   else begin
-    out.vcount  <= vga_2q.vcount;
-    out.vsync   <= vga_2q.vsync;
-    out.vblnk   <= vga_2q.vblnk;
-    out.hcount  <= vga_2q.hcount;
-    out.hsync   <= vga_2q.hsync;
-    out.hblnk   <= vga_2q.hblnk;
+    out.vcount  <= vga_5q.vcount;
+    out.vsync   <= vga_5q.vsync;
+    out.vblnk   <= vga_5q.vblnk;
+    out.hcount  <= vga_5q.hcount;
+    out.hsync   <= vga_5q.hsync;
+    out.hblnk   <= vga_5q.hblnk;
 
     case(board_state)
       IDLE: begin
@@ -218,12 +264,12 @@ always_ff @(posedge clk) begin
         board_state  <= main_state == PLAY ? READ_SETTINGS : IDLE;
         read_en      <= main_state == PLAY;
         read_addr    <= 8'h0;
-        out.rgb      <= vga_q.rgb;
+        out.rgb      <= vga_5q.rgb;
 
         settings_read_ctr <= 4'b0;
       end
       READ_SETTINGS: begin
-        out.rgb      <= vga_q.rgb;
+        out.rgb      <= vga_5q.rgb;
         burst_active <= 1'b1;
         read_en      <= 1'b0;
         board_state  <= settings_read_ctr == SETTINGS_REG_NUM ? DRAW : READ_SETTINGS;
@@ -244,30 +290,33 @@ always_ff @(posedge clk) begin
         
 
 
-        if (game_board_mem[board_ind_y_2q][board_ind_x_2q].mine && game_board_mem[board_ind_y_2q][board_ind_x_2q].defused)
+        if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine && game_board_mem[board_ind_y_5q][board_ind_x_5q].defused)
           out.rgb <= draw_bomb();
-        else if (game_board_mem[board_ind_y_2q][board_ind_x_2q].defused)
-          if (game_board_mem[board_ind_y_2q][board_ind_x_2q].mine_ind == 0)
+        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].defused)
+          if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine_ind == 0)
             out.rgb <= draw_uncovered();
           else
             out.rgb <= draw_number();
-        else if (game_board_mem[board_ind_y_2q][board_ind_x_2q].flag)
+        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].flag)
           out.rgb <= draw_flag();
-        else if (vcount_valid_2q && hcount_valid_2q)
+        else if (vcount_valid_5q && hcount_valid_5q)
           out.rgb <= draw_button();
-        else if (vga_2q.hcount >= pause_resume_xpos &&
-                 vga_2q.hcount <  pause_resume_xpos + 12'd32) 
+        else if (vga_5q.hcount >= pause_resume_xpos &&
+                 vga_5q.hcount <  pause_resume_xpos + 12'd32) 
         begin
           if (main_state == PAUSE)
             out.rgb <= draw_resume();
           else
             out.rgb <= draw_pause();
         end
-        else if(vga_2q.hcount >= retry_xpos &&
-                vga_2q.hcount <  retry_xpos + 12'd32)
+        else if (vga_5q.hcount >= retry_xpos &&
+                vga_5q.hcount <  retry_xpos + 12'd32)
           out.rgb <= draw_retry();
-        else
+        else if (vga_5q.hcount >= retry_xpos + 12'd32 &&
+                vga_5q.hcount <  retry_xpos + 12'd64)
           out.rgb <= draw_home();
+        else
+          out.rgb <= vga_5q.rgb;
 
       end
       default: board_state <= IDLE;
@@ -356,92 +405,80 @@ wishbone_master u_board_master (
 );
 
 function logic [11:0] draw_button;
-  if (field_hcount_2q >= MARGIN && field_hcount_2q <= M_FIELD_SIZE-MARGIN && field_vcount_2q >= MARGIN && field_vcount_2q <= M_FIELD_SIZE-MARGIN &&
-      hcount_valid_2q && vcount_valid_2q) begin
+  if (field_hcount_5q >= MARGIN && field_hcount_5q <= M_FIELD_SIZE-MARGIN && field_vcount_5q >= MARGIN && field_vcount_5q <= M_FIELD_SIZE-MARGIN &&
+      hcount_valid_5q && vcount_valid_5q) begin
     return BUTTON_BACK;
   end
-  else if (hcount_valid_2q && vcount_valid_2q) begin
-    if(field_hcount_2q >= field_vcount_2q) begin
+  else if (hcount_valid_5q && vcount_valid_5q) begin
+    if(field_hcount_5q >= field_vcount_5q) begin
       return BUTTON_WHITE;
     end
     else begin
       return BUTTON_GRAY;
     end
   end
-  return vga_2q.rgb;
+  return vga_5q.rgb;
 endfunction
 
 function logic [11:0] draw_uncovered;
-  if (field_hcount_2q < game_setup_cashe[FIELD_SIZE_REG_NUM]-1 &&
-      field_vcount_2q < game_setup_cashe[FIELD_SIZE_REG_NUM]-1 &&
-      field_hcount_2q > 0 && field_vcount_2q > 0 &&
-      vcount_valid_2q && hcount_valid_2q) begin
+  if (field_hcount_5q < game_setup_cashe[FIELD_SIZE_REG_NUM]-1 &&
+      field_vcount_5q < game_setup_cashe[FIELD_SIZE_REG_NUM]-1 &&
+      field_hcount_5q > 0 && field_vcount_5q > 0 &&
+      vcount_valid_5q && hcount_valid_5q) begin
 
     return BUTTON_BACK;
   end
-  else if (vcount_valid_2q && hcount_valid_2q)
+  else if (vcount_valid_5q && hcount_valid_5q)
     return BUTTON_FRAME;
   else
-    return vga_2q.rgb;
+    return vga_5q.rgb;
 endfunction
 
 function logic [11:0] draw_bomb;
-  if (field_hcount_2q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 || 
-    field_vcount_2q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 ||
-    field_hcount_2q == 0 ||
-    field_vcount_2q == 0)
+  if (field_hcount_5q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 || 
+      field_vcount_5q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 ||
+      field_hcount_5q == 0 ||
+      field_vcount_5q == 0)
   return BUTTON_FRAME;
   else
     return bomb_vga.rgb;
 endfunction
 
 function logic [11:0] draw_flag;
-  if (field_hcount_2q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 || 
-      field_vcount_2q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 ||
-      field_hcount_2q == 0 ||
-      field_vcount_2q == 0)
+  if (field_hcount_5q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 || 
+      field_vcount_5q == game_setup_cashe[FIELD_SIZE_REG_NUM]-1 ||
+      field_hcount_5q == 0 ||
+      field_vcount_5q == 0)
     return BUTTON_FRAME;
   else 
     return flag_vga.rgb;
 endfunction
 
 function logic [11:0] draw_pause;
-  if (pause_vga.rgb != 12'h00F)
-    return pause_vga.rgb;
-  else 
-    return vga_2q.rgb;
+  return pause_vga.rgb;
 endfunction
 
 function logic [11:0] draw_resume;
-  if (resume_vga.rgb != 12'h00F)
-    return resume_vga.rgb;
-  else 
-    return vga_2q.rgb;
+  return resume_vga.rgb;
 endfunction
 
 function logic [11:0] draw_home;
-  if (home_vga.rgb != 12'h00F)
-    return home_vga.rgb;
-  else 
-    return vga_2q.rgb;
+  return home_vga.rgb;
 endfunction
 
 function logic [11:0] draw_retry;
-  if (retry_vga.rgb != 12'h00F)
-    return retry_vga.rgb;
-  else 
-    return vga_2q.rgb;
+  return retry_vga.rgb;
 endfunction
 
 function logic [11:0] draw_number();
-  if (num_vga.rgb == NUM_1 ||
-      num_vga.rgb == NUM_2 ||
-      num_vga.rgb == NUM_3 ||
-      num_vga.rgb == NUM_4 ||
-      num_vga.rgb == NUM_5 ||
-      num_vga.rgb == NUM_6 ||
-      num_vga.rgb == NUM_7 )
-    return num_vga.rgb;
+  if (num_rgb_2q == NUM_1 ||
+      num_rgb_2q == NUM_2 ||
+      num_rgb_2q == NUM_3 ||
+      num_rgb_2q == NUM_4 ||
+      num_rgb_2q == NUM_5 ||
+      num_rgb_2q == NUM_6 ||
+      num_rgb_2q == NUM_7 )
+    return num_rgb_2q;
   else
     return draw_uncovered();
 endfunction
@@ -455,7 +492,7 @@ draw_image #(
 )
 u_draw_bomb (
   .clk       (clk),
-  .in        (vga_q),
+  .in        (vga_2q),
   .out       (bomb_vga.out),
   .rect_x_pos(symbol_xpos_2q),
   .rect_y_pos(symbol_ypos_2q),
@@ -470,7 +507,7 @@ draw_image #(
 )
 u_draw_flag (
   .clk       (clk),
-  .in        (vga_q),
+  .in        (vga_2q),
   .out       (flag_vga.out),
   .rect_x_pos(symbol_xpos_2q),
   .rect_y_pos(symbol_ypos_2q),
@@ -551,8 +588,14 @@ draw_char #(
   .char_ypos(symbol_ypos_2q),
   .num_color(num_color),
 
-  .in       (vga_q),
+  .in       (vga_2q),
   .out      (num_vga.out)
 );
+
+
+always_ff @(posedge clk) begin
+  num_rgb_q <= num_vga.rgb;
+  num_rgb_2q <= num_rgb_q;
+end
 
 endmodule
