@@ -26,7 +26,7 @@ logic rst;
 
 wire vs, hs;
 wire [3:0] r, g, b;
-
+logic [2:0] main_state;
 
 // ----- Signal interfaces -----
 wishbone_if game_set_if();
@@ -37,6 +37,22 @@ initial begin
   clk = 1'b0;
   forever #(CLK_PERIOD/2) clk = ~clk;
 end
+
+main_fsm u_main_fsm (
+  .clk          (clk),
+  .rst          (rst),
+
+  .game_lost    (1'b0),
+  .game_won     (1'b0),
+  .level        (2'd2),
+  .retry        (1'b0),
+  .state_out    (),
+  .timer_stop   (1'b0),
+
+  .game_set_wb1(game_set_if.slave),
+  .game_set_wb2(game_set_if.slave),
+  .game_set_wb3(game_set_if.slave)
+);
 
 
 top_vga dut (
@@ -55,8 +71,8 @@ top_vga dut (
   .game_won     (0),
   .retry        (0),
 
-  .main_state       (PLAY),
-  .game_settings_wb (game_set_if),
+  .main_state       (main_state),
+  .game_settings_wb (game_set_if.master),
   .game_board_wb    (game_board_if)
 );
 
@@ -79,6 +95,20 @@ initial begin
   `log_info("Starting top_vga testbench");
   `log_info("Generating image...");
   WaitClocks(30);
+  main_state = PLAY;
+  WaitClocks(1000);
+  dut.u_draw_board.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM]  = H_ROW_COLUMN_NUMBER;
+  dut.u_draw_board.game_setup_cashe[MINE_NUM_REG_NUM]           = H_MINE_NUM;
+  dut.u_draw_board.game_setup_cashe[TIMER_SECONDS_REG_NUM]      = H_TIMER_SECONDS;
+  dut.u_draw_board.game_setup_cashe[FIELD_SIZE_REG_NUM]         = H_FIELD_SIZE;
+  dut.u_draw_board.game_setup_cashe[BOARD_SIZE_REG_NUM]         = H_BOARD_SIZE;
+  dut.u_draw_board.game_setup_cashe[BOARD_XPOS_REG_NUM]         = H_BOARD_XPOS;
+  dut.u_draw_board.game_setup_cashe[BOARD_YPOS_REG_NUM]         = H_BOARD_YPOS;
+
+
+  dut.u_draw_board.game_board_mem[0][0].flag = 1'b1;
+  dut.u_draw_board.game_board_mem[9][9].flag = 1'b1;
+
 
   wait (vs == 1'b0);
   @(negedge vs) `log_info($sformatf("Info: negedge VS at %t", $time));
@@ -99,5 +129,7 @@ task automatic InitReset();
   rst = 0;
   WaitClocks(10);
 endtask
+
+
 
 endmodule

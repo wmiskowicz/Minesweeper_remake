@@ -110,8 +110,8 @@ enum logic [STATE_BITS-1 :0] {
 
 
 // ----- Signal assignments -----
-assign vcount_valid = in.vcount >= game_setup_cashe[BOARD_YPOS_REG_NUM] && in.vcount < (game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
-assign hcount_valid = in.hcount >= game_setup_cashe[BOARD_XPOS_REG_NUM] && in.hcount < (game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
+assign vcount_valid = in.vcount >= 11'(game_setup_cashe[BOARD_YPOS_REG_NUM] - 1) && in.vcount < 11'(game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM] + 1);
+assign hcount_valid = in.hcount >= 11'(game_setup_cashe[BOARD_XPOS_REG_NUM] - 1) && in.hcount < 11'(game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM] + 1);
 
 assign board_vcount = vcount_valid && hcount_valid ? in.vcount - game_setup_cashe[BOARD_YPOS_REG_NUM] : 11'h7_f_f;
 assign board_hcount = vcount_valid && hcount_valid ? in.hcount - game_setup_cashe[BOARD_XPOS_REG_NUM] : 11'h7_f_f;
@@ -128,17 +128,17 @@ assign symbol_ypos = game_setup_cashe[BOARD_YPOS_REG_NUM] + board_ind_y * game_s
 assign home_xpos         = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd64;
 assign pause_resume_xpos = game_setup_cashe[BOARD_XPOS_REG_NUM];
 assign retry_xpos        = game_setup_cashe[BOARD_XPOS_REG_NUM] + 12'd32;
-assign buttons_ypos      = game_setup_cashe[BOARD_YPOS_REG_NUM] - 12'd34;
+assign buttons_ypos      = game_setup_cashe[BOARD_YPOS_REG_NUM] - 12'd36;
 
 
 always_ff @(posedge clk) begin
-  symbol_xpos_q <= symbol_xpos;
-  symbol_ypos_q <= symbol_ypos;
+  symbol_xpos_q  <= symbol_xpos;
+  symbol_ypos_q  <= symbol_ypos;
   symbol_xpos_2q <= symbol_xpos_q;
   symbol_ypos_2q <= symbol_ypos_q;
 
-  field_hcount_q <= field_hcount;
-  field_vcount_q <= field_vcount;
+  field_hcount_q  <= field_hcount;
+  field_vcount_q  <= field_vcount;
   field_hcount_2q <= field_hcount_q;
   field_vcount_2q <= field_vcount_q;
   field_hcount_3q <= field_hcount_2q;
@@ -148,8 +148,8 @@ always_ff @(posedge clk) begin
   field_hcount_5q <= field_hcount_4q;
   field_vcount_5q <= field_vcount_4q;
 
-  hcount_valid_q <= hcount_valid;
-  vcount_valid_q <= vcount_valid;
+  hcount_valid_q  <= hcount_valid;
+  vcount_valid_q  <= vcount_valid;
   hcount_valid_2q <= hcount_valid_q;
   vcount_valid_2q <= vcount_valid_q;
   hcount_valid_3q <= hcount_valid_2q;
@@ -289,34 +289,47 @@ always_ff @(posedge clk) begin
         board_state  <= main_state == MENU ? IDLE : DRAW;
         
 
-
-        if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine && game_board_mem[board_ind_y_5q][board_ind_x_5q].defused)
-          out.rgb <= draw_bomb();
-        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].defused)
-          if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine_ind == 0)
-            out.rgb <= draw_uncovered();
-          else
-            out.rgb <= draw_number();
-        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].flag)
-          out.rgb <= draw_flag();
-        else if (vcount_valid_5q && hcount_valid_5q)
-          out.rgb <= draw_button();
-        else if (vga_5q.hcount >= pause_resume_xpos &&
-                 vga_5q.hcount <  pause_resume_xpos + 12'd32) 
-        begin
-          if (main_state == PAUSE)
-            out.rgb <= draw_resume();
-          else
-            out.rgb <= draw_pause();
+        if (is_board_frame()) begin
+          out.rgb <= BUTTON_FRAME;
         end
-        else if (vga_5q.hcount >= retry_xpos &&
-                vga_5q.hcount <  retry_xpos + 12'd32)
+        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine && game_board_mem[board_ind_y_5q][board_ind_x_5q].defused) begin
+          out.rgb <= draw_bomb();
+        end
+        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].defused) begin
+
+          if (game_board_mem[board_ind_y_5q][board_ind_x_5q].mine_ind == 0) begin
+            out.rgb <= draw_uncovered();
+          end
+          else begin
+            out.rgb <= draw_number();
+          end
+
+        end
+        else if (game_board_mem[board_ind_y_5q][board_ind_x_5q].flag) begin
+          out.rgb <= draw_flag();
+        end
+        else if (vcount_valid_5q && hcount_valid_5q) begin
+          out.rgb <= draw_button();
+        end
+        else if (is_pause_position()) begin
+          
+          if (main_state == PAUSE) begin
+            out.rgb <= draw_resume();
+          end
+          else begin
+            out.rgb <= draw_pause();
+          end
+
+        end
+        else if (is_retry_position()) begin
           out.rgb <= draw_retry();
-        else if (vga_5q.hcount >= retry_xpos + 12'd32 &&
-                vga_5q.hcount <  retry_xpos + 12'd64)
+        end
+        else if (is_home_position()) begin
           out.rgb <= draw_home();
-        else
+        end
+        else begin
           out.rgb <= vga_5q.rgb;
+        end
 
       end
       default: board_state <= IDLE;
@@ -481,6 +494,35 @@ function logic [11:0] draw_number();
     return num_rgb_2q;
   else
     return draw_uncovered();
+endfunction
+
+function logic is_board_frame();
+  return hcount_valid_5q && vcount_valid_5q && 
+  (vga_5q.hcount == game_setup_cashe[BOARD_XPOS_REG_NUM] - 1 || 
+   vga_5q.vcount == game_setup_cashe[BOARD_YPOS_REG_NUM] - 1 ||
+   vga_5q.hcount == game_setup_cashe[BOARD_XPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM] ||
+   vga_5q.vcount == game_setup_cashe[BOARD_YPOS_REG_NUM] + game_setup_cashe[BOARD_SIZE_REG_NUM]);
+endfunction
+
+function logic is_pause_position();
+  return (vga_5q.hcount >= pause_resume_xpos && 
+          vga_5q.hcount < pause_resume_xpos + 12'd32 &&
+          vga_5q.vcount >= buttons_ypos &&
+          vga_5q.vcount < buttons_ypos + 12'd32);
+endfunction
+
+function logic is_retry_position();
+  return (vga_5q.hcount >= retry_xpos &&
+          vga_5q.hcount <  retry_xpos + 12'd32 &&
+          vga_5q.vcount >= buttons_ypos &&
+          vga_5q.vcount < buttons_ypos + 12'd32);
+endfunction
+
+function logic is_home_position();
+  return (vga_5q.hcount >= retry_xpos + 12'd32 &&
+          vga_5q.hcount <  retry_xpos + 12'd64 &&
+          vga_5q.vcount >= buttons_ypos &&
+          vga_5q.vcount < buttons_ypos + 12'd32);
 endfunction
 
 

@@ -17,15 +17,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000000 us"></ZoomStartTime>
-      <ZoomEndTime time="116.600001 us"></ZoomEndTime>
-      <Cursor1Time time="401.893507 us"></Cursor1Time>
+      <ZoomStartTime time="11,569.157 ns"></ZoomStartTime>
+      <ZoomEndTime time="12,295.158 ns"></ZoomEndTime>
+      <Cursor1Time time="11,690.157 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="354"></NameColumnWidth>
+      <NameColumnWidth column_width="330"></NameColumnWidth>
       <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="47" />
+   <WVObjectSize size="26" />
    <wvobject fp_name="/top_basys3_tb/rst" type="logic">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
@@ -131,148 +131,166 @@
       <obj_property name="ObjectShortName">row_col_num[15:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/adr_o" type="array">
-      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject fp_name="group64" type="group">
+      <obj_property name="label">Wishbone</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/adr_o" type="array">
+         <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
+         <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/dat_o" type="array">
+         <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/we_o" type="logic">
+         <obj_property name="ElementShortName">we_o</obj_property>
+         <obj_property name="ObjectShortName">we_o</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/stb_o" type="logic">
+         <obj_property name="ElementShortName">stb_o</obj_property>
+         <obj_property name="ObjectShortName">stb_o</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/cyc_o" type="logic">
+         <obj_property name="ElementShortName">cyc_o</obj_property>
+         <obj_property name="ObjectShortName">cyc_o</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/dat_i" type="array">
+         <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/ack_i" type="logic">
+         <obj_property name="ElementShortName">ack_i</obj_property>
+         <obj_property name="ObjectShortName">ack_i</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/stall_i" type="logic">
+         <obj_property name="ElementShortName">stall_i</obj_property>
+         <obj_property name="ObjectShortName">stall_i</obj_property>
+         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/adr_o" type="array">
+         <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
+         <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/dat_o" type="array">
+         <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/we_o" type="logic">
+         <obj_property name="ElementShortName">we_o</obj_property>
+         <obj_property name="ObjectShortName">we_o</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/stb_o" type="logic">
+         <obj_property name="ElementShortName">stb_o</obj_property>
+         <obj_property name="ObjectShortName">stb_o</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/cyc_o" type="logic">
+         <obj_property name="ElementShortName">cyc_o</obj_property>
+         <obj_property name="ObjectShortName">cyc_o</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/dat_i" type="array">
+         <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/ack_i" type="logic">
+         <obj_property name="ElementShortName">ack_i</obj_property>
+         <obj_property name="ObjectShortName">ack_i</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/stall_i" type="logic">
+         <obj_property name="ElementShortName">stall_i</obj_property>
+         <obj_property name="ObjectShortName">stall_i</obj_property>
+         <obj_property name="CustomSignalColor">#FFD700</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/adr_o" type="array">
+         <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
+         <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/dat_o" type="array">
+         <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/we_o" type="logic">
+         <obj_property name="ElementShortName">we_o</obj_property>
+         <obj_property name="ObjectShortName">we_o</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/stb_o" type="logic">
+         <obj_property name="ElementShortName">stb_o</obj_property>
+         <obj_property name="ObjectShortName">stb_o</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/cyc_o" type="logic">
+         <obj_property name="ElementShortName">cyc_o</obj_property>
+         <obj_property name="ObjectShortName">cyc_o</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/dat_i" type="array">
+         <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/ack_i" type="logic">
+         <obj_property name="ElementShortName">ack_i</obj_property>
+         <obj_property name="ObjectShortName">ack_i</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/stall_i" type="logic">
+         <obj_property name="ElementShortName">stall_i</obj_property>
+         <obj_property name="ObjectShortName">stall_i</obj_property>
+         <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
    </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/dat_o" type="array">
-      <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject fp_name="/top_basys3_tb/dut/u_top_vga/board_vga/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">board_out_hcount[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/we_o" type="logic">
-      <obj_property name="ElementShortName">we_o</obj_property>
-      <obj_property name="ObjectShortName">we_o</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/stb_o" type="logic">
-      <obj_property name="ElementShortName">stb_o</obj_property>
-      <obj_property name="ObjectShortName">stb_o</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/cyc_o" type="logic">
-      <obj_property name="ElementShortName">cyc_o</obj_property>
-      <obj_property name="ObjectShortName">cyc_o</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/dat_i" type="array">
-      <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/ack_i" type="logic">
-      <obj_property name="ElementShortName">ack_i</obj_property>
-      <obj_property name="ObjectShortName">ack_i</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write1_wb/stall_i" type="logic">
-      <obj_property name="ElementShortName">stall_i</obj_property>
-      <obj_property name="ObjectShortName">stall_i</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/adr_o" type="array">
-      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/dat_o" type="array">
-      <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/we_o" type="logic">
-      <obj_property name="ElementShortName">we_o</obj_property>
-      <obj_property name="ObjectShortName">we_o</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/stb_o" type="logic">
-      <obj_property name="ElementShortName">stb_o</obj_property>
-      <obj_property name="ObjectShortName">stb_o</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/cyc_o" type="logic">
-      <obj_property name="ElementShortName">cyc_o</obj_property>
-      <obj_property name="ObjectShortName">cyc_o</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/dat_i" type="array">
-      <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/ack_i" type="logic">
-      <obj_property name="ElementShortName">ack_i</obj_property>
-      <obj_property name="ObjectShortName">ack_i</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/write2_wb/stall_i" type="logic">
-      <obj_property name="ElementShortName">stall_i</obj_property>
-      <obj_property name="ObjectShortName">stall_i</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/adr_o" type="array">
-      <obj_property name="ElementShortName">adr_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">adr_o[7:0]</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/dat_o" type="array">
-      <obj_property name="ElementShortName">dat_o[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_o[15:0]</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/we_o" type="logic">
-      <obj_property name="ElementShortName">we_o</obj_property>
-      <obj_property name="ObjectShortName">we_o</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/stb_o" type="logic">
-      <obj_property name="ElementShortName">stb_o</obj_property>
-      <obj_property name="ObjectShortName">stb_o</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/cyc_o" type="logic">
-      <obj_property name="ElementShortName">cyc_o</obj_property>
-      <obj_property name="ObjectShortName">cyc_o</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/dat_i" type="array">
-      <obj_property name="ElementShortName">dat_i[15:0]</obj_property>
-      <obj_property name="ObjectShortName">dat_i[15:0]</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/ack_i" type="logic">
-      <obj_property name="ElementShortName">ack_i</obj_property>
-      <obj_property name="ObjectShortName">ack_i</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/top_basys3_tb/dut/u_top_memory/read_wb/stall_i" type="logic">
-      <obj_property name="ElementShortName">stall_i</obj_property>
-      <obj_property name="ObjectShortName">stall_i</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject fp_name="/top_basys3_tb/dut/u_top_vga/output_vga/hcount" type="array">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">hcount[10:0]</obj_property>
+      <obj_property name="label">out_out_hcount[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>

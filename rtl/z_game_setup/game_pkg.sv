@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /*
- Module name:   main_fsm.sv
+ Module name:   game_pkg.sv
  Author:        Wojciech Miskowicz
  Description:   The package containing game specific constants. 
  */
@@ -9,7 +9,7 @@
 package game_pkg;
   import vga_pkg::*;
 
-  // ==== Definition types ====
+// ==== Definition types ====
   enum logic [2:0] {BANNER, MENU, PAUSE, PLAY, WIN, LOST, GAME_OVER} fsm_state;
 
 // ======== EASY ========
@@ -24,7 +24,7 @@ package game_pkg;
 // ======== MEDIUM ========
   localparam [15:0] M_ROW_COLUMN_NUMBER = 8; 
   localparam [15:0] M_MINE_NUM          = 10;
-  localparam [15:0] M_TIMER_SECONDS     = 100;
+  localparam [15:0] M_TIMER_SECONDS     = 85;
   localparam [15:0] M_FIELD_SIZE        = 64;
   localparam [15:0] M_BOARD_SIZE        = M_FIELD_SIZE * M_ROW_COLUMN_NUMBER; 
   localparam [15:0] M_BOARD_XPOS        = X_CENTER - (M_BOARD_SIZE / 2); 
@@ -32,8 +32,8 @@ package game_pkg;
 
 // ======== HARD ========
   localparam [15:0] H_ROW_COLUMN_NUMBER = 10; 
-  localparam [15:0] H_MINE_NUM          = 12;
-  localparam [15:0] H_TIMER_SECONDS     = 120;
+  localparam [15:0] H_MINE_NUM          = 17;
+  localparam [15:0] H_TIMER_SECONDS     = 99;
   localparam [15:0] H_FIELD_SIZE        = 64;
   localparam [15:0] H_BOARD_SIZE        = H_FIELD_SIZE * H_ROW_COLUMN_NUMBER; 
   localparam [15:0] H_BOARD_XPOS        = X_CENTER - (H_BOARD_SIZE / 2); 

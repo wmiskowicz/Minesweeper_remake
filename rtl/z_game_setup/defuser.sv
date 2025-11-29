@@ -137,7 +137,7 @@ always_ff @(posedge clk) begin
              mouse_ypos >= game_setup_cashe[BOARD_YPOS_REG_NUM] - 15'd32 &&
              mouse_ypos <  game_setup_cashe[BOARD_YPOS_REG_NUM] && left)
     begin
-      pause_q <= !pause_q;
+      pause_q <= (main_state == PAUSE || main_state == PLAY) ? !pause_q : pause_q;
     end   
     else if (btm_q) begin
       if (btm_ctr >= BTM_RETRY_HOLD_CYCLES) begin

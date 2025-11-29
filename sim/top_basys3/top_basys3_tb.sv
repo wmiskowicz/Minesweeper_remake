@@ -85,7 +85,7 @@ top_basys3 dut (
 
     `TEST_CASE("BUG1") begin
       int mine_ctr;
-      WaitClk74(10);
+      WaitClk74(1000);
       MouseLeftClick();
       `CHECK_EQUAL(main_state, MENU);
 

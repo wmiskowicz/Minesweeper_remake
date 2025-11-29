@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="730,316.200 ns"></ZoomStartTime>
-      <ZoomEndTime time="730,456.001 ns"></ZoomEndTime>
-      <Cursor1Time time="730,339.500 ns"></Cursor1Time>
+      <ZoomStartTime time="729,630.034 ns"></ZoomStartTime>
+      <ZoomEndTime time="729,860.835 ns"></ZoomEndTime>
+      <Cursor1Time time="729,668.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="384"></NameColumnWidth>
+      <NameColumnWidth column_width="378"></NameColumnWidth>
       <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="20" />
+   <WVObjectSize size="22" />
    <wvobject fp_name="/draw_board_tb/dut/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -187,5 +187,13 @@
       <obj_property name="ObjectShortName">vcount[10:0]</obj_property>
       <obj_property name="label">5q_vcount[10:0](40)</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/hcount_valid_5q" type="logic">
+      <obj_property name="ElementShortName">hcount_valid_5q</obj_property>
+      <obj_property name="ObjectShortName">hcount_valid_5q</obj_property>
+   </wvobject>
+   <wvobject fp_name="/draw_board_tb/dut/vcount_valid_5q" type="logic">
+      <obj_property name="ElementShortName">vcount_valid_5q</obj_property>
+      <obj_property name="ObjectShortName">vcount_valid_5q</obj_property>
    </wvobject>
 </wave_config>
