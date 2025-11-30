@@ -18,12 +18,14 @@ module top_timer (
 
   input   wire  [7:0] sec_to_count,
   output  logic [7:0] seconds_left,
+  output  logic [7:0] miliseconds_left,
 
   output  logic time_elapsed
 );
 
 // ----- Local variables -----
 wire [7:0] second_ctr;
+wire [7:0] milisecond_ctr;
 
 
 time_controller u_time_controller(
@@ -34,14 +36,20 @@ time_controller u_time_controller(
   .stop  (stop),
   .retry (retry),
   
-  .time_elapsed (time_elapsed),
-  .sec_to_count (sec_to_count),
-  .second_ctr   (second_ctr)
+  .time_elapsed  (time_elapsed),
+  .sec_to_count  (sec_to_count),
+  .second_ctr    (second_ctr),
+  .milisecond_ctr(milisecond_ctr)
 );
 
-bin2bcd u_bin2bcd(
+bin2bcd sec_bin2bcd(
   .bin(second_ctr),
   .bcd(seconds_left)
+);
+
+bin2bcd msec_bin2bcd(
+  .bin(milisecond_ctr),
+  .bcd(miliseconds_left)
 );
 
 endmodule

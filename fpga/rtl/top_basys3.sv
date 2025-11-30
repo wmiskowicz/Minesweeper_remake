@@ -54,6 +54,7 @@ wire timer_stop;
 wire back_to_menu;
 wire retry;
 logic [7:0] seconds_left;
+logic [7:0] miliseconds_left;
 logic       time_elapsed;
 
 (* KEEP = "TRUE" *)
@@ -105,12 +106,12 @@ level_select u_level_select(
 sseg_disp u_disp(
   .clk    (clk74MHz),
   .reset  (rst),
-  .dp_in  (4'b1111), // active low
+  .dp_in  (4'b1011), // active low
 
   .hex3   (seconds_left[7:4]),
   .hex2   (seconds_left[3:0]),
-  .hex1   (0),
-  .hex0   (0),
+  .hex1   (seconds_left < 8'd10 ? miliseconds_left[7:4] : 4'd0),
+  .hex0   (seconds_left < 8'd10 ? miliseconds_left[3:0] : 4'd0),
 
   .an     (an),
   .sseg   (seg),
@@ -213,15 +214,16 @@ main_fsm u_main_fsm (
   .back_to_menu(back_to_menu),
   .retry       (retry),
 
-  .timer_stop   (timer_stop),
-  .seconds_left (seconds_left),
-  .time_elapsed (time_elapsed),
+  .timer_stop       (timer_stop),
+  .seconds_left     (seconds_left),
+  .miliseconds_left (miliseconds_left),
+  .time_elapsed     (time_elapsed),
 
-  .state_out    (main_state),
+  .state_out        (main_state),
 
-  .game_set_wb1 (planter_set_wb_if.slave),
-  .game_set_wb2 (defuser_set_wb_if.slave),
-  .game_set_wb3 (vga_set_wb_if.slave)
+  .game_set_wb1     (planter_set_wb_if.slave),
+  .game_set_wb2     (defuser_set_wb_if.slave),
+  .game_set_wb3     (vga_set_wb_if.slave)
 );
 
 

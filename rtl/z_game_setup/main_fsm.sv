@@ -24,6 +24,7 @@ module main_fsm#(
 
   output logic [2:0] state_out,
   output logic [7:0] seconds_left,
+  output logic [7:0] miliseconds_left,
   output logic       time_elapsed,
 
   wishbone_if.slave game_set_wb1,
@@ -158,6 +159,7 @@ top_timer u_top_timer(
   .retry (retry || (fsm_state == GAME_OVER)),   
 
   .sec_to_count (game_setup_mem[TIMER_SECONDS_REG_NUM][7:0]),
+  .miliseconds_left(miliseconds_left),
   .seconds_left (seconds_left),
   .time_elapsed (time_elapsed)
 );
