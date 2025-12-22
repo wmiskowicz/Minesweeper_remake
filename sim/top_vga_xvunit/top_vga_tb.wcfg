@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_vga_tb.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_wishbone_if_sv_176926771 " />
+            <top_module name="color_pkg" />
+            <top_module name="game_pkg" />
+            <top_module name="glbl" />
+            <top_module name="logger_pkg" />
+            <top_module name="top_vga_tb" />
+            <top_module name="vga_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="74.734 ns"></ZoomStartTime>
+      <ZoomEndTime time="208.335 ns"></ZoomEndTime>
+      <Cursor1Time time="97.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="390"></NameColumnWidth>
+      <ValueColumnWidth column_width="90"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="5" />
+   <wvobject fp_name="/top_vga_tb/dut/u_draw_bg/x_rect_ctr" type="array">
+      <obj_property name="ElementShortName">x_rect_ctr[7:0]</obj_property>
+      <obj_property name="ObjectShortName">x_rect_ctr[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_vga_tb/dut/u_draw_bg/y_rect_ctr" type="array">
+      <obj_property name="ElementShortName">y_rect_ctr[7:0]</obj_property>
+      <obj_property name="ObjectShortName">y_rect_ctr[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_vga_tb/dut/u_draw_bg/rect_hcount" type="array">
+      <obj_property name="ElementShortName">rect_hcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">rect_hcount[10:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_vga_tb/dut/u_draw_bg/rect_vcount" type="array">
+      <obj_property name="ElementShortName">rect_vcount[10:0]</obj_property>
+      <obj_property name="ObjectShortName">rect_vcount[10:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/top_vga_tb/rst" type="logic">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+</wave_config>

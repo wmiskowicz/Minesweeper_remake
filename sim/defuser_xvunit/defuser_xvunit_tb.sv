@@ -109,7 +109,7 @@ main_fsm u_main_fsm (
 );
 
 
-`TEST_SUITE_BEGIN_X 
+`TEST_SUITE_BEGIN 
 
     `TEST_SUITE_SETUP begin
       $display("Setting up test suite");
@@ -180,7 +180,7 @@ main_fsm u_main_fsm (
     end
 
 
-`TEST_SUITE_END_X
+`TEST_SUITE_END
 
 initial begin
   void'(logger::init());

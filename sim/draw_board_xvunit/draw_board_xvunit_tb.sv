@@ -110,7 +110,7 @@ main_fsm u_main_fsm (
   .game_set_wb3(game_set_if.slave)
 );
 
-`TEST_SUITE_BEGIN_X 
+`TEST_SUITE_BEGIN
 
     `TEST_SUITE_SETUP begin
       $display("Setting up test suite");
@@ -162,7 +162,7 @@ main_fsm u_main_fsm (
 
 
 
-`TEST_SUITE_END_X
+`TEST_SUITE_END
 
 
 task automatic WaitClocks(input int num_of_clock_cycles);

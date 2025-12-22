@@ -2,19 +2,21 @@
  /*
   Module name:   top_timer
   Author:        Wojciech Miskowicz
-  Description:   Top module for timer logic.
+  Description:   Top module for timer logic. 
+  Output second and milisecond values are in BCD format. 
   */
 //////////////////////////////////////////////////////////////////////////////
 
 `timescale 1 ns / 1 ps
 
-module top_timer (
+module top_timer #(
+  parameter int F_CLK_HZ = 100_000_000
+)(
   input   wire  clk,
   input   wire  rst,
 
   input   wire  start, stop,
   input   wire  retry,
-
 
   input   wire  [7:0] sec_to_count,
   output  logic [7:0] seconds_left,
@@ -28,7 +30,10 @@ wire [7:0] second_ctr;
 wire [7:0] milisecond_ctr;
 
 
-time_controller u_time_controller(
+time_controller #(
+  .F_CLK_HZ(F_CLK_HZ)
+)
+u_time_controller(
   .clk   (clk),
   .rst   (rst),
 

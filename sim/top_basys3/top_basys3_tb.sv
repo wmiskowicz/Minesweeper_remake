@@ -66,7 +66,7 @@ top_basys3 dut (
 );
 
 
-`TEST_SUITE_BEGIN_X 
+`TEST_SUITE_BEGIN
 
     `TEST_SUITE_SETUP begin
       $display("Setting up test suite");
@@ -133,7 +133,7 @@ top_basys3 dut (
       end
 
     
-`TEST_SUITE_END_X
+`TEST_SUITE_END
 
 
 task automatic WaitUntilState(input logic[2:0] current_state, input logic[2:0] target_state);

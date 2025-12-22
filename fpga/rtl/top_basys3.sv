@@ -110,8 +110,8 @@ sseg_disp u_disp(
 
   .hex3   (seconds_left[7:4]),
   .hex2   (seconds_left[3:0]),
-  .hex1   (seconds_left < 8'd10 ? miliseconds_left[7:4] : 4'd0),
-  .hex0   (seconds_left < 8'd10 ? miliseconds_left[3:0] : 4'd0),
+  .hex1   (seconds_left <= 8'd10 ? miliseconds_left[7:4] : 4'd0),
+  .hex0   (seconds_left <= 8'd10 ? miliseconds_left[3:0] : 4'd0),
 
   .an     (an),
   .sseg   (seg),

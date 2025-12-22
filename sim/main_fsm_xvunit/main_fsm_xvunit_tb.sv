@@ -95,7 +95,7 @@ initial begin
   forever #(CLK_PERIOD/2) clk = ~clk;
 end
 
-`TEST_SUITE_BEGIN_X 
+`TEST_SUITE_BEGIN 
 
     `TEST_SUITE_SETUP begin
       $display("Setting up test suite");
@@ -258,7 +258,7 @@ end
       `CHECK_EQUAL(main_state, PLAY);
     end
     
-`TEST_SUITE_END_X
+`TEST_SUITE_END
 
 
 task automatic WaitClocks(input int num_of_clock_cycles);

@@ -151,7 +151,10 @@ always_ff @(posedge clk) begin : fsm_blk
 end
 
 
-top_timer u_top_timer(
+top_timer #(
+  .F_CLK_HZ(74_250_000)
+)
+u_top_timer(
   .clk   (clk),
   .rst   (rst || (fsm_state == MENU)),
   .start (fsm_state == PLAY), 
