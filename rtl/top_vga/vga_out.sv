@@ -32,8 +32,6 @@ always_ff @(posedge clk) begin: buffer_swap_blk
   else if (in.hcount == HCOUNT_MAX) begin
     buffer_select <= ~buffer_select;
   end
-  else begin
-  end
 end
 
 // Write buffer
