@@ -10,6 +10,8 @@
 
 `include "../../rtl/memory/wishbone_defs.svh"
 `include "../../XVunit/internals/verilog/xvunit_defines.svh"
+`include "../../sim/top_mouse/ps2_if.sv"
+`include "../../sim/top_mouse/ps2_mouse_bfm.sv"
 
 
 module top_basys3_tb;
@@ -28,12 +30,24 @@ logic clk;
 logic clk74MHz;
 logic rst;
 
+ps2_if ps2_if0();
+ps2_mouse_bfm mouse_bfm;
+
 logic [4:0] led;
 wire PS2Clk;
 wire PS2Data;
 
 wire [2:0] main_state;
 wire locked;
+
+wire dut_clk_low  = (PS2Clk  === 1'b0);
+wire dut_data_low = (PS2Data === 1'b0);
+
+assign PS2Clk  = (ps2_if0.clk_drv  === 1'b0) ? 1'b0 : (dut_clk_low  ? 1'bz : 1'b1);
+assign PS2Data = (ps2_if0.data_drv === 1'b0) ? 1'b0 : (dut_data_low ? 1'bz : 1'b1);
+
+assign ps2_if0.clk_in  = (PS2Clk  === 1'b0) ? 1'b0 : 1'b1;
+assign ps2_if0.data_in = (PS2Data === 1'b0) ? 1'b0 : 1'b1;
 
 assign main_state = led[4:2];
 assign locked = led[0];
@@ -70,9 +84,12 @@ top_basys3 dut (
 
     `TEST_SUITE_SETUP begin
       $display("Setting up test suite");
+      // mouse_bfm = new(ps2_if0, 1us);
+      // mouse_bfm.start();
     end
 
     `TEST_CASE_SETUP begin
+      // mouse_bfm.init_mouse();
       Reset();
       @(posedge locked); // Wait for PLL to lock
     end

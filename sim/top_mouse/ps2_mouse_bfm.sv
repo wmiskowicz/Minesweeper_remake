@@ -3,7 +3,25 @@
  Module name:   ps2_mouse_bfm.sv
  Author:        Wojciech Miskowicz
  Description:   PS/2 Mouse Bus Functional Model for testbench use.
-                Implements bidirectional open-drain PS/2 protocol.
+                Implements the bidirectional open-drain PS/2 protocol,
+                acting as the device side of the link (the host is the DUT).
+
+                In the real protocol, the DEVICE always generates the
+                clock square wave on ps2_clk, even for host-to-device
+                transfers: the host merely requests a transfer by
+                holding the clock low, then lets the device clock the
+                bits in. This model reflects that: every byte transfer,
+                in either direction, is driven by this BFM toggling
+                clk_drv itself.
+
+                A single background process (bus_owner) owns the bus.
+                It answers whatever the host (DUT) sends (ACK, BAT result,
+                device ID) and, whenever the host is quiet, transmits the
+                movement packets queued by the testbench API
+                (set_position, click_button, ...). Having one owner
+                guarantees the BFM never mistakes its own clock pulses
+                for a host request-to-send, and never interleaves a
+                command response with a movement packet.
  Reference:     https://wiki.osdev.org/PS/2_Mouse
                 Adam Chapweske's PS/2 Mouse/Keyboard Protocol Guide
  */
@@ -12,14 +30,22 @@
 class ps2_mouse_bfm;
 
   // ----- PS/2 Protocol Parameters -----
-  localparam PS2_CLK_PERIOD = 60us;     // ~16.7 kHz clock
-  localparam PS2_CLK_HALF   = PS2_CLK_PERIOD / 2;
-  localparam HOST_TIMEOUT   = 1000us;   // Host wait timeout
-  
-  // Pull-up resistors values (simulation abstraction)
-  localparam PULLUP_STRENGTH = 1'b1;    // Weak pull-up when line is released
+  // A real mouse clocks at 10-16.7kHz (60-100us period). The DUT
+  // (Ps2Interface.vhd) has no upper bound on the bit time and only needs
+  // each level to be stable for >16 cycles @100MHz to pass its
+  // debouncer, so the period can be shortened to speed up simulation.
+  // Keep it well above ~1us so every level survives the debouncer and
+  // the host's 63-cycle wait after releasing the clock.
+  realtime clk_half_period;
 
-  // Mouse command bytes
+  // A real mouse is a free-running oscillator, completely async to the
+  // FPGA's 100MHz system clock. Jitter each half-period slightly so the
+  // edges don't always land at the same phase of the system clock.
+  function automatic realtime half_period_jittered();
+    return clk_half_period + ($urandom_range(0, 19) * 1ns);
+  endfunction
+
+  // Mouse command bytes (sent by host)
   typedef enum logic [7:0] {
     CMD_RESET           = 8'hFF,
     CMD_RESEND          = 8'hFE,
@@ -39,13 +65,15 @@ class ps2_mouse_bfm;
     CMD_SET_SCALING_1_1 = 8'hE6
   } mouse_cmd_e;
 
-  // Mouse response bytes
+  // Mouse response bytes (sent by device)
   typedef enum logic [7:0] {
     RESP_SELF_TEST_PASS = 8'hAA,
     RESP_ACK            = 8'hFA,
     RESP_SELF_TEST_FAIL = 8'hFC,
     RESP_ERROR          = 8'hFE
   } mouse_resp_e;
+
+  localparam logic [7:0] MOUSE_ID = 8'h00; // plain 3-byte-packet mouse, no wheel
 
   // Mouse packet structure
   typedef struct packed {
@@ -61,376 +89,264 @@ class ps2_mouse_bfm;
     logic [7:0] y_movement;
   } mouse_packet_t;
 
-  // Configuration
-  int sample_rate = 100;
-  int resolution  = 4;
-  logic scaling_2_1 = 0;
-  logic stream_mode = 1;
-  logic enabled = 0;
-
   // Internal state
-  mouse_packet_t last_packet;
   int x_pos = 0;
   int y_pos = 0;
-  logic left_btn = 0;
-  logic right_btn = 0;
+  logic left_btn   = 0;
+  logic right_btn  = 0;
   logic middle_btn = 0;
+  bit   enabled    = 0;
+  bit   verbose    = 1;
+
+  // Set when the previous host byte was a command that takes a
+  // parameter (SET_SAMPLE_RATE, SET_RESOLUTION): the next byte is that
+  // parameter and must only be ACKed, never decoded as a command.
+  bit expect_param = 0;
+
+  // Bytes waiting to be sent to the host (movement packets), and the
+  // number of bytes the bus owner is still transmitting from it.
+  logic [7:0] tx_queue[$];
+  bit         tx_busy = 0;
+
+  // Fires each time the host (DUT) finishes a full init handshake and
+  // sends CMD_ENABLE, i.e. once the mouse is ready to stream movement.
+  event e_init_done;
 
   // Virtual interface
   virtual ps2_if.mouse ps2_vif;
 
   // Constructor
-  function new(virtual ps2_if.mouse vif);
+  function new(virtual ps2_if.mouse vif, realtime half_period = 30us);
     this.ps2_vif = vif;
-    $display("PS/2 Mouse BFM created");
+    this.clk_half_period = half_period;
+    $display("PS/2 Mouse BFM created (clock half-period %0t)", half_period);
   endfunction
 
-  // ----- Open-drain drive helper functions -----
-  // Drive line low (0) or release to pull-up (1)
+  // ----- Open-drain drive helper tasks -----
   task drive_clk_low();
     ps2_vif.clk_drv = 1'b0;
   endtask
-  
+
   task release_clk();
-    ps2_vif.clk_drv = 1'b1;  // High-Z in real hardware, pull-up pulls to 1
+    ps2_vif.clk_drv = 1'b1;
   endtask
-  
+
   task drive_data_low();
     ps2_vif.data_drv = 1'b0;
   endtask
-  
+
   task release_data();
-    ps2_vif.data_drv = 1'b1;  // High-Z in real hardware
+    ps2_vif.data_drv = 1'b1;
   endtask
-  
-  // Read current line state with pull-up simulation
-  function logic read_clk();
-    return (ps2_vif.clk_drv === 1'b0) ? 1'b0 : PULLUP_STRENGTH;
-  endfunction
-  
+
+  // Read the actual bus line state (resolution of every driver)
   function logic read_data();
-    return (ps2_vif.data_drv === 1'b0) ? 1'b0 : PULLUP_STRENGTH;
+    return ps2_vif.data_in;
   endfunction
 
-  // ----- Task: Initialize lines to idle state -----
-  task init_mouse_lines();
+  // ----- Task: start the BFM -----
+  // Releases both lines and launches the background bus owner that
+  // keeps answering the host for the rest of the simulation. Call this
+  // once, before the DUT is taken out of reset.
+  task automatic start();
     release_clk();
     release_data();
     #10us;
     $display("PS/2 lines initialized to idle (both high)");
+    fork
+      bus_owner();
+    join_none
   endtask
 
-    // ----- Task: Receive Byte from Mouse (Device-to-Host) -----
-  // This is called by the testbench to receive a byte that the mouse sends
-  task receive_device_byte(output logic [7:0] data);
-    logic parity, received_parity;
-    logic stop_bit;
-    
-    $display("Testbench waiting to receive byte from mouse...");
-    
-    // Wait for mouse to start transmission
-    // Mouse pulls data low while clock is high
-    wait(read_data() === 1'b0 && read_clk() === 1'b1);
-    $display("Mouse start bit detected (data low, clock high) at %t", $time);
-    
-    // Mouse then pulls clock low
-    wait_clock_low();
-    $display("Mouse pulled clock low at %t", $time);
-    
-    // Mouse releases clock (starts generating clock pulses)
-    wait_clock_high();
-    $display("Mouse started clock generation at %t", $time);
-    
-    // Receive 8 data bits (mouse sends on falling edge, host reads on falling edge for device->host)
-    data = 8'h00;
-    for (int i = 0; i < 8; i++) begin
-      // Wait for falling edge (mouse toggles clock)
-      wait_clock_fall();
-      
-      // Host reads data on falling edge for device->host communication
-      #1us;  // Small setup time after clock edge
-      data[i] = read_data();
-      
-      // Wait for clock to go high before next bit
-      wait_clock_high();
-    end
-    
-    // Receive parity bit
-    wait_clock_fall();
-    #1us;
-    received_parity = read_data();
-    wait_clock_high();
-    
-    // Receive stop bit (should be high)
-    wait_clock_fall();
-    #1us;
-    stop_bit = read_data();
-    wait_clock_high();
-    
-    // Verify parity (should be odd parity for PS/2)
-    parity = ^data;  // Calculate odd parity (1 if even number of 1's in data)
-    if (received_parity !== parity) begin
-      $warning("Parity error in mouse transmission: data=0x%02h, expected parity=%b, got=%b", 
-               data, parity, received_parity);
-    end
-    
-    // Verify stop bit
-    if (stop_bit !== 1'b1) begin
-      $error("Stop bit error in mouse transmission: expected 1, got %b", stop_bit);
-    end
-    
-    // After stop bit, mouse releases data line
-    wait(read_data() === 1'b1);
-    
-    // Host should pull data low to acknowledge
-    #10us;
-    drive_data_low();
-    
-    // Wait for mouse to pull clock low
-    wait_clock_low();
-    
-    // Host releases data line
-    release_data();
-    
-    // Wait for mouse to release clock
-    wait_clock_high();
-    
-    // Verify lines return to idle
-    wait_for_idle();
-    
-    $display("Testbench received byte from mouse: 0x%02h at %t (parity OK: %b)", 
-             data, $time, (received_parity === parity));
+  // ----- Task: wait for the host to complete its init sequence -----
+  // The DUT re-runs its whole RESET..ENABLE handshake every time it is
+  // reset, so this can be called again after every reset.
+  task automatic init_mouse();
+    $display("Waiting for host to complete mouse initialization...");
+    @(e_init_done);
+    $display("Mouse initialization complete at %t", $time);
   endtask
 
-  // ----- Task: Initialize Mouse -----
-  task init_mouse();
-    logic [7:0] resp_byte;
-    
-    $display("Initializing PS/2 mouse...");
-    init_mouse_lines();
-
-    // Reset mouse
-    send_command(CMD_RESET);
-    wait_response(RESP_ACK, "Reset ACK");
-    
-    // Wait for self-test pass
-    receive_device_byte(resp_byte);
-    if (resp_byte == RESP_SELF_TEST_PASS) begin
-      $display("Mouse self-test passed: 0x%02h", resp_byte);
-    end else begin
-      $error("Mouse self-test failed: 0x%02h", resp_byte);
+  // ----- Background task: the only process that touches the bus -----
+  // Host requests always win: a host request-to-send (clock pulled low
+  // while we are not driving it) is served first. Queued movement bytes
+  // are only sent while the host is idle and the mouse is enabled.
+  task automatic bus_owner();
+    logic [7:0] cmd;
+    forever begin
+      // Host request-to-send: clock low while we are not driving it.
+      if (ps2_vif.clk_in === 1'b0 && ps2_vif.clk_drv === 1'b1) begin
+        receive_host_byte(cmd);
+        handle_host_byte(cmd);
+      end else if (enabled && tx_queue.size() > 0) begin
+        tx_busy = 1;
+        send_device_byte(tx_queue.pop_front());
+        tx_busy = 0;
+      end else begin
+        // Poll: a host request-to-send holds the clock low for 100us,
+        // so a 1us poll can't miss it, and it also picks up bytes newly
+        // queued by the testbench.
+        #1us;
+      end
     end
-    
-    // Get mouse ID
-    receive_device_byte(resp_byte);
-    $display("Mouse ID: 0x%02h", resp_byte);
+  endtask
 
-    // Set defaults and enable
-    send_command(CMD_SET_DEFAULTS);
-    wait_response(RESP_ACK, "Defaults set");
+  // ----- Protocol behaviour for each byte received from the host -----
+  task automatic handle_host_byte(logic [7:0] cmd);
+    if (expect_param) begin
+      // Parameter of SET_SAMPLE_RATE / SET_RESOLUTION
+      expect_param = 0;
+      send_device_byte(RESP_ACK);
+      return;
+    end
 
-    send_command(CMD_ENABLE);
-    wait_response(RESP_ACK, "Data reporting enabled");
-    enabled = 1;
+    case (cmd)
+      CMD_RESET: begin
+        enabled = 0;
+        tx_queue.delete();
+        send_device_byte(RESP_ACK);
+        send_device_byte(RESP_SELF_TEST_PASS);
+        send_device_byte(MOUSE_ID);
+      end
 
-    // Configure sample rate and resolution
-    set_sample_rate(sample_rate);
-    set_resolution(resolution);
+      CMD_GET_DEVICE_ID: begin
+        send_device_byte(RESP_ACK);
+        send_device_byte(MOUSE_ID);
+      end
 
-    $display("Mouse initialization complete");
+      CMD_SET_SAMPLE_RATE, CMD_SET_RESOLUTION: begin
+        expect_param = 1;
+        send_device_byte(RESP_ACK);
+      end
+
+      CMD_ENABLE: begin
+        send_device_byte(RESP_ACK);
+        enabled = 1;
+        -> e_init_done;
+      end
+
+      CMD_DISABLE: begin
+        send_device_byte(RESP_ACK);
+        enabled = 0;
+      end
+
+      default: begin
+        // SET_DEFAULTS, SET_SCALING, ... : a plain ACK.
+        send_device_byte(RESP_ACK);
+      end
+    endcase
   endtask
 
   // ----- Task: Send Byte from Mouse to Host (Device-to-Host) -----
-  task send_device_byte(logic [7:0] data);
+  // Device-generated clock: 11 pulses (start, 8 data bits, parity,
+  // stop). Data is changed while the clock is high and sampled by the
+  // host on the falling edge, per the PS/2 spec. No ack is expected
+  // from the host for this direction.
+  task automatic send_device_byte(logic [7:0] data);
     logic parity;
-    logic [10:0] frame;  // Start(0) + 8 data + parity + stop(1)
-    
-    parity = ~(^data);  // Odd parity for PS/2 (1 if even number of 1's)
-    
-    // Build frame: start(0), data[0:7], parity, stop(1)
+    logic [10:0] frame;  // {stop, parity, data[7:0], start}
+
+    parity = ~(^data);  // odd parity
     frame = {1'b1, parity, data, 1'b0};
-    
-    $display("Mouse sending byte: 0x%02h (parity=%b) at %t", data, parity, $time);
-    
-    // Check if host is trying to send (clock low means host wants to send)
-    if (read_clk() === 1'b0) begin
-      $warning("Host is trying to send, waiting for completion");
-      wait_for_idle();
+
+    wait_for_idle();
+    if (verbose) $display("[%0t] BFM -> host: 0x%02h", $time, data);
+
+    for (int i = 0; i < 11; i++) begin
+      if (frame[i]) release_data();
+      else          drive_data_low();
+      #(half_period_jittered());
+      drive_clk_low();   // falling edge: host samples data now
+      #(half_period_jittered());
+      release_clk();     // rising edge
     end
-    
-    // 1. Mouse pulls data low (start bit)
-    drive_data_low();
-    #50us;
-    
-    // 2. Mouse pulls clock low
-    drive_clk_low();
-    #50us;
-    
-    // 3. Release clock - device generates clock
-    release_clk();
-    
-    // 4. Wait for clock to go high (device generates clock)
-    wait_clock_high();
-    
-    // 5. Send bits on falling edge, host reads on falling edge for device->host
-    for (int i = 0; i < 11; i++) begin  // 11 bits total
-      // Wait for clock to go low (device controls clock)
-      wait_clock_low();
-      
-      // Set data bit on falling edge
-      #1us;  // Small setup time
-      if (frame[i] === 1'b0) begin
-        drive_data_low();
-      end else begin
-        release_data();  // Pull-up will make it high
-      end
-      
-      // Wait for clock to go high
-      wait_clock_high();
-    end
-    
-    // 6. Release data line after stop bit
-    wait_clock_low();
+
     release_data();
-    
-    // 7. Release clock line
-    wait_clock_high();
-    release_clk();
-    
-    // 8. Wait for host to acknowledge (pull data low)
-    fork : wait_ack
-      begin
-        wait(read_data() === 1'b0);
-        $display("Host ACK received at %t", $time);
-        #50us;
-      end
-      begin
-        #HOST_TIMEOUT;
-        $warning("Host ACK timeout at %t", $time);
-      end
-    join_any
-    disable wait_ack;
-    
-    // 9. Wait for host to release data
-    wait(read_data() === 1'b1);
-    
-    $display("Mouse finished sending byte: 0x%02h at %t", data, $time);
+    settle();
+  endtask
+
+  // Let the bus resolve after we release the lines. Without this the
+  // bus owner could re-sample clk_in in the same time step, still see
+  // our own (stale) low level and mistake it for a host request-to-send.
+  task automatic settle();
+    #1us;
   endtask
 
   // ----- Task: Receive Byte from Host (Host-to-Device) -----
-  task receive_host_byte(output logic [7:0] data);
-    logic parity, received_parity;
-    logic stop_bit;
-    
-    $display("Mouse waiting to receive byte from host...");
-    
-    // Wait for host to start transmission
-    // Host pulls clock low for at least 100us
-    wait(read_clk() === 1'b0);
-    $display("Host pulled clock low at %t", $time);
-    #150us;  // Wait >100us as per spec
-    
-    // Wait for host to pull data low (start bit)
-    wait(read_data() === 1'b0);
-    $display("Host start bit detected at %t", $time);
-    
-    // Host releases clock
-    wait(read_clk() === 1'b1);
-    $display("Host released clock at %t", $time);
-    
-    // Receive 8 data bits (host sends on falling edge, mouse reads on rising edge)
+  // Host requests a transfer by holding clk low (>=100us) then data
+  // low (start bit) then releasing clk. From there the DEVICE (us)
+  // generates the clock: 8 data bits, parity and stop are read while
+  // the clock is high (host changes data while it is low). An 11th
+  // clock pulse carries our ACK (data held low).
+  task automatic receive_host_byte(output logic [7:0] data);
+    logic parity, received_parity, stop_bit;
+
+    // Host is holding the clock low (>=100us). It then pulls data low
+    // (start bit) and finally releases the clock: only then may we
+    // start clocking the bits in.
+    wait (ps2_vif.data_in === 1'b0);
+    wait (ps2_vif.clk_in === 1'b1);
+    #(half_period_jittered());
+
     data = 8'h00;
-    for (int i = 0; i < 8; i++) begin
-      wait_clock_fall();      // Wait for host to toggle clock
-      wait_clock_rise();      // Mouse reads on rising edge for host->device
-      data[i] = read_data();
+    for (int i = 0; i < 10; i++) begin
+      drive_clk_low();
+      #(half_period_jittered());
+      release_clk();
+      #(half_period_jittered());
+      if (i < 8)
+        data[i] = read_data();
+      else if (i == 8)
+        received_parity = read_data();
+      else
+        stop_bit = read_data();
     end
-    
-    // Receive parity bit
-    wait_clock_fall();
-    wait_clock_rise();
-    received_parity = read_data();
-    
-    // Receive stop bit
-    wait_clock_fall();
-    wait_clock_rise();
-    stop_bit = read_data();
-    
-    // Verify parity (should be odd parity)
-    parity = ^data;
-    if (received_parity !== parity) begin
-      $warning("Parity error: expected %b, got %b", parity, received_parity);
-    end
-    
-    // Verify stop bit
-    if (stop_bit !== 1'b1) begin
-      $error("Stop bit error: expected 1, got %b", stop_bit);
-    end
-    
-    // Mouse pulls data low to acknowledge
-    #50us;
+
+    parity = ~(^data);  // odd parity, matching send_device_byte
+    if (received_parity !== parity)
+      $error("Parity error in host->device transmission: data=0x%02h, expected parity=%b, got=%b",
+             data, parity, received_parity);
+    if (stop_bit !== 1'b1)
+      $error("Stop bit error in host->device transmission: expected 1, got %b", stop_bit);
+
+    // Acknowledge: data low, then one more clock pulse, then release.
     drive_data_low();
-    
-    // Wait for host to pull clock low
-    wait_clock_fall();
-    
-    // Mouse releases data
+    #(half_period_jittered());
+    drive_clk_low();
+    #(half_period_jittered());
+    release_clk();
     release_data();
-    
-    // Wait for host to release both lines
-    wait(read_clk() === 1'b1 && read_data() === 1'b1);
-    
-    $display("Mouse received byte from host: 0x%02h at %t", data, $time);
-  endtask
+    settle();
 
-  // ----- Task: Send Command to Mouse (from testbench) -----
-  task send_command(logic [7:0] cmd);
-    $display("Testbench sending command to mouse: 0x%02h", cmd);
-    
-    // Use host-to-device communication
-    receive_host_byte(cmd);
-    
-    // Wait for mouse response (ACK)
-    wait_response(RESP_ACK, $sformatf("Command 0x%02h ACK", cmd));
-  endtask
-
-  // ----- Task: Wait for Specific Response from Mouse -----
-  task wait_response(logic [7:0] expected, string msg = "");
-    logic [7:0] received;
-    
-    // Mouse responds with device-to-host communication
-    send_device_byte(expected);  // Actually we need to receive from mouse
-    
-    // For simplicity, we'll use a different approach
-    // In real testbench, you'd monitor what the mouse sends
-    if (msg != "") begin
-      $display("Expected mouse response: %s (0x%02h)", msg, expected);
-    end
+    if (verbose) $display("[%0t] host -> BFM: 0x%02h", $time, data);
   endtask
 
   // ----- Task: Send Movement Packet -----
-  task send_packet(mouse_packet_t packet);
+  // Queues the 3 packet bytes for the bus owner and blocks until they
+  // have all been transmitted.
+  task automatic send_packet(mouse_packet_t packet);
     $display("Mouse sending packet: X=%0d, Y=%0d, B=[L:%0d M:%0d R:%0d]",
       $signed(packet.x_movement), $signed(packet.y_movement),
       packet.left, packet.middle, packet.right);
-    
-    // Send three bytes as per PS/2 mouse protocol
-    send_device_byte({packet.y_ovf, packet.x_ovf, packet.y_sign, packet.x_sign,
-                     packet.always_1, packet.middle, packet.right, packet.left});
-    send_device_byte(packet.x_movement);
-    send_device_byte(packet.y_movement);
-    
-    last_packet = packet;
+
+    if (!enabled)
+      $warning("Packet queued while mouse reporting is disabled; it is held until the host enables it");
+
+    tx_queue.push_back({packet.y_ovf, packet.x_ovf, packet.y_sign, packet.x_sign,
+                        packet.always_1, packet.middle, packet.right, packet.left});
+    tx_queue.push_back(packet.x_movement);
+    tx_queue.push_back(packet.y_movement);
+    wait (tx_queue.size() == 0 && !tx_busy);
   endtask
 
-  // ----- Task: Set Mouse Position -----
-  task set_position(
-    input int delta_x, 
+  // ----- Task: Set Mouse Position (relative move + button state) -----
+  task automatic set_position(
+    input int delta_x,
     input int delta_y,
-    logic left = 0, 
-    logic right = 0, 
+    logic left = 0,
+    logic right = 0,
     logic middle = 0);
-    
+
     automatic mouse_packet_t packet;
     automatic logic signed [7:0] dx_signed, dy_signed;
 
@@ -452,7 +368,7 @@ class ps2_mouse_bfm;
       dx_signed = delta_x;
       packet.x_ovf = 1'b0;
     end
-    
+
     if (delta_y > 127) begin
       dy_signed = 8'd127;
       packet.y_ovf = 1'b1;
@@ -476,70 +392,10 @@ class ps2_mouse_bfm;
     send_packet(packet);
   endtask
 
-  // ----- Task: Set Sample Rate -----
-  task set_sample_rate(int rate);
-    $display("Setting sample rate: %0d Hz", rate);
-    
-    send_command(CMD_SET_SAMPLE_RATE);
-    // Note: Mouse will send ACK via wait_response in send_command
-    
-    // Send rate value
-    receive_host_byte(rate[7:0]);
-    
-    sample_rate = rate;
-    $display("Sample rate set to %0d Hz", rate);
-  endtask
-
-  // ----- Task: Set Resolution -----
-  task set_resolution(int res);
-    automatic logic [7:0] res_code;
-
-    case (res)
-      1: res_code = 8'h00;
-      2: res_code = 8'h01;
-      4: res_code = 8'h02;
-      8: res_code = 8'h03;
-      default: begin
-        $warning("Invalid resolution %0d, using 4", res);
-        res_code = 8'h02;
-      end
-    endcase
-
-    $display("Setting resolution: %0d counts/mm", res);
-
-    send_command(CMD_SET_RESOLUTION);
-    // Note: Mouse will send ACK via wait_response in send_command
-    
-    // Send resolution code
-    receive_host_byte(res_code);
-    
-    resolution = res;
-    $display("Resolution set to %0d counts/mm", res);
-  endtask
-
-  // ----- Clock edge detection tasks -----
-  task wait_clock_rise();
-    @(posedge ps2_vif.clk_in);
-  endtask
-  
-  task wait_clock_fall();
-    @(negedge ps2_vif.clk_in);
-  endtask
-  
-  task wait_clock_high();
-    wait(read_clk() === 1'b1);
-  endtask
-  
-  task wait_clock_low();
-    wait(read_clk() === 1'b0);
-  endtask
-
   // ----- Task: Wait for idle state -----
-  task wait_for_idle();
-    // Wait for both lines to be high (released)
-    wait(read_clk() === 1'b1 && read_data() === 1'b1);
-    #10us;
-    $display("PS/2 bus idle at %t", $time);
+  task automatic wait_for_idle();
+    wait (ps2_vif.clk_in === 1'b1 && ps2_vif.data_in === 1'b1);
+    #(half_period_jittered());
   endtask
 
   // ----- Status Report -----
@@ -547,19 +403,20 @@ class ps2_mouse_bfm;
     $display("=== Mouse Status ===");
     $display("Position: X=%0d, Y=%0d", x_pos, y_pos);
     $display("Buttons: L=%0d M=%0d R=%0d", left_btn, middle_btn, right_btn);
-    $display("Sample: %0d Hz, Res: %0d c/mm", sample_rate, resolution);
     $display("Enabled: %0d", enabled);
   endfunction
 
   // ----- Helper tasks for testbench use -----
-  task click_button(bit left = 1, bit middle = 0, bit right = 0);
+  task automatic click_button(bit left = 1, bit middle = 0, bit right = 0);
     $display("Mouse click: L=%0d M=%0d R=%0d", left, middle, right);
     set_position(0, 0, left, right, middle);
-    #20ms;
+    // Held just long enough to clear the CDC/FIFO pipeline into
+    // mouse_xpos/left/right, not a realistic human click duration.
+    #200us;
     set_position(0, 0, 0, 0, 0);
   endtask
 
-  task move_smooth(int delta_x, int delta_y, int steps = 10);
+  task automatic move_smooth(int delta_x, int delta_y, int steps = 10);
     automatic int step_x, step_y;
     automatic int current_x = 0;
     automatic int current_y = 0;
@@ -574,12 +431,10 @@ class ps2_mouse_bfm;
 
       current_x += step_x;
       current_y += step_y;
-
-      #(1000ms / sample_rate);
     end
   endtask
 
-  task random_movement(int max_distance = 50, int packets = 10);
+  task automatic random_movement(int max_distance = 50, int packets = 10);
     automatic int dx, dy;
 
     $display("Random movement: %0d packets", packets);
@@ -589,7 +444,6 @@ class ps2_mouse_bfm;
       dy = $urandom_range(-max_distance, max_distance);
 
       set_position(dx, dy, left_btn, right_btn, middle_btn);
-      #(1000ms / sample_rate);
     end
   endtask
 

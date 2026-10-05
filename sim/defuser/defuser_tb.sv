@@ -8,8 +8,10 @@
 
 `include "../../rtl/memory/wishbone_defs.svh"
 `include "../../rtl/z_game_setup/defuser.svh"
+`include "../../XVunit/internals/verilog/xvunit_defines.svh"
 
-module defuser_tb;
+
+module defuser_xvunit_tb;
 
 import logger_pkg::*;
 import game_pkg::*;
@@ -32,7 +34,8 @@ logic right;
 wire game_lost;
 logic retry;
 logic [1:0] level;
-
+wire back_to_menu;
+logic pause;
 logic [2:0] main_state;
 
 
@@ -53,7 +56,8 @@ defuser dut (
   .clk              (clk),
   .rst              (rst),
   .retry            (retry),
-
+  .back_to_menu     (back_to_menu),
+  .pause            (pause),
   .planting_complete(planting_complete),
   .main_state       (main_state),
 
@@ -85,6 +89,7 @@ main_fsm u_main_fsm (
   .clk         (clk),
   .rst         (rst),
 
+  .back_to_menu(back_to_menu),
   .level       (level),
   .left        (left),
   .right       (right),
@@ -102,6 +107,80 @@ main_fsm u_main_fsm (
   .game_set_wb2(game_set_wb2.slave),
   .game_set_wb3(game_set_wb3.slave)
 );
+
+
+`TEST_SUITE_BEGIN 
+
+    `TEST_SUITE_SETUP begin
+      $display("Setting up test suite");
+    end
+
+    `TEST_CASE_SETUP begin
+      planting_complete = 1'b0;
+      mouse_xpos = 12'd0;
+      mouse_ypos = 12'd0;
+      left = 1'b0;
+      right = 1'b0;
+      retry = 1'b0;
+      pause = 1'b0;
+      level = 2'd2; // constant medium level
+
+      defuser_game_set_wb.stall_i = 1'b0;
+      defuser_game_board_wb.stall_i = 1'b0;
+      game_set_wb2.stall_i = 1'b0;
+      game_set_wb3.stall_i = 1'b0;
+      Reset();
+    end
+
+    `TEST_CASE("TC000") begin
+      $display("Verify reset state");
+      `CHECK_EQUAL(dut.defuser_state, DEF_IDLE);
+      `CHECK_EQUAL(dut.auto_write_state, AW_WAIT);
+      `CHECK_EQUAL(dut.auto_read_state, AR_IDLE);
+      `CHECK_EQUAL(dut.board_ready, 1'b0);
+    end
+
+    `TEST_CASE("TC001") begin
+      $display("Verify that defuser transitions from IDLE to READ_BOARD when main_state");
+      $display("main_state is equal to PLAY and planting_complete input is asserted");
+
+      `CHECK_EQUAL(dut.defuser_state, DEF_IDLE);
+      MouseLeftClick();
+      WaitClocks(10);
+      `CHECK_EQUAL(main_state, PLAY);
+
+      planting_complete = 1'b1;
+      WaitClocks(2);
+      `CHECK_EQUAL(dut.defuser_state, DEF_READ_BOARD);
+    end
+
+    
+    `TEST_CASE("TC002") begin
+      $display("Verify that data in wishbone memory is populated");
+      $display("to internal settings and game_board memory.");
+
+      u_wishbone_board_mem.board_mem[0][0].mine = 1'b1;
+      u_wishbone_board_mem.board_mem[3][3].mine = 1'b1;
+      u_wishbone_board_mem.board_mem[5][5].mine = 1'b1;
+
+      // Put into READ_BOARD_STATE
+      MouseLeftClick();
+      WaitClocks(10);
+      planting_complete = 1'b1;
+      WaitClocks(2);
+      wait(dut.board_ready == 1'b1);
+
+      `CHECK_EQUAL(dut.game_board_mem[0][0].mine, 1'b1);
+      `CHECK_EQUAL(dut.game_board_mem[3][3].mine, 1'b1);
+      `CHECK_EQUAL(dut.game_board_mem[5][5].mine, 1'b1);
+      `CHECK_EQUAL(dut.game_board_mem[4][4].mine, 1'b0);
+      `CHECK_EQUAL(dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM], M_ROW_COLUMN_NUMBER);
+      `CHECK_EQUAL(dut.game_setup_cashe[BOARD_XPOS_REG_NUM], M_BOARD_XPOS);
+
+    end
+
+
+`TEST_SUITE_END
 
 initial begin
   void'(logger::init());
@@ -121,13 +200,8 @@ initial begin
   game_set_wb2.stall_i = 1'b0;
   game_set_wb3.stall_i = 1'b0;
   
-  InitReset();
+  Reset();
   
-  `log_info("Starting defuser module testbench");
-  
-  // Test 1: Verify reset state
-  `check_eq(dut.defuser_state, DEF_IDLE, "Reset state should be DEF_IDLE");
-  `check_eq(dut.board_ready, 1'b0, "Board should not be ready after reset");
   
   // Initialize test mines
   u_wishbone_board_mem.board_mem[0][0].mine = 1'b1;
@@ -141,14 +215,14 @@ initial begin
   
   `check_eq(dut.auto_read_state, AR_READ_SETTINGS, "Should be reading settings");
 
-  click_left_mouse();
+  MouseLeftClick();
 
 
   wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
   WaitClocks(50);
   mouse_xpos = M_BOARD_XPOS + 1;
   mouse_ypos = M_BOARD_YPOS + 1;
-  click_left_mouse();
+  MouseLeftClick();
 
   WaitClocks(100);
   `check_eq(game_lost, 1'b1);
@@ -175,18 +249,18 @@ initial begin
   WaitClocks(10);
   mouse_xpos = E_BOARD_XPOS + 1;
   mouse_ypos = E_BOARD_YPOS + 1;
-  click_right_mouse();
+  MouseRightClick();
   WaitClocks(500);
   `check_eq(dut.game_won, 1'b0);
   mouse_xpos = E_BOARD_XPOS + (E_FIELD_SIZE * 5) + 1;
   mouse_ypos = E_BOARD_YPOS + (E_FIELD_SIZE * 5) + 1;
   WaitClocks(10);
-  click_right_mouse();
+  MouseRightClick();
   WaitClocks(500);
   wait(dut.defuser_state == DEF_WAIT_FOR_MOUSE);
   mouse_xpos = E_BOARD_XPOS + (E_FIELD_SIZE * 2) + 1;
   mouse_ypos = E_BOARD_YPOS + (E_FIELD_SIZE * 2) + 1;
-  click_left_mouse();
+  MouseLeftClick();
   WaitClocks(500);
 
   
@@ -206,13 +280,13 @@ task automatic WaitClocks(input int num_of_clock_cycles);
   repeat (num_of_clock_cycles) @(posedge clk);
 endtask
 
-task automatic InitReset();
+task automatic Reset();
   rst = 1;
   WaitClocks(10);
   rst = 0;
 endtask
 
-task automatic click_left_mouse();
+task automatic MouseLeftClick();
   begin
     left = 1'b1;
     WaitClocks(10);
@@ -221,7 +295,7 @@ task automatic click_left_mouse();
   end
 endtask
 
-task automatic click_right_mouse();
+task automatic MouseRightClick();
   begin
     right = 1'b1;
     WaitClocks(10);

@@ -1,10 +1,16 @@
-from XVunit.internals.python.xvunit import XVunit
-from XVunit.path_settings import PROJECT_DIR
 import os
 import sys
 
-xvunit = XVunit()
+HERE        = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.abspath(os.path.join(HERE, "..", ".."))
 
+os.environ.setdefault("XVUNIT_BUILD_DIR", os.path.join(HERE, "xvunit_out"))
+sys.path.insert(0, PROJECT_DIR)
+
+from XVunit.internals.python.xvunit import XVunit
+from XVunit.path_settings import PROJECT_DIR
+
+xvunit = XVunit()
 
 
 sources = {

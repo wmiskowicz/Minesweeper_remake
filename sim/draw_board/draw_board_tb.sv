@@ -6,6 +6,8 @@
                 Similar to top_vga_tb but can customise board state and is a lot faster.
  */
 //////////////////////////////////////////////////////////////////////////////
+`include "../../XVunit/internals/verilog/xvunit_defines.svh"
+
 
 `timescale 1 ns / 1 ps
 
@@ -13,7 +15,7 @@ import vga_pkg::*;
 import logger_pkg::*;
 import game_pkg::*;
 
-module draw_board_tb;
+module draw_board_xvunit_tb;
 
 
 // ----- Local parameters -----
@@ -108,51 +110,65 @@ main_fsm u_main_fsm (
   .game_set_wb3(game_set_if.slave)
 );
 
-initial begin
-  void'(logger::init());
-  InitReset();
-  force in_vga.rgb = 12'h333;
+`TEST_SUITE_BEGIN
 
-  main_state = PLAY;
+    `TEST_SUITE_SETUP begin
+      $display("Setting up test suite");
+    end
 
-  WaitClocks(500);
-  dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] = H_ROW_COLUMN_NUMBER;
-  dut.game_setup_cashe[MINE_NUM_REG_NUM] = H_MINE_NUM;
-  dut.game_setup_cashe[TIMER_SECONDS_REG_NUM] = H_TIMER_SECONDS;
-  dut.game_setup_cashe[FIELD_SIZE_REG_NUM] = H_FIELD_SIZE;
-  dut.game_setup_cashe[BOARD_SIZE_REG_NUM] = H_BOARD_SIZE;
-  dut.game_setup_cashe[BOARD_XPOS_REG_NUM] = H_BOARD_XPOS;
-  dut.game_setup_cashe[BOARD_YPOS_REG_NUM] = H_BOARD_YPOS;
-  main_state = PAUSE;
+    `TEST_CASE_SETUP begin
+      InitReset();
+      force in_vga.rgb = 12'h777;
+    end
 
-  dut.game_board_mem[0][0].flag = 1'b1;
-  dut.game_board_mem[1][0].flag = 1'b1;
-  dut.game_board_mem[0][1].flag = 1'b1;
+    `TEST_CASE("TC000") begin
+      $display("Verify reset state");
+      main_state = PLAY;
 
-  dut.game_board_mem[2][2].mine = 1'b1;
-  dut.game_board_mem[1][2].mine = 1'b1;
-  dut.game_board_mem[1][1].defused = 1'b1;
-  dut.game_board_mem[1][1].mine_ind = 3;
-  dut.game_board_mem[1][4].mine_ind = 1;
-  dut.game_board_mem[1][4].defused = 1;
-  dut.game_board_mem[2][0].defused = 1'b1;
-  dut.game_board_mem[1][5].defused = 1'b1;
-  dut.game_board_mem[1][3].defused = 1'b1;
-  dut.game_board_mem[1][3].mine = 1'b1;
-  dut.game_board_mem[1][5].mine = 1'b1;
+      WaitClocks(1500);
+      dut.game_setup_cashe[ROW_COLUMN_NUMBER_REG_NUM] = H_ROW_COLUMN_NUMBER;
+      dut.game_setup_cashe[MINE_NUM_REG_NUM] = H_MINE_NUM;
+      dut.game_setup_cashe[TIMER_SECONDS_REG_NUM] = H_TIMER_SECONDS;
+      dut.game_setup_cashe[FIELD_SIZE_REG_NUM] = H_FIELD_SIZE;
+      dut.game_setup_cashe[BOARD_SIZE_REG_NUM] = H_BOARD_SIZE;
+      dut.game_setup_cashe[BOARD_XPOS_REG_NUM] = H_BOARD_XPOS;
+      dut.game_setup_cashe[BOARD_YPOS_REG_NUM] = H_BOARD_YPOS;
+      main_state = PAUSE;
+
+      dut.game_board_mem[0][1].flag = 1'b1;
+      // dut.game_board_mem[1][0].mine = 1'b1;
+      dut.game_board_mem[2][2].mine = 1'b1;
+      dut.game_board_mem[1][2].mine = 1'b1;
+      dut.game_board_mem[1][1].defused = 1'b1;
+      dut.game_board_mem[1][1].mine_ind = 3;
+      dut.game_board_mem[1][4].mine_ind = 1;
+      dut.game_board_mem[1][4].defused = 1;
+      dut.game_board_mem[0][0].defused = 1'b1;
+      dut.game_board_mem[1][0].defused = 1'b1;
+      dut.game_board_mem[2][0].defused = 1'b1;
+      dut.game_board_mem[1][5].defused = 1'b1;
+      dut.game_board_mem[1][3].defused = 1'b1;
+      dut.game_board_mem[1][3].mine = 1'b1;
+      dut.game_board_mem[1][5].mine = 1'b1;
 
 
 
-  wait (vs == 1'b0);
-  @(negedge vs) $display("Info: negedge VS at %t",$time);
-  @(negedge vs) $display("Info: negedge VS at %t",$time);
+      wait (vs == 1'b0);
+      @(negedge vs) $display("Info: negedge VS at %t",$time);
+      @(negedge vs) $display("Info: negedge VS at %t",$time);
 
-  $finish();
-end
+      $finish();
+    end
+
+
+
+`TEST_SUITE_END
+
 
 task automatic WaitClocks(input int num_of_clock_cycles);
   repeat (num_of_clock_cycles) @(posedge clk);
 endtask
+
 
 task automatic InitReset();
   rst = 1;
@@ -160,5 +176,6 @@ task automatic InitReset();
   rst = 0;
   WaitClocks(10);
 endtask
+
 
 endmodule

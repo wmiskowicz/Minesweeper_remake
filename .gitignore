@@ -33,6 +33,8 @@
 *.synlog
 *.xml.log
 *.xpa
+*__pycache__/
+# *.pyc
 
 # SystemVerilog and simulation artifacts
 *.vcd

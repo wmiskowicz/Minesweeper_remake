@@ -17,7 +17,7 @@ It drives a 1280×720 VGA display, takes input from a PS/2 mouse and keeps the c
 # History
 After a second year of my studies we had to make a big project during summer break.
 As befits a student I started about 2 weeks before the deadline. In the end I 
-sumbitted my [Minesweeper](https://github.com/wmiskowicz/Minesweeper-old-version) and passed.  
+sumbitted my [Minesweeper](https://github.com/wmiskowicz/Minesweeper-old-version) and eventually passed.  
 
 Some time after that when I started a job as FPGA engineer I noticed how terribly this was written so based on my new skills and knowledge I decided to remake it -
 that's how this project exists.
@@ -25,7 +25,7 @@ that's how this project exists.
 Throughout the process of creating it in my free time I again learned more and would have done things differently. The project is far from perfect but I had to wrap it up at some point :) enjoy!
 
 P.S.  
-The project was developed without agentic AI except hereby README (Claude Code).
+The project was developed without agentic AI except this README (Claude Code).
 
 ---
 
@@ -72,7 +72,7 @@ The project was developed without agentic AI except hereby README (Claude Code).
 |:----:|:--------:|:---------:|
 | ![Menu](doc/media/menu.png) | ![Gameplay](doc/media/gameplay.png) | ![Game over](doc/media/game_over.png) |
 
-<sub>These frames come straight from simulation. The [stages_screenshots](sim/stages_screenshots/stages_screenshots.sv) testbench plays the full top-level design, opening a safe field, flagging mines and finally stepping on one, and saves the VGA output of each stage. Regenerate them with `python run_screenshots.py`.</sub>
+
 
 <p align="center">
   <!-- TODO: photo of the Basys3 board + monitor + mouse setup -->
@@ -103,7 +103,6 @@ flowchart LR
     FSM --> SSEG[7-segment<br/>timer display]
 ```
 
-<!-- TODO (optional): replace/augment with a hand-drawn block diagram, e.g. doc/media/block_diagram.png -->
 
 | Block | Location | Role |
 |-------|----------|------|
@@ -131,7 +130,7 @@ Each board field is a packed struct ([wishbone_defs.svh](rtl/memory/wishbone_def
 
 A reusable [wishbone_master](rtl/memory/wishbone_master.sv) turns the bus protocol into simple `read_en`/`write_en` ports, so game modules don't have to implement the handshake themselves.
 
-<!-- TODO (optional): XSim waveform screenshot of a Wishbone transaction, e.g. doc/media/wishbone_wave.png -->
+![wishbone_wave](doc/media/wishbone_wave2.png)
 
 ---
 
@@ -152,7 +151,6 @@ Any image can be converted to a ROM file with the toolchain's `img2dat.py` scrip
 
 **Frames rendered in simulation.** The VGA testbenches use a `tiff_writer` to save full frames to `results/`. You can check what the screen will show before you ever touch the board.
 
-<!-- TODO: simulated frame next to a photo of the real monitor showing the same screen -->
 | Simulated frame (XSim) | Real hardware |
 |:---:|:---:|
 | ![Simulated frame](doc/media/sim_frame.png) | ![Monitor photo](doc/media/hw_frame.jpg) |
