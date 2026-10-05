@@ -1,48 +1,41 @@
-
 `ifndef PS2_IF_SV
 `define PS2_IF_SV
 
 interface ps2_if;
-  // Bidirectional open-drain signals
-  wire clk;
-  wire data;
+  // Drive controls: 1=high-Z/release, 0=drive low (open-drain)
+  logic clk_drv;
+  logic data_drv;
 
-  // Internal drivers
-  logic clk_drive = 1'b1;
-  logic data_drive = 1'b1;
+  // Actual bus line states. These are NOT driven here: the testbench
+  // top level resolves them from clk_drv/data_drv together with the
+  // DUT's own open-drain drive and the bus pull-ups, then drives them
+  // in from outside. Driving them here too would create a second
+  // driver on the same net and race with the DUT's value (resolving
+  // to 'x' whenever they disagree).
+  wire clk_in;
+  wire data_in;
 
-  assign clk = (clk_drive === 1'b0) ? 1'b0 : 1'bz;
-  assign data = (data_drive === 1'b0) ? 1'b0 : 1'bz;
-
-  // For monitoring
-  logic clk_in;
-  logic data_in;
-
-  assign clk_in = clk;
-  assign data_in = data;
-
-  modport master (
-    output clk_drive,
-    output data_drive,
-    input  clk_in,
-    input  data_in
+   // Modport for mouse BFM
+  modport mouse (
+    output clk_drv,
+    output data_drv,
+    input clk_in,
+    input data_in
+  );
+  
+  // Modport for host (DUT)
+  modport host (
+    output clk_drv,
+    output data_drv,
+    input clk_in,
+    input data_in
   );
 
-  modport slave (
-    input  clk_drive,
-    input  data_drive,
-    output clk_in,
-    output data_in
-  );
-
-  initial begin
-    // Ensure signals start high (pulled up)
-    clk_drive = 1'b1;
-    data_drive = 1'b1;
+    initial begin
+    clk_drv = 1'b1;  // Start in released state
+    data_drv = 1'b1; // Start in released state
   end
 
 endinterface
 
 `endif
-
-

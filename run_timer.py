@@ -1,9 +1,9 @@
-from XVunit.internals.python.run_XVUnitCommon import run_XVUnitCommon
-from XVunit.internals.python.paths import PROJECT_DIR
+from XVunit.internals.python.xvunit import XVunit
+from XVunit.path_settings import PROJECT_DIR
 import os
 import sys
 
-XVUnitCommon = run_XVUnitCommon()
+xvunit = XVunit()
 
 
 
@@ -14,15 +14,15 @@ sources = {
     ],
     "sim": [
         os.path.join(PROJECT_DIR, "sim", "timer", "*.sv"),
-        os.path.join(PROJECT_DIR, "XVUnit", "internals", "verilog", "*.sv"),
+        os.path.join(PROJECT_DIR, "XVunit", "internals", "verilog", "*.sv"),
     ],
 }
 
 
 
-XVUnitCommon.set_parameters(
+xvunit.set_parameters(
     sources=sources
 )
 
 
-XVUnitCommon.run(argv=sys.argv)
+xvunit.run(argv=sys.argv)

@@ -50,46 +50,21 @@
 *.ucdb
 *.shm
 
-# Compiled output files (QuestaSim, ModelSim, etc.)
+# Compiled output files
 work/
 work_lib/
-*.wlf
-*.vstf
-*.vcd
-transcript
-vsim.wlf
-*.mti
-*.vst
 
 # IP and generated files
 .ip_user_files/
-.xci
 .xdci
 .xco
 .xtcl
 .fpo
 .lut
 *.ncf
-*.sdf
 *.pkl
 *.init
 *.gise
-
-# Custom scripts and log files
-*.sh~
-*.pyc
-*.pyo
-__pycache__/
-*.tcl.bak
-*.tcl.log
-*.backup
-
-# Operating system specific files
-.DS_Store
-Thumbs.db
-ehthumbs.db
-*.swp
-*.swo
 
 # DVT specific files
 *_dict*
@@ -103,8 +78,6 @@ results
 images
 *build*
 *.vscode
-*.png
-*.jpg
 *vunit_out*
 *.cxl*
 .settings/
