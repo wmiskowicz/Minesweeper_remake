@@ -9,20 +9,20 @@
 **The classic Minesweeper game, built entirely in FPGA logic, with no CPU and no software.**
 It drives a 1280×720 VGA display, takes input from a PS/2 mouse and keeps the countdown on the seven-segment display. All of it runs on a Digilent Basys3 board.
 
-<!-- TODO: hero GIF, e.g. a full game from menu to win, recorded from the monitor -->
+
 <p align="center">
-  <img src="doc/media/gameplay.gif" alt="Gameplay on a Basys3 board" width="720">
+  <img src="doc/media/full_gameplay.gif" alt="Gameplay on a Basys3 board" width="720">
 </p>
 
 # History
-After a second year of my studies we had to make a big project during summer break.
-As befits a student I started about 2 weeks before the deadline. In the end I 
+After a second year of my studies we had to make a big project during a summer break.
+As befits a student I started the project about 2 weeks before the deadline. In the end I made it on time,
 sumbitted my [Minesweeper](https://github.com/wmiskowicz/Minesweeper-old-version) and eventually passed.  
 
 Some time after that when I started a job as FPGA engineer I noticed how terribly this was written so based on my new skills and knowledge I decided to remake it -
 that's how this project exists.
 
-Throughout the process of creating it in my free time I again learned more and would have done things differently. The project is far from perfect but I had to wrap it up at some point :) enjoy!
+Throughout the process of creating it in my free time I again learned more and today would have done some things differently. The Minesweeper project is far from perfect but I had to wrap it up at some point :) enjoy!
 
 P.S.  
 The project was developed without agentic AI except this README (Claude Code).
@@ -75,8 +75,7 @@ The project was developed without agentic AI except this README (Claude Code).
 
 
 <p align="center">
-  <!-- TODO: photo of the Basys3 board + monitor + mouse setup -->
-  <img src="doc/media/setup.jpg" alt="Basys3 board connected to a monitor and a PS/2 mouse" width="600">
+  <img src="doc/media/setup.jpeg" alt="Basys3 board connected to a monitor and a PS/2 mouse" width="300">
 </p>
 
 ---
@@ -149,13 +148,6 @@ vga_timing → draw_bg → draw_back_objects → draw_board → writings → dra
 
 Any image can be converted to a ROM file with the toolchain's `img2dat.py` script.
 
-**Frames rendered in simulation.** The VGA testbenches use a `tiff_writer` to save full frames to `results/`. You can check what the screen will show before you ever touch the board.
-
-| Simulated frame (XSim) | Real hardware |
-|:---:|:---:|
-| ![Simulated frame](doc/media/sim_frame.png) | ![Monitor photo](doc/media/hw_frame.jpg) |
-
----
 
 ## Verification with XVunit
 
@@ -181,7 +173,6 @@ python run_vga.py vga_out_tb.TC001  # run a single test case
 python run_vga.py vga_out_tb -g     # open it in the XSim GUI
 ```
 
-<!-- TODO: GIF/screenshot of a terminal run with green PASS lines, e.g. doc/media/xvunit_run.gif -->
 <p align="center">
   <img src="doc/media/xvunit_run.gif" alt="XVunit test run" width="720">
 </p>
